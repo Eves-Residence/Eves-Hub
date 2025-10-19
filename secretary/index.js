@@ -23,12 +23,11 @@ function changeFrame(type) {
       case "calendar":
         iframe.src = "https://calendar.google.com/calendar/embed?src=f8939355c05bdafed63e7eb02789566c7ebe844c36005d3ce552d4d2fd6cba16%40group.calendar.google.com&ctz=Asia%2FManila";
         break;
-        case "task":
-        iframe.src = "https://eves-residence.github.io/Task-Manager/";
-        break;
       default:
         iframe.src = "https://tephdy.github.io/WEB-APP/";
     }
     iframe.onload = () => (iframe.style.opacity = 1);
   }, 200);
 }
+
+
