@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <title>Secretary | EveHub</title>
   <link rel="stylesheet" href="../css/department.css">
-  <script src="index.js" defer></script>
+  <link rel="stylesheet" href="../css/task.css">
+  <script src="sec.js" defer></script>
 </head>
 <body>
   <div id="header"></div>
@@ -28,13 +29,70 @@
         <div class="card"><a href="https://drive.google.com/drive/folders/1SzEMdtEnluqixrB9Zyj_KC4OvgwwAW-M?usp=sharing">Promotional Content</a></div>
 
         <div class="card"><a href="#" onclick="changeFrame('bnb'); return false;">Bed and Bath Info</a></div>
-
-        <div class="card"><a href="#" onclick="changeFrame('task'); return false;">Task Manager</a></div>
         
         <div class="card"><a href="#" onclick="changeFrame('search'); return false;">Search Engine</a></div>
       </div>
 
       <iframe id="mainFrame" src="https://tephdy.github.io/WEB-APP/"></iframe>
+
+      <div class="task-main-container">
+        <!-- ✅ Left: Form -->
+        <div class="todo-form-container">
+          <h1>📝 Task Manager</h1>
+          <form id="todo-form">
+            <label>Task Name</label>
+            <input type="text" id="taskName" required>
+
+            <label>Priority</label>
+            <select id="priority">
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+
+            <label>Assigned By</label>
+            <input type="text" id="assignedBy" required>
+
+            <label>Assigned To</label>
+            <select id="assignTo" required>
+              <option value="Self">Self</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Propperty Representative">Propperty Representative</option>
+              <option value="Accounting">Accounting</option>
+              <option value="IT">IT</option>
+            </select>
+
+            <label>Due Date</label>
+            <input type="date" id="dueDate" required>
+
+            <label>Notes</label>
+            <textarea id="notes" rows="3" style="
+              width:100%;
+              padding:8px;
+              border:1px solid #ccc;
+              border-radius:5px;
+              resize:none;
+              overflow:hidden;
+              min-height:100px;
+              max-height:300px;
+              font-family:inherit;
+              font-size:14px;
+              line-height:1.4;
+              box-sizing:border-box;"></textarea>
+
+            <button type="submit">Save Task</button>
+          </form>
+          <p id="response" class="response"></p>
+        </div>
+
+        <!-- ✅ Right: Task List -->
+        <div class="task-list-container">
+          <h1>📋 Task List</h1>
+          <div id="taskList" class="task-list"></div>
+        </div>
+      </div>
+
+
     </div>
 
     <div class="content resizable">
