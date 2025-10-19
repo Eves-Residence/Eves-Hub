@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Secretary | EveHub</title>
+  <link rel="stylesheet" href="../css/department.css">
+</head>
+<body>
+  <div id="header"></div>
+
+  <div class="content">
+    <div class="title">
+      <h1>💼 Secretary</h1>
+      <p>All tools and files for Secretary.</p>
+    </div>
+
+    <div class="sub_content">
+      <div class="card"><a href="https://drive.google.com/drive/folders/1Gs-pUHBqwuZhLEptxTeMFLed0K0wH0At?usp=sharing">📁 Property Information Files</a></div>
+
+      <div class="card"><a href="https://docs.google.com/spreadsheets/d/18xxjZHVO_4Ert_uTvuYWKfqz5x_eAkdqzo5YvWGPRkI/edit?usp=sharing">📒 Vacancy</a></div>
+
+      <div class="card"><a href="https://drive.google.com/drive/folders/1uXhNGPapLnYDvxXnGU5MzCM2ecint04e?usp=sharing">📅 Viewing Schedule</a></div>
+
+      <div class="card"><a href="https://docs.google.com/spreadsheets/d/1S2v43l75aC6EpyCkXNifSfFYvuXE_XJ9HPcr0RDyhtg/edit?usp=sharing">⌛ Wait List</a></div>
+
+      <div class="card"><a href="https://drive.google.com/drive/folders/1SzEMdtEnluqixrB9Zyj_KC4OvgwwAW-M?usp=sharing">📈 Promotional Content</a></div>
+    </div>
+
+  </div>
+
+  <script>
+  // Load shared header from the header folder
+  fetch("../header/header.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("header").innerHTML = data;
+      // Wait until header is loaded, then update department name
+      const deptName = document.getElementById("dept-name");
+      if (deptName) {
+        deptName.textContent = "Secretary";
+      }
+    })
+    .catch(err => console.error("Error loading header:", err));
+</script>
+
+</body>
+</html>
