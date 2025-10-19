@@ -241,7 +241,7 @@ function renderTasks() {
         <b>Due:</b> ${safe(t["DUE DATE"]) || "-"} |
         <b>Status:</b> <span style="color:${statusColor};font-weight:600;">${safe(status)}</span>
       </div>
-      ${t["NOTES"] ? `<div class="task-notes"><b>Notes:</b> ${safe(t["NOTES"])}</div>` : ""}
+      ${t["NOTES"] ? `<div class="task-notes"><b>Details:</b> ${safe(t["NOTES"])}</div>` : ""}
 
       <div class="task-remarks-container">
         ${t["REMARKS"] ? `<div class="task-remarks">Remarks: ${safe(t["REMARKS"]).replace(/\n/g, "<br>")}</div>` : ""}
