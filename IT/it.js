@@ -1,4 +1,4 @@
-
+// EVERYTHING IS WORKING AS OF 19/10/2025
 // ===============================
 // IFRAME SWITCHER
 // ===============================
@@ -10,7 +10,7 @@ function changeFrame(type) {
     switch (type) {
       case "vacancy":
         iframe.src = "https://docs.google.com/spreadsheets/d/18xxjZHVO_4Ert_uTvuYWKfqz5x_eAkdqzo5YvWGPRkI/edit?usp=sharing";
-        break;  
+        break;
       case "search":
         iframe.src = "https://tephdy.github.io/WEB-APP/";
         break;
@@ -20,18 +20,23 @@ function changeFrame(type) {
       case "bnb":
         iframe.src = "https://docs.google.com/spreadsheets/d/1aWdlIT9aRwT4FktT_3oB0poxC8xyC0lOTDKEj574M2Y/edit?usp=sharing";
         break;
-      case "task":
-        iframe.src = "https://eves-residence.github.io/Task-Manager/";
-        break;
       default:
-        iframe.src = "https://tephdy.github.io/WEB-APP/";
+        iframe.src = "";
     }
-    iframe.onload = () => (iframe.style.opacity = 1);
+
+    // 🔹 Hide or show the iframe based on src
+    if (iframe.src === "" || iframe.src === window.location.href) {
+      iframe.style.display = "none";
+    } else {
+      iframe.style.display = "block";
+      iframe.onload = () => (iframe.style.opacity = 1);
+    }
   }, 200);
 }
 
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbz2kgIE_8d-H8nGkY8Jx4DjuGpsA-A98KBTikGXW98v8hA4k9K6VyxhvEQxPlHZjYa11A/exec";
+
+const scriptURL = "https://script.google.com/macros/s/AKfycbxSrHFInHiwzPYkVGI8_-_gOQDI1kgw4jb8475C8WAb6r_Dnha-SGc6O0w_prv8dWAeCQ/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
@@ -247,7 +252,7 @@ function renderTasks() {
         <b>Due:</b> ${safe(t["DUE DATE"]) || "-"} |
         <b>Status:</b> <span style="color:${statusColor};font-weight:600;">${safe(status)}</span>
       </div>
-      ${t["NOTES"] ? `<div class="task-notes"><b>Details:</b> ${safe(t["NOTES"])}</div>` : ""}
+      ${t["NOTES"] ? `<div class="task-notes"><b>Notes:</b> ${safe(t["NOTES"])}</div>` : ""}
 
       <div class="task-remarks-container">
         ${t["REMARKS"] ? `<div class="task-remarks">Remarks: ${safe(t["REMARKS"]).replace(/\n/g, "<br>")}</div>` : ""}
@@ -341,4 +346,3 @@ document.getElementById("priorityFilter").addEventListener("change", renderTasks
 
 // 🔹 Auto-load
 window.addEventListener("load", fetchTasks);
-
