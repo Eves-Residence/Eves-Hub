@@ -1,39 +1,63 @@
-
+////WORKING AS 0F 21/10/2025
 // ===============================
 // IFRAME SWITCHER
 // ===============================
 function changeFrame(type) {
   const iframe = document.getElementById("mainFrame");
-  iframe.style.opacity = 0;
 
+  // Initially hide
+  iframe.style.opacity = 0;
+  iframe.style.display = "none";
+
+  // Choose source
+  let newSrc = "";
+  switch (type) {
+    case "master":
+      newSrc = "https://docs.google.com/spreadsheets/d/15ouIKyyo1pfegl7oMxUgNgy_36JPb87Ta4JGxgws5HI/edit?usp=sharing";
+      break;
+    case "search":
+      newSrc = "https://tephdy.github.io/WEB-APP/";
+      break;
+    case "waitlist":
+      newSrc = "https://docs.google.com/spreadsheets/d/1S2v43l75aC6EpyCkXNifSfFYvuXE_XJ9HPcr0RDyhtg/edit?usp=sharing";
+      break;
+    case "bnb":
+      newSrc = "https://docs.google.com/spreadsheets/d/1aWdlIT9aRwT4FktT_3oB0poxC8xyC0lOTDKEj574M2Y/edit?usp=sharing";
+      break;
+    case "calendar":
+      newSrc = "https://calendar.google.com/calendar/embed?src=f8939355c05bdafed63e7eb02789566c7ebe844c36005d3ce552d4d2fd6cba16%40group.calendar.google.com&ctz=Asia%2FManila";
+      break;
+    default:
+      newSrc = "https://tephdy.github.io/WEB-APP/";
+  }
+
+  // Update src
   setTimeout(() => {
-    switch (type) {
-      case "vacancy":
-        iframe.src = "https://docs.google.com/spreadsheets/d/18xxjZHVO_4Ert_uTvuYWKfqz5x_eAkdqzo5YvWGPRkI/edit?usp=sharing";
-        break;  
-      case "search":
-        iframe.src = "https://tephdy.github.io/WEB-APP/";
-        break;
-      case "waitlist":
-        iframe.src = "https://docs.google.com/spreadsheets/d/1S2v43l75aC6EpyCkXNifSfFYvuXE_XJ9HPcr0RDyhtg/edit?usp=sharing";
-        break;
-      case "bnb":
-        iframe.src = "https://docs.google.com/spreadsheets/d/1aWdlIT9aRwT4FktT_3oB0poxC8xyC0lOTDKEj574M2Y/edit?usp=sharing";
-        break;
-      default:
-        iframe.src = "https://tephdy.github.io/WEB-APP/";
+    iframe.src = newSrc;
+
+    // Show iframe once it has a valid src
+    if (newSrc && newSrc.trim() !== "") {
+      iframe.style.display = "block";
     }
-    iframe.onload = () => (iframe.style.opacity = 1);
+
+    // Smooth fade-in when loaded
+    iframe.onload = () => {
+      iframe.style.transition = "opacity 0.4s ease";
+      iframe.style.opacity = 1;
+    };
   }, 200);
 }
 
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbz2kgIE_8d-H8nGkY8Jx4DjuGpsA-A98KBTikGXW98v8hA4k9K6VyxhvEQxPlHZjYa11A/exec";
+
+// ✅ WORKING AS OF 21/10/2025 WITH "Assign To" AND "addRemarks"
+
+const scriptURL = "https://script.google.com/macros/s/AKfycbxgZw8B0Y3YnRREgs-p_IIVz5mK3SMmUykG5U3xku8tkrzu_eLj-fJ7zxCKr661FPJLgQ/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
 
-// 🔹 Filter container (Status + Priority)
+// ✅ Add status & priority filters
 const filterContainer = document.createElement("div");
 filterContainer.innerHTML = `
   <label for="statusFilter">Status</label>
@@ -44,9 +68,7 @@ filterContainer.innerHTML = `
     <option value="Completed">Completed</option>
   </select>
 
-  &nbsp;&nbsp;&nbsp;
-
-  <label for="priorityFilter">Priority</label>
+  <label for="priorityFilter" style="margin-left:10px;">Priority</label>
   <select id="priorityFilter">
     <option value="All">All</option>
     <option value="High">High</option>
@@ -60,58 +82,36 @@ taskList.parentNode.insertBefore(filterContainer, taskList);
 let allTasks = [];
 let editIndex = null;
 
-// 🔹 Modal HTML (Edit: Status + Add Remarks)
+// ✅ Popup modal
 const modalHTML = `
-  <div id="modalOverlay" style="
-    display:none;
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background:rgba(0,0,0,0.5);
-    justify-content:center;
-    align-items:center;
-    z-index:1000;">
+  <div id="modalOverlay" style="display:none;
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
     <div id="modalBox" style="
-      background:#fff;
-      padding:20px;
-      border-radius:10px;
-      box-shadow:0 0 20px rgba(0,0,0,0.3);
-      width:100%;
-      max-width:500px;
-      box-sizing:border-box;">
-      
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <h3>Edit Task</h3>
-
+      background:#fff; padding:20px; border-radius:10px;
+      box-shadow:0 0 20px rgba(0,0,0,0.3); width:100%; max-width:500px; box-sizing:border-box;">
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <h3>Edit Task Status</h3>
         <label for="editStatus">Status:</label>
-        <select id="editStatus" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;">
+        <select id="editStatus" style="display:block; width:100%; padding:8px; margin-top:5px;
+          border:1px solid #ccc; border-radius:5px; font-size:14px;">
           <option value="Not Started">Not Started</option>
           <option value="In Progress">In Progress</option>
           <option value="Completed">Completed</option>
         </select>
-
         <label for="addRemarks">Remarks:</label>
-        <textarea id="addRemarks" placeholder="Add new remark..." style="
-          width:100%;
-          padding:8px;
-          border:1px solid #ccc;
-          border-radius:5px;
-          resize:none;
-          overflow:hidden;
-          min-height:100px;
-          max-height:300px;
-          font-family:inherit;
-          font-size:14px;
-          line-height:1.4;
-          box-sizing:border-box;"></textarea>
+        <textarea id="addRemarks" style="display:block; width:100%; padding:8px; margin-top:5px;
+          border:1px solid #ccc; border-radius:5px; resize:none; overflow:hidden;
+          min-height:50px; max-height:500px; line-height:1.4; font-family:inherit; font-size:14px;"></textarea>
+        <div id="loadingIndicator" style="display:none; color:#555; text-align:center;">⏳ Saving...</div>
       </div>
-
-      <div style="margin-top:15px;display:flex;justify-content:flex-end;gap:10px;">
-        <button id="saveEditBtn" style="padding:10px 16px;background:#4CAF50;color:#fff;border:none;border-radius:5px;">Save</button>
-        <button id="cancelEditBtn" style="padding:10px 16px;background:#ccc;border:none;border-radius:5px;">Cancel</button>
+      <div style="margin-top:15px; text-align:right;">
+        <button id="saveEditBtn" style="padding:6px 12px; background:#4CAF50; color:#fff; border:none; border-radius:5px;">Save</button>
+        <button id="cancelEditBtn" style="padding:6px 12px; background:#ccc; border:none; border-radius:5px;">Cancel</button>
       </div>
     </div>
-  </div>`;
+  </div>
+`;
 document.body.insertAdjacentHTML("beforeend", modalHTML);
 
 const modalOverlay = document.getElementById("modalOverlay");
@@ -119,16 +119,17 @@ const editStatus = document.getElementById("editStatus");
 const addRemarks = document.getElementById("addRemarks");
 const saveEditBtn = document.getElementById("saveEditBtn");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
+const loadingIndicator = document.getElementById("loadingIndicator");
 
-// 🔹 Auto-resize textarea
+// Auto resize remarks box
 addRemarks.addEventListener("input", () => {
   addRemarks.style.height = "auto";
-  const newHeight = Math.min(addRemarks.scrollHeight, 300);
+  const newHeight = Math.min(addRemarks.scrollHeight, 500);
   addRemarks.style.height = newHeight + "px";
-  addRemarks.style.overflowY = addRemarks.scrollHeight > 300 ? "auto" : "hidden";
+  addRemarks.style.overflowY = addRemarks.scrollHeight > 500 ? "auto" : "hidden";
 });
 
-// 🔹 Add Task
+// ✅ Add new task
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const task = {
@@ -150,10 +151,12 @@ form.addEventListener("submit", async (e) => {
   try {
     await fetch(scriptURL, {
       method: "POST",
+      mode: "cors",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: JSON.stringify(task),
     });
     responseMsg.textContent = "✅ Task saved successfully!";
+    setTimeout(() => (responseMsg.textContent = ""), 3000);
     form.reset();
     setTimeout(fetchTasks, 800);
   } catch (err) {
@@ -161,7 +164,7 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// 🔹 Fetch Tasks
+// ✅ Fetch all tasks
 async function fetchTasks() {
   taskList.innerHTML = "<p>Loading tasks...</p>";
   try {
@@ -169,43 +172,28 @@ async function fetchTasks() {
     const text = await res.text();
     const jsonMatch = text.match(/\{.*\}|\[.*\]/s);
     if (!jsonMatch) throw new Error("Invalid JSON format");
-
-    const data = JSON.parse(jsonMatch[0]);
-
-    // 🔹 Filter tasks assigned by "Marketing"
-    const department = "Marketing"; // change this per department page
-    allTasks = data.filter(
-      (t) => (t["ASSIGNED BY"] || "").trim().toLowerCase() === department.toLowerCase()
-    );
-
+    allTasks = JSON.parse(jsonMatch[0]);
     renderTasks();
   } catch (err) {
     taskList.innerHTML = `<p>⚠️ Error fetching tasks: ${err.message}</p>`;
   }
 }
 
-
-// 🔹 Render Tasks (Status + Priority Filter)
+// ✅ Render tasks
 function renderTasks() {
-  const selectedStatus = document.getElementById("statusFilter").value;
-  const selectedPriority = document.getElementById("priorityFilter").value;
+  const statusFilter = document.getElementById("statusFilter").value;
+  const priorityFilter = document.getElementById("priorityFilter").value;
 
   let tasksToShow = allTasks;
-
-  if (selectedStatus !== "All") {
-    tasksToShow = tasksToShow.filter(
-      (t) => (t["STATUS"] || "Not Started") === selectedStatus
-    );
+  if (statusFilter !== "All") {
+    tasksToShow = tasksToShow.filter(t => (t["STATUS"] || "Not Started") === statusFilter);
   }
-
-  if (selectedPriority !== "All") {
-    tasksToShow = tasksToShow.filter(
-      (t) => (t["PRIORITY"] || "").toLowerCase() === selectedPriority.toLowerCase()
-    );
+  if (priorityFilter !== "All") {
+    tasksToShow = tasksToShow.filter(t => (t["PRIORITY"] || "").trim() === priorityFilter);
   }
 
   taskList.innerHTML = "";
-  if (!tasksToShow || tasksToShow.length === 0) {
+  if (!tasksToShow.length) {
     taskList.innerHTML = "<p>No tasks found.</p>";
     return;
   }
@@ -223,102 +211,83 @@ function renderTasks() {
     div.style.borderLeft = `6px solid ${statusColor}`;
     div.style.backgroundColor = bgColor;
 
-    const safe = (str) => !str ? "" : String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+    const safe = str => str ? String(str).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]) : "";
 
     div.innerHTML = `
       <div class="task-header">${safe(t["TASK NAME"])}</div>
       <div class="task-meta">
         <b>Priority:</b> ${safe(t["PRIORITY"])} |
         <b>Assigned By:</b> ${safe(t["ASSIGNED BY"]) || "-"} |
-        <b>Assigned To:</b> ${safe(t["ASSIGNED TO"]) || "-"} |
+        <b>Assigned To:</b> ${safe(t["ASSIGNED TO"]) || "-"} 
         <b>Due:</b> ${safe(t["DUE DATE"]) || "-"} |
-        <b>Status:</b> <span style="color:${statusColor};font-weight:600;">${safe(status)}</span>
+        <b>Status:</b> <span style="color:${statusColor}; font-weight:600;">${safe(status)}</span>
       </div>
-      ${t["NOTES"] ? `<div class="task-notes"><b>Details:</b> ${safe(t["NOTES"])}</div>` : ""}
-
-      <div class="task-remarks-container">
-        ${t["REMARKS"] ? `<div class="task-remarks">Remarks: ${safe(t["REMARKS"]).replace(/\n/g, "<br>")}</div>` : ""}
-        ${t["FINISH DATE"] ? `<div class="task-finish">Finish Date: ${safe(t["FINISH DATE"])}</div>` : ""}
-      </div>
-
-      <div class="task-meta">${safe(t["TIMESTAMP"]) || ""}</div>
+      ${t["NOTES"] ? `<div class="task-notes">🗒 ${safe(t["NOTES"])}</div>` : ""}
+      <div class="task-meta">🕒 ${safe(t["TIMESTAMP"]) || ""}</div>
       <div class="task-actions">
-        ${status !== "Completed" ? `<button class="edit-btn" data-index="${index}">Edit</button>` : ""}
+        <button class="edit-btn" data-index="${index}" data-status="${safe(status)}">✏️ Edit</button>
         <button class="delete-btn" data-index="${index}">🗑️ Delete</button>
       </div>
     `;
 
-    const editBtn = div.querySelector(".edit-btn");
-    if (editBtn) editBtn.addEventListener("click", () => openEditModal(index));
+    div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(index, status));
     div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(index));
 
     taskList.appendChild(div);
   });
 }
 
-// 🔹 Open Edit Modal
-function openEditModal(index) {
+// ✅ Open modal
+function openEditModal(index, currentStatus) {
   editIndex = index;
-  const t = allTasks[index];
-  editStatus.value = t["STATUS"] || "Not Started";
-  addRemarks.value = "";
+  editStatus.value = currentStatus;
+  addRemarks.value = allTasks[index]["NOTES"] || "";
   modalOverlay.style.display = "flex";
 }
 
-// 🔹 Close Modal
-cancelEditBtn.addEventListener("click", () => (modalOverlay.style.display = "none"));
+// ✅ Close modal
+cancelEditBtn.addEventListener("click", () => modalOverlay.style.display = "none");
 
-// 🔹 Save Edit
+// ✅ Save edit
 saveEditBtn.addEventListener("click", async () => {
   if (editIndex === null) return;
+  const newStatus = editStatus.value;
+  const newRemarks = addRemarks.value.trim();
 
-  const remarkInput = addRemarks.value.trim();
-  const selectedStatus = editStatus.value;
-  const now = new Date();
-  const currentDate = now.toLocaleString("en-US", {
-    timeZone: "Asia/Manila",
-    year: "2-digit",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false
-  });
-
-  const updatedTask = {
-    action: "update",
-    rowIndex: editIndex,
-    status: selectedStatus,
-    remarks: remarkInput,
-    finishDate: selectedStatus === "Completed" ? currentDate : (allTasks[editIndex]["FINISH DATE"] || ""),
-  };
+  loadingIndicator.style.display = "block";
+  saveEditBtn.disabled = true;
 
   try {
     await fetch(scriptURL, {
       method: "POST",
+      mode: "cors",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: JSON.stringify(updatedTask),
+      body: JSON.stringify({
+        action: "update",
+        rowIndex: editIndex,
+        status: newStatus,
+        notes: newRemarks
+      })
     });
     modalOverlay.style.display = "none";
     fetchTasks();
   } catch (err) {
     alert("❌ Error updating: " + err.message);
+  } finally {
+    loadingIndicator.style.display = "none";
+    saveEditBtn.disabled = false;
   }
 });
 
-// 🔹 Delete Task
+// ✅ Delete task
 async function deleteTask(index) {
   if (!confirm("Are you sure you want to delete this task?")) return;
   try {
     await fetch(scriptURL, {
       method: "POST",
+      mode: "cors",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: JSON.stringify({ action: "delete", rowIndex: index }),
+      body: JSON.stringify({ action: "delete", rowIndex: index })
     });
     fetchTasks();
   } catch (err) {
@@ -326,10 +295,9 @@ async function deleteTask(index) {
   }
 }
 
-// 🔹 Filters (Status + Priority)
+// ✅ Filters
 document.getElementById("statusFilter").addEventListener("change", renderTasks);
 document.getElementById("priorityFilter").addEventListener("change", renderTasks);
 
-// 🔹 Auto-load
+// ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
-
