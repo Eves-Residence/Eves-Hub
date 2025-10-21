@@ -1,3 +1,4 @@
+
 /* ========== HEADER ========== */
 header {
   width: 100%;
@@ -90,9 +91,14 @@ body {
   box-sizing: border-box;
 }
 
+
+#mainFrame{
+  display: none;
+}
+
 /* ========== MAIN CONTAINER ========== */
 .main_container {
-  margin-top: 70px;
+  margin-top: 50px;
   display: flex;
   justify-content: center;
   align-items: stretch;
@@ -173,6 +179,15 @@ iframe {
   flex-grow: 1;
 }
 
+footer {
+  text-align: center;
+  padding: 15px 0;
+  background-color: #f4f6f8;
+  color: #666;
+  font-size: 16px;
+  margin-top: 30px;
+}
+
 /* RESPONSIVE ADJUSTMENTS */
 @media (max-width: 1024px) {
   .main_container {
@@ -188,15 +203,6 @@ iframe {
   iframe {
     height: 550px;
   }
-}
-
-footer {
-  text-align: center;
-  padding: 15px 0;
-  background-color: #f4f6f8;
-  color: #666;
-  font-size: 16px;
-  margin-top: 30px;
 }
 
 @media (max-width: 480px) {
@@ -219,4 +225,3 @@ footer {
     height: 400px;
   }
 }
-
