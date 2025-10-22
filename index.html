@@ -6,54 +6,38 @@
   <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-  <div class="login-box">
-    <h1>🏢 EveHub</h1>
-    <p>Select your department to access your page.</p>
 
-    <select id="dept">
-      <option value="" disabled selected>Select Department</option>
-      <option value="admin">Admin Department</option>
-      <option value="marketing">Marketing Department</option>
-      <option value="maintenance">Maintenance Department</option>
-      <option value="secretary">Secretary</option>
-      <option value="IT">IT Department</option>
-    </select>
+  <div class="container">
+    <div class="left-side">
+    </div>
 
-    <input type="password" id="password" placeholder="Enter password">
-    <button onclick="login()">Access</button>
+    <div class="right-side">
+      <div class="login-card">
+        <h1>🏢 EveHub</h1>
+        <p>Login with your department access.</p>
 
-    <p id="error"></p>
+        <select id="dept">
+          <option value="" disabled selected>Select Department</option>
+          <option value="admin">Admin Department</option>
+          <option value="marketing">Marketing Department</option>
+          <option value="secretary">Secretary</option>
+          <option value="IT">IT Department</option>
+        </select>
+
+        <input type="text" id="name" placeholder="Enter your name">
+        <input type="password" id="password" placeholder="Enter password">
+
+        <button onclick="login()">Access</button>
+
+        <p id="error"></p>
+      </div>
+      <footer>
+        <p>© 2025 Eve's Residences. All rights reserved.</p> 
+        <p>Developed by Eve's Residences IT Department.</p> 
+      </footer>
+    </div>
   </div>
 
-  <footer>© 2025 Eve’s Residences</footer>
-
-  <script>
-    // 🔐 Department access credentials
-    const access = {
-      "admin": "admin123",
-      "marketing": "market456",
-      "maintenance": "maint789",
-      "secretary": "secret",
-      "IT": "hackerboi2499",
-    };
-
-    function login() {
-      const dept = document.getElementById("dept").value;
-      const pass = document.getElementById("password").value.trim();
-      const error = document.getElementById("error");
-
-      if (!dept) {
-        error.textContent = "Please select a department.";
-        return;
-      }
-
-      if (access[dept] && access[dept] === pass) {
-        // Redirect to folder (e.g., /marketing/index.html)
-        window.location.href = `${dept}/index.html`;
-      } else {
-        error.textContent = "Invalid password.";
-      }
-    }
-  </script>
+  <script src="/js/login.js"></script>
 </body>
 </html>
