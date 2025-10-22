@@ -125,27 +125,41 @@ src=7137dc2d42770e37e88ced5ae69e61975b63c4767c5abd73a5be3019759ef8b9%40group.cal
 
   <script>
       // Load shared header
-    fetch("../header/header.html")
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById("header").innerHTML = data;
+  fetch("../header/header.html")
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById("header").innerHTML = data;
 
-        // Update department name
-        const deptName = document.getElementById("dept-name");
-        if (deptName) deptName.textContent = "Marketing Department";
+    // 🔹 Get department & name from localStorage
+    const department = localStorage.getItem("department");
+    const name = localStorage.getItem("name");
 
-        // Enable mobile menu toggle AFTER header loads
-        const menuToggle = document.querySelector(".menu-toggle");
-        const subContent = document.querySelector(".sub_content");
-        if (menuToggle && subContent) {
-          menuToggle.addEventListener("click", () => {
-            subContent.classList.toggle("active");
-          });
-        }
-      })
-      .catch(err => console.error("Error loading header:", err));
+    // Redirect to login if no credentials found
+    if (!department || !name) {
+      window.location.href = "../index.html";
+      return;
+    }
+
+    // 🔹 Update department display text (e.g. IT Department | John)
+    const deptName = document.getElementById("dept-name");
+    if (deptName) {
+      const deptFormatted = department.toUpperCase() + " Department";
+      deptName.textContent = `${deptFormatted} | ${name}`;
+    }
+
+    // 🔹 Enable mobile menu toggle AFTER header loads
+    const menuToggle = document.querySelector(".menu-toggle");
+    const subContent = document.querySelector(".sub_content");
+    if (menuToggle && subContent) {
+      menuToggle.addEventListener("click", () => {
+        subContent.classList.toggle("active");
+      });
+    }
+  })
+  .catch(err => console.error("Error loading header:", err));
 
   </script>
 </body>
 </html>
+
 
