@@ -10,6 +10,7 @@ const access = {
 
 // === LOGIN FUNCTION ===
 function login() {
+  alert("Working...")
   const dept = document.getElementById("dept").value;
   const name = document.getElementById("name").value.trim();
   const pass = document.getElementById("password").value.trim();
@@ -40,3 +41,4 @@ function login() {
     error.textContent = "Invalid department name or password.";
   }
 }
+
