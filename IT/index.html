@@ -3,15 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <title>IT Department | EveHub</title>
-  <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
-  <link rel="stylesheet" href="css/department.css">
-  <link rel="stylesheet" href="css/task.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+  <link rel="stylesheet" href="../css/header.css">
+  <link rel="stylesheet" href="../css/department.css">
+  <link rel="stylesheet" href="../css/task.css">
   <script src="index.js" defer></script>
   <script src="it.js" defer></script>
+  <script src="/js/header.js" defer></script>
+  <script src="notif.js" defer></script>
 </head>
+
 <body>
-  <div id="header"></div>
- 
+  <!-- ✅ HEADER -->
+  <header>
+  <div class="logo-container">
+    <img src="../img/Logo-for-the-header-1024x248.png" alt="EveHub Logo" class="logo">
+  </div>
+
+  <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
+  <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
+</a>
+
+  <h2 id="dept-name">Department | User</h2>
+
+  <div class="header-right">
+    <!-- 🔔 Notification -->
+    <div class="notification-container" data-count="0">
+      <span class="material-symbols-outlined" id="notif-icon">notifications_unread</span>
+      <span class="notification-count">0</span>
+
+      <!-- Dropdown -->
+      <div class="notif-dropdown" id="notif-list">
+        <p class="empty">No new notifications</p>
+      </div>
+    </div>
+
+    <!-- 🚪 Logout -->
+    <a href="../index.html" id="logout-link" title="Logout">
+      <span class="material-symbols-outlined">logout</span>
+    </a>
+  </div>
+</header>
+
+
+
   <div class="main_container">
     <div class="content resizable">
       <div class="title">
@@ -21,24 +57,19 @@
 
       <div class="sub_content">
         <div class="card"><a href="">Property Information Files</a></div>
-
         <div class="card"><a href="#" onclick="changeFrame('master'); return false;">Master List</a></div>
-
         <div class="card"><a href="https://drive.google.com/drive/folders/1uXhNGPapLnYDvxXnGU5MzCM2ecint04e?usp=sharing">Viewing Schedule</a></div>
-
         <div class="card"><a href="#" onclick="changeFrame('waitlist'); return false;">Wait List</a></div>
-
         <div class="card"><a href="https://drive.google.com/drive/folders/1SzEMdtEnluqixrB9Zyj_KC4OvgwwAW-M?usp=sharing">Promotional Content</a></div>
-
         <div class="card"><a href="#" onclick="changeFrame('bnb'); return false;">Bed and Bath Info</a></div>
-        
         <div class="card"><a href="#" onclick="changeFrame('search'); return false;">Search Engine</a></div>
       </div>
 
       <iframe id="mainFrame" src=""></iframe>
 
+      <!-- ✅ TASK MANAGER SECTION -->
       <div class="task-main-container">
-        <!-- ✅ Left: Form -->
+        <!-- Left: Form -->
         <div class="todo-form-container">
           <h1>📝 Task Manager</h1>
           <form id="todo-form">
@@ -59,7 +90,7 @@
             <select id="assignTo" required>
               <option value="Secretary">Secretary</option>
               <option value="Marketing">Marketing</option>
-              <option value="Propperty Representative">Propperty Representative</option>
+              <option value="Property Representative">Property Representative</option>
               <option value="Accounting">Accounting</option>
               <option value="IT">IT</option>
             </select>
@@ -87,7 +118,7 @@
           <p id="response" class="response"></p>
         </div>
 
-        <!-- ✅ Right: Task List -->
+        <!-- Right: Task List -->
         <div class="task-list-container">
           <h1>📋 Task List</h1>
           <div id="taskList" class="task-list"></div>
@@ -95,54 +126,55 @@
       </div>
     </div>
 
+    <!-- ✅ Google Calendar -->
     <div class="content resizable">
       <iframe 
         src="https://calendar.google.com/calendar/embed?src=c3d9a3cc01cce614d7432b94ac9162bbce8ad63964dfb927af50b557b9ba75a6%40group.calendar.google.com&ctz=Asia%2FManila" 
         frameborder="0" scrolling="no">
       </iframe>
     </div>
-        <footer>
-            <p>© 2025 Eve's Residences. All rights reserved.</p> 
-            <p>Developed by Eve's Residences IT Department.</p> 
-      </footer>
+
+    <footer>
+      <p>© 2025 Eve's Residences. All rights reserved.</p> 
+      <p>Developed by Eve's Residences IT Department.</p> 
+    </footer>
   </div>
 
-
+  <!-- ✅ HEADER SCRIPT (merged logic) -->
   <script>
-      // Load shared header
-  fetch("../header/header.html")
-  .then(res => res.text())
-  .then(data => {
-    document.getElementById("header").innerHTML = data;
+    document.addEventListener("DOMContentLoaded", () => {
+      // 🔹 Auto-detect department from URL if needed
+      const pathParts = window.location.pathname.split("/");
+      const dept = pathParts.find(p =>
+        ["admin", "marketing", "maintenance", "it"].includes(p.toLowerCase())
+      );
 
-    // 🔹 Get department & name from localStorage
-    const department = localStorage.getItem("department");
-    const name = localStorage.getItem("name");
+      const deptNameMap = {
+        admin: "Admin Department",
+        marketing: "Marketing Department",
+        maintenance: "Maintenance Department",
+        housekeeping: "Housekeeping Department",
+        it: "IT Department"
+      };
 
-    // Redirect to login if no credentials found
-    if (!department || !name) {
-      window.location.href = "../index.html";
-      return;
-    }
+      const deptElement = document.getElementById("dept-name");
+      const deptFormatted = deptNameMap[dept?.toLowerCase()] || "Department";
 
-    // 🔹 Update department display text (e.g. IT Department | John)
-    const deptName = document.getElementById("dept-name");
-    if (deptName) {
-      const deptFormatted = department.toUpperCase() + " Department";
-      deptName.textContent = `${deptFormatted} | ${name}`;
-    }
+      // 🔹 Load user info from localStorage
+      const department = localStorage.getItem("department");
+      const name = localStorage.getItem("name");
 
-    // 🔹 Enable mobile menu toggle AFTER header loads
-    const menuToggle = document.querySelector(".menu-toggle");
-    const subContent = document.querySelector(".sub_content");
-    if (menuToggle && subContent) {
-      menuToggle.addEventListener("click", () => {
-        subContent.classList.toggle("active");
-      });
-    }
-  })
-  .catch(err => console.error("Error loading header:", err));
+      if (!department || !name) {
+        window.location.href = "../index.html";
+        return;
+      }
 
+      // 🔹 Combine both logic: header + user info
+      if (deptElement) {
+        const finalDept = department ? `${department.toUpperCase()} Department` : deptFormatted;
+        deptElement.textContent = `${finalDept} | ${name}`;
+      }
+    });
   </script>
 </body>
 </html>
