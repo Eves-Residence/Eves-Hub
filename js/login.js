@@ -2,9 +2,9 @@
 
 // 🔐 Department access credentials
 const access = {
-  admin: "admin123",
-  marketing: "market456",
-  secretary: "secret",
+  PR: "ecorep2025",
+  Marketing: "market456",
+  Secretary: "secret",
   IT: "hackerboi2499",
 };
 
@@ -40,5 +40,3 @@ function login() {
     error.textContent = "Invalid department name or password.";
   }
 }
-
-
