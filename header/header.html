@@ -1,5 +1,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-<link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+  <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+
 <link rel="stylesheet" href="../css/header.css">
 
 <!-- header.html -->
@@ -35,7 +36,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     const pathParts = window.location.pathname.split("/");
     const dept = pathParts.find(p =>
-      ["admin", "marketing", "maintenance", "housekeeping"].includes(p.toLowerCase())
+      ["Admin", "Marketing", "Maintenance", "Housekeeping"]
     );
 
     const deptName = {
@@ -45,7 +46,7 @@
       housekeeping: "Housekeeping Department"
     };
 
-    const deptTitle = deptName[dept?.toLowerCase()] || "Department";
+    const deptTitle = deptName| "Department";
 
     const deptElement = document.getElementById("dept-name");
     if (deptElement) {
@@ -53,7 +54,3 @@
     }
   });
 </script>
-
-
-
-
