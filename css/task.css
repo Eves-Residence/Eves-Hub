@@ -193,8 +193,8 @@ button:hover {
 .filter-menu {
   display: none;
   position: absolute;
-  top: 35px;
-  left: 0;
+  top: 40px;
+  right: 0;
   background: #fff;
   color: #000;
   border: 1px solid #ccc;
@@ -278,4 +278,5 @@ button:hover {
     top: 30px;
   }
 }
+
 
