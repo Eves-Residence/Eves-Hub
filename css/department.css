@@ -1,24 +1,84 @@
 
 /* ========== HEADER ========== */
-.telegram-float {
+header {
+  width: 100%;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
   position: fixed;
-  width: 60px;
-  height: 60px;
-  bottom: 20px;
-  right: 20px;
-  background-color: #0088cc;
-  color: #FFF;
-  border-radius: 50px;
-  text-align: center;
-  box-shadow: 2px 2px 3px #999;
+  top: 0;
+  left: 0;
   z-index: 1000;
-}
-.telegram-float img {
-  width: 35px;
-  margin-top: 12px;
 }
 
 /* ===== LOGO AND TITLE ===== */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-container img {
+  height: 35px;
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-container h2 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ===== BACK BUTTON ===== */
+.back-button {
+  background-color: #9ff210;
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #a9ec35;
+}
+
+/* ===== MOBILE HEADER ===== */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .logo-container {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .logo-container img {
+    height: 28px;
+  }
+
+  .logo-container h2 {
+    font-size: 14px;
+  }
+
+  .back-button {
+    margin-top: 8px;
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}
+
 /* ========== BASE LAYOUT ========== */
 body {
   font-family: Arial, sans-serif;
