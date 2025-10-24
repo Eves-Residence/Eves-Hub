@@ -12,6 +12,9 @@
 </head>
 <body>
   <div id="header"></div>
+  <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
+  <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
+</a>
  
   <div class="main_container">
     <div class="content resizable">
@@ -106,26 +109,38 @@
 
   <script>
     // Load shared header
-    fetch("../header/header.html")
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById("header").innerHTML = data;
+  fetch("../header/header.html")
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById("header").innerHTML = data;
 
-        // Update department name
-        const deptName = document.getElementById("dept-name");
-        if (deptName) deptName.textContent = "Secretary";
+    // 🔹 Get department & name from localStorage
+    const department = localStorage.getItem("department");
+    const name = localStorage.getItem("name");
 
-        // Enable mobile menu toggle AFTER header loads
-        const menuToggle = document.querySelector(".menu-toggle");
-        const subContent = document.querySelector(".sub_content");
-        if (menuToggle && subContent) {
-          menuToggle.addEventListener("click", () => {
-            subContent.classList.toggle("active");
-          });
-        }
-      })
-      .catch(err => console.error("Error loading header:", err));
+    // Redirect to login if no credentials found
+    if (!department || !name) {
+      window.location.href = "../index.html";
+      return;
+    }
+
+    // 🔹 Update department display text (e.g. IT Department | John)
+    const deptName = document.getElementById("dept-name");
+    if (deptName) {
+      const deptFormatted = department.toUpperCase() + " Department";
+      deptName.textContent = `${deptFormatted} | ${name}`;
+    }
+
+    // 🔹 Enable mobile menu toggle AFTER header loads
+    const menuToggle = document.querySelector(".menu-toggle");
+    const subContent = document.querySelector(".sub_content");
+    if (menuToggle && subContent) {
+      menuToggle.addEventListener("click", () => {
+        subContent.classList.toggle("active");
+      });
+    }
+  })
+  .catch(err => console.error("Error loading header:", err));
   </script>
 </body>
 </html>
-
