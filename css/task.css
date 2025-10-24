@@ -7,36 +7,43 @@ body {
   padding: 20px;
 }
 
-.task-main-container{
+/* ✅ Main layout */
+.task-main-container {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
-  margin-top: 50px;
+  margin-top: 30px;
 }
 
-.todo-form-container, .task-list-container {
+.todo-form-container,
+.task-list-container {
   background: #fff;
   border-radius: 10px;
   padding: 25px 30px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   flex: 1 1 350px;
   max-width: 500px;
 }
 
+/* ✅ Titles */
 h1 {
   text-align: center;
   color: #333;
   margin-bottom: 15px;
 }
 
+/* ✅ Form elements */
 form {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-input, select, textarea, button {
+input,
+select,
+textarea,
+button {
   font-size: 14px;
   padding: 8px;
   border-radius: 6px;
@@ -100,14 +107,20 @@ button:hover {
   color: #555;
 }
 
-.task-remarks{
-  margin-top:10px;
+.task-remarks {
+  margin-top: 10px;
 }
 
 /* ✅ Priority colors */
-.high { border-left: 6px solid #ff3b30; }
-.medium { border-left: 6px solid #ffcc00; }
-.low { border-left: 6px solid #34c759; }
+.high {
+  border-left: 6px solid #ff3b30;
+}
+.medium {
+  border-left: 6px solid #ffcc00;
+}
+.low {
+  border-left: 6px solid #34c759;
+}
 
 /* ✅ Buttons inside tasks */
 .task-actions {
@@ -122,16 +135,146 @@ button:hover {
   font-size: 12px;
 }
 
-.edit-btn { background: #ffd60a; border: none; cursor: pointer; }
-.delete-btn { background: #ff453a; border: none; color: white; cursor: pointer; }
+.edit-btn {
+  background: #ffd60a;
+  border: none;
+  cursor: pointer;
+}
+.delete-btn {
+  background: #ff453a;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
 
-.edit-btn:hover { background: #ffcd00; }
-.delete-btn:hover { background: #ff2d55; }
+.edit-btn:hover {
+  background: #ffcd00;
+}
+.delete-btn:hover {
+  background: #ff2d55;
+}
+
+/* ✅ Compact unified filter dropdown */
+.filter-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.filter-dropdown {
+  position: relative;
+}
+
+#filterBtn {
+  background: #ffffff;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: 0.2s ease;
+}
+
+.filter:hover{
+  color: #000;
+}
+
+/* #filterBtn:hover {
+  background: #dcdcdc;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+} */
+
+/* Dropdown menu */
+.filter-menu {
+  display: none;
+  position: absolute;
+  top: 35px;
+  left: 0;
+  background: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 200;
+  min-width: 220px;
+}
+
+.filter-menu.active {
+  display: block;
+}
+
+.filter-menu label {
+  display: block;
+  font-weight: 500;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.filter-menu select {
+  width: 100%;
+  padding: 4px;
+  margin-top: 3px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+}
+
+.filter-menu button {
+  margin-top: 8px;
+  width: 48%;
+  background: #a9ec35;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.filter-menu button:hover {
+  background: #92cf2a;
+}
+
+.filter-menu #clearFilter {
+  background: #ccc;
+  color: #000;
+}
+
+.filter-menu #clearFilter:hover {
+  background: #aaa;
+}
+
+/* ✅ Scrollbar styling */
+.task-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.task-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
 
 /* ✅ Responsive */
 @media (max-width: 768px) {
-  .main-container {
+  .task-main-container {
     flex-direction: column;
     align-items: center;
+  }
+
+  #filterBtn {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .filter-menu {
+    min-width: 180px;
+    top: 30px;
   }
 }
