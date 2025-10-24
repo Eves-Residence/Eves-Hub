@@ -1,0 +1,181 @@
+/* === GLOBAL RESET === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* === HEADER BASE === */
+header {
+  width: 100vw;
+  background: #ffffff;
+  color: #000;
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+/* === LOGO === */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+/* === DEPARTMENT NAME === */
+#dept-name {
+  color: #000000;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* === RIGHT SIDE === */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* === ICONS === */
+.material-symbols-outlined {
+  font-size: 30px;
+  color: black;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.material-symbols-outlined:hover,
+.material-symbols-outlined:active {
+  color: #a9ec35;
+}
+
+/* === NOTIFICATION === */
+.notification-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.notification-count {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background: #000;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  display: none;
+}
+
+/* Show badge if count > 0 */
+.notification-container[data-count]:not([data-count="0"]) .notification-count {
+  display: inline-block;
+}
+
+/* === DROPDOWN === */
+.notif-dropdown {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 300px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 2000;
+}
+
+.notification-container:hover .notif-dropdown {
+  display: block;
+}
+
+.notif-item {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+}
+
+.notif-item strong {
+  color: #333;
+  font-size: 14px;
+}
+
+.notif-item p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.notif-time {
+  font-size: 11px;
+  color: gray;
+}
+
+.notif-dropdown .empty {
+  text-align: center;
+  color: gray;
+  font-size: 13px;
+  padding: 10px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 15px;
+    position: static;
+  }
+
+  #dept-name {
+    position: static;
+    transform: none;
+    font-size: 16px;
+  }
+
+  .logo {
+    height: 32px;
+  }
+
+  .header-right {
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .material-symbols-outlined {
+    font-size: 26px;
+  }
+
+  .notification-count {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+
+  .notif-dropdown {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90vw;
+  }
+}
