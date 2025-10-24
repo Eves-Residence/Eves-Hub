@@ -7,28 +7,62 @@ const responseMsg = document.getElementById("response");
 
 // ✅ Add status & priority filters
 const filterContainer = document.createElement("div");
+filterContainer.classList.add("filter-container");
 filterContainer.innerHTML = `
-  <label for="statusFilter">Status</label>
-  <select id="statusFilter">
-    <option value="All">All</option>
-    <option value="Not Started">Not Started</option>
-    <option value="In Progress">In Progress</option>
-    <option value="Completed">Completed</option>
-  </select>
+  <div class="filter-dropdown">
+    <button id="filterBtn">
+      <span class="material-symbols-outlined filter">filter_list</span>
+      Filter
+    </button>
+    <div class="filter-menu">
+      <label>Status:</label>
+      <select id="statusFilter">
+        <option value="All">All</option>
+        <option value="Not Started">Not Started</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
 
-  <label for="priorityFilter" style="margin-left:10px;">Priority</label>
-  <select id="priorityFilter">
-    <option value="All">All</option>
-    <option value="High">High</option>
-    <option value="Medium">Medium</option>
-    <option value="Low">Low</option>
-  </select>
+      <label>Priority:</label>
+      <select id="priorityFilter">
+        <option value="All">All</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+
+      <label>Assigned By:</label>
+      <select id="assignedByFilter">
+        <option value="All">All</option>
+      </select>
+
+      <button id="applyFilter">Apply</button>
+      <button id="clearFilter">Clear</button>
+    </div>
+  </div>
 `;
-filterContainer.style.marginBottom = "10px";
 taskList.parentNode.insertBefore(filterContainer, taskList);
 
-let allTasks = [];
-let editIndex = null;
+// 🧠 Toggle filter menu visibility
+document.getElementById("filterBtn").addEventListener("click", () => {
+  document.querySelector(".filter-menu").classList.toggle("active");
+});
+
+// ✅ Apply filters
+document.getElementById("applyFilter").addEventListener("click", () => {
+  document.querySelector(".filter-menu").classList.remove("active");
+  applyFilters();
+});
+
+// ✅ Clear filters
+document.getElementById("clearFilter").addEventListener("click", () => {
+  document.getElementById("statusFilter").value = "All";
+  document.getElementById("priorityFilter").value = "All";
+  document.getElementById("assignedByFilter").value = "All";
+  document.querySelector(".filter-menu").classList.remove("active");
+  applyFilters();
+});
+
 
 // ✅ Popup modal
 const modalHTML = `
@@ -249,4 +283,5 @@ document.getElementById("priorityFilter").addEventListener("change", renderTasks
 
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
+
 
