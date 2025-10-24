@@ -1,13 +1,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
 
-<link rel="stylesheet" href="../css/header.css">
+<link rel="stylesheet" href="/css/header.css">
 
 <!-- header.html -->
 <header>
   <div class="logo-container">
     <img src="../img/Logo-for-the-header-1024x248.png" alt="EveHub Logo" class="logo">
   </div>
+
+  <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
+  <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
 </a>
 
   <h2 id="dept-name">Department | User</h2>
@@ -36,7 +39,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     const pathParts = window.location.pathname.split("/");
     const dept = pathParts.find(p =>
-      ["admin", "marketing", "maintenance", "housekeeping"]
+      ["admin", "marketing", "maintenance", "housekeeping"].includes(p.toLowerCase())
     );
 
     const deptName = {
@@ -46,7 +49,7 @@
       housekeeping: "Housekeeping Department"
     };
 
-    const deptTitle = deptName| "Department";
+    const deptTitle = deptName[dept?.toLowerCase()] || "Department";
 
     const deptElement = document.getElementById("dept-name");
     if (deptElement) {
@@ -54,4 +57,3 @@
     }
   });
 </script>
-
