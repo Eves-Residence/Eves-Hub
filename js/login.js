@@ -2,9 +2,9 @@
 
 // 🔐 Department access credentials
 const access = {
-  PR: "ecorep2025",
-  Marketing: "market456",
-  Secretary: "secret",
+  rep: "ecorep2025",
+  marketing: "market456",
+  secretary: "secret",
   IT: "hackerboi2499",
 };
 
