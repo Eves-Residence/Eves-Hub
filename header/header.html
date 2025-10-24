@@ -1,105 +1,38 @@
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+
+<link rel="stylesheet" href="/css/header.css">
+
 <!-- header.html -->
 <header>
   <div class="logo-container">
     <img src="../img/Logo-for-the-header-1024x248.png" alt="EveHub Logo" class="logo">
   </div>
 
-  <h2 id="dept-name">Department</h2>
+  <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
+  <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
+</a>
 
-  <a href="../index.html" class="back-link">← Back to Login</a>
+  <h2 id="dept-name">Department | User</h2>
+
+  <div class="header-right">
+    <!-- 🔔 Notification -->
+    <div class="notification-container" data-count="0">
+      <span class="material-symbols-outlined" id="notif-icon">notifications_unread</span>
+      <span class="notification-count">0</span>
+
+      <!-- Dropdown -->
+      <div class="notif-dropdown" id="notif-list">
+        <p class="empty">No new notifications</p>
+      </div>
+    </div>
+
+    <!-- 🚪 Logout -->
+    <a href="../index.html" id="logout-link" title="Logout">
+      <span class="material-symbols-outlined">logout</span>
+    </a>
+  </div>
 </header>
-
-<style>
-  /* Reset defaults */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  header {
-    width: 100vw;
-    background: #ffffff;
-    color: rgb(5, 5, 5);
-    padding: 20px 50px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 1000;
-  }
-
-  /* 🔹 Center Department Name */
-  #dept-name {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 18px;
-    font-weight: 600;
-    text-align: center;
-  }
-
-  /* 🔹 Logo */
-  .logo-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .logo {
-    height: 40px;
-    width: auto;
-  }
-
-  /* 🔹 Back to Login Button */
-  header a {
-    color: rgb(5, 5, 5);
-    text-decoration: none;
-    background: #9ff210;
-    padding: 12px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: bold;
-    transition: background 0.2s ease, opacity 0.3s ease;
-    white-space: nowrap;
-  }
-
-  header a:hover {
-    background: #a9ec35;
-    opacity: 0.9;
-  }
-
-  /* 📱 Responsive Design */
-  @media (max-width: 600px) {
-    header {
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 15px;
-      position: static;
-    }
-
-    #dept-name {
-      position: static;
-      transform: none;
-      text-align: center;
-      font-size: 16px;
-      margin-top: 4px;
-    }
-
-    .logo {
-      height: 32px;
-    }
-
-    header a {
-      font-size: 12px;
-      padding: 6px 10px;
-    }
-  }
-</style>
 
 <script>
   // ✅ Auto-detect the department based on folder name in URL
