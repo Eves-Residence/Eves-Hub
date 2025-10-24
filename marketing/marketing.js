@@ -1,384 +1,170 @@
-////WORKING AS 0F 21/10/2025
-// ===============================
-// IFRAME SWITCHER
-// ===============================
-function changeFrame(type) {
-  const iframe = document.getElementById("mainFrame");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Marketing Department | EveHub</title>
+  <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+  <link rel="stylesheet" href="../css/department.css">
+  <link rel="stylesheet" href="../css/header.css">
+  <link rel="stylesheet" href="../css/task.css">
+  <script src="marketing.js" defer></script>
+  <script src="/js/header.js" defer></script>
+</head>
+<body>
+  <div id="header"></div>
+  <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
+  <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
+</a>
 
-  // Initially hide
-  iframe.style.opacity = 0;
-  iframe.style.display = "none";
+  <div class="main_container">
+    <div class="content resizable">
+      <div class="title">
+        <h1>📈 Marketing Department</h1>
+        <p>All tools and files for marketing team.</p>
+      </div>
 
-  // Choose source
-  let newSrc = "";
-  switch (type) {
-    case "master":
-      newSrc = "https://docs.google.com/spreadsheets/d/15ouIKyyo1pfegl7oMxUgNgy_36JPb87Ta4JGxgws5HI/edit?usp=sharing";
-      break;
-    case "search":
-      newSrc = "https://tephdy.github.io/WEB-APP/";
-      break;
-    case "waitlist":
-      newSrc = "https://docs.google.com/spreadsheets/d/1S2v43l75aC6EpyCkXNifSfFYvuXE_XJ9HPcr0RDyhtg/edit?usp=sharing";
-      break;
-    case "bnb":
-      newSrc = "https://docs.google.com/spreadsheets/d/1aWdlIT9aRwT4FktT_3oB0poxC8xyC0lOTDKEj574M2Y/edit?usp=sharing";
-      break;
-      case "vacancy":
-      newSrc = "https://docs.google.com/spreadsheets/d/1Z_3YqO4ve0TvbkV4Lrg6X9utii7EswQiwnczFcAKvsI/edit?usp=sharing";
-      break;
-    case "calendar":
-      newSrc = "https://calendar.google.com/calendar/embed?src=f8939355c05bdafed63e7eb02789566c7ebe844c36005d3ce552d4d2fd6cba16%40group.calendar.google.com&ctz=Asia%2FManila";
-      break;
-    default:
-      newSrc = "https://tephdy.github.io/WEB-APP/";
-  }
+      <div class="sub_content">
+        <div class="card"><a href="">Property Information Files</a></div>
 
-  // Update src
-  setTimeout(() => {
-    iframe.src = newSrc;
+        <div class="card"><a href="https://drive.google.com/drive/folders/1uXhNGPapLnYDvxXnGU5MzCM2ecint04e?usp=sharing">Viewing Schedule</a></div>
 
-    // Show iframe once it has a valid src
-    if (newSrc && newSrc.trim() !== "") {
-      iframe.style.display = "block";
+        <div class="card"><a href="#" onclick="changeFrame('waitlist'); return false;">Wait List</a></div>
+
+        <div class="card"><a href="https://drive.google.com/drive/folders/1SzEMdtEnluqixrB9Zyj_KC4OvgwwAW-M?usp=sharing">Promotional Content</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('bnb'); return false;">Bed and Bath Info</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('vacancy'); return false;">Upcoming Vacancy</a></div>
+        
+        <div class="card"><a href="#" onclick="changeFrame('search'); return false;">Search Engine</a></div>
+      </div>
+
+      <iframe id="mainFrame" src=""></iframe>
+
+      <div class="task-main-container">
+        <!-- ✅ Left: Form -->
+        <div class="todo-form-container">
+          <h1>📝 Task Manager</h1>
+          <form id="todo-form">
+            <label>Task Name</label>
+            <input type="text" id="taskName" required>
+
+            <label>Priority</label>
+            <select id="priority">
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+
+            <label>Assigned By</label>
+            <input type="text" id="assignedBy" required>
+
+            <label>Assigned To</label>
+            <select id="assignTo" required>
+              <option value="Self">Self</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Propperty Representative">Propperty Representative</option>
+              <option value="Accounting">Accounting</option>
+              <option value="IT">IT</option>
+            </select>
+
+            <label>Due Date</label>
+            <input type="date" id="dueDate" required>
+
+            <label>Details</label>
+            <textarea id="notes" rows="3" style="
+              width:100%;
+              padding:8px;
+              border:1px solid #ccc;
+              border-radius:5px;
+              resize:none;
+              overflow:hidden;
+              min-height:100px;
+              max-height:300px;
+              font-family:inherit;
+              font-size:14px;
+              line-height:1.4;
+              box-sizing:border-box;"></textarea>
+
+            <button type="submit">Save Task</button>
+          </form>
+          <p id="response" class="response"></p>
+        </div>
+
+        <!-- ✅ Right: Task List -->
+        <div class="task-list-container">
+          <h1>📋 Task List</h1>
+          <div id="taskList" class="task-list"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="content resizable">
+      <iframe 
+        src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff
+&
+src=d9184ebfee6f27477b34aa9c60772a48825fdcfa8161294cac223b11c1b92bfa%40group.calendar.google.com
+&
+src=f8939355c05bdafed63e7eb02789566c7ebe844c36005d3ce552d4d2fd6cba16%40group.calendar.google.com
+&src=7e3b30ff9999ea614326851547fe1ad3b916dbd5d66e1ca4aee284a643bec5b8%40group.calendar.google.com
+&src=4135d53669ba8aeb9fa97e9d43b90b898559135041b9877a74024e64f938433d%40group.calendar.google.com
+&src=1e4d7aeebe105f901f5667b6ab66abe0cbf3200430b4038c56fca65b9e34fd80%40group.calendar.google.com
+&src=502be4aa37504dea77d1a6b9102a6e47f615fc2da0cb6bfe75e366d39396fcce%40group.calendar.google.com
+&src=9b12293cfc74b3ef24aa3b47f244cc0ddd985ccad38a76d8113c6f8fda1c8d57%40group.calendar.google.com
+&src=e606ac15794bbbf3367bf604d1dcfec9c54206fc69f4a091b27f2998c9a0bbb2%40group.calendar.google.com
+&src=0ff5cd60c64f7f245b9a751f7bb51aad1c8fef2212d4c37befc52593bd9e37c4%40group.calendar.google.com
+&
+src=7137dc2d42770e37e88ced5ae69e61975b63c4767c5abd73a5be3019759ef8b9%40group.calendar.google.com
+&color=%23039BE5&color=%23D50000&color=%23F6BF26&color=%237CB342&color=%23E67C73
+&color=%23F4511E&color=%237CB342&color=%239E69AF&color=%2323164E&ctz=Asia%2FManila" 
+        frameborder="0" scrolling="no">
+      </iframe>
+      </div>
+
+      <footer>
+        <p>© 2025 Eve's Residences. All rights reserved.</p> 
+        <p>Developed by Eve's Residences IT Department.</p> 
+      </footer>
+  </div>
+
+  <script>
+     // Load shared header
+  fetch("../header/header.html")
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById("header").innerHTML = data;
+
+    // 🔹 Get department & name from localStorage
+    const department = localStorage.getItem("department");
+    const name = localStorage.getItem("name");
+
+    // Redirect to login if no credentials found
+    if (!department || !name) {
+      window.location.href = "../index.html";
+      return;
     }
 
-    // Smooth fade-in when loaded
-    iframe.onload = () => {
-      iframe.style.transition = "opacity 0.4s ease";
-      iframe.style.opacity = 1;
-    };
-  }, 200);
-}
-
-
-
-// ✅ WORKING AS OF 21/10/2025 WITH "Assign To" AND "addRemarks"
-
-// ✅ WORKING AS OF 21/10/2025 WITH "Assign To", "addRemarks", AND READ-ONLY PROTECTION
-
-const scriptURL = "https://script.google.com/macros/s/AKfycbwthD5GNWum_mbuLOKPZdjTogdRx5kowT_p4HFCeCV4QOStMuDoyNscebyxFwsymbav/exec";
-const form = document.getElementById("todo-form");
-const taskList = document.getElementById("taskList");
-const responseMsg = document.getElementById("response");
-
-// ✅ Create single unified filter dropdown
-const filterContainer = document.createElement("div");
-filterContainer.classList.add("filter-container");
-filterContainer.innerHTML = `
-  <div class="filter-dropdown">
-    <button id="filterBtn">
-      <span class="material-symbols-outlined filter">filter_list</span>
-      Filter
-    </button>
-    <div class="filter-menu">
-      <label>Status:</label>
-      <select id="statusFilter">
-        <option value="All">All</option>
-        <option value="Not Started">Not Started</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Completed">Completed</option>
-      </select>
-
-      <label>Priority:</label>
-      <select id="priorityFilter">
-        <option value="All">All</option>
-        <option value="High">High</option>
-        <option value="Medium">Medium</option>
-        <option value="Low">Low</option>
-      </select>
-
-      <label>Assigned By:</label>
-      <select id="assignedByFilter">
-        <option value="All">All</option>
-      </select>
-
-      <button id="applyFilter">Apply</button>
-      <button id="clearFilter">Clear</button>
-    </div>
-  </div>
-`;
-taskList.parentNode.insertBefore(filterContainer, taskList);
-
-// 🧠 Toggle filter menu visibility
-document.getElementById("filterBtn").addEventListener("click", () => {
-  document.querySelector(".filter-menu").classList.toggle("active");
-});
-
-// ✅ Apply filters
-document.getElementById("applyFilter").addEventListener("click", () => {
-  document.querySelector(".filter-menu").classList.remove("active");
-  applyFilters();
-});
-
-// ✅ Clear filters
-document.getElementById("clearFilter").addEventListener("click", () => {
-  document.getElementById("statusFilter").value = "All";
-  document.getElementById("priorityFilter").value = "All";
-  document.getElementById("assignedByFilter").value = "All";
-  document.querySelector(".filter-menu").classList.remove("active");
-  applyFilters();
-});
-
-
-// ✅ Popup modal
-const modalHTML = `
-  <div id="modalOverlay" style="display:none;
-    position:fixed; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
-    <div id="modalBox" style="
-      background:#fff; padding:20px; border-radius:10px;
-      box-shadow:0 0 20px rgba(0,0,0,0.3); width:100%; max-width:500px; box-sizing:border-box;">
-      <div style="display:flex; flex-direction:column; gap:10px;">
-        <h3>Edit Task Status</h3>
-        <label for="editStatus">Status:</label>
-        <select id="editStatus" style="display:block; width:100%; padding:8px; margin-top:5px;
-          border:1px solid #ccc; border-radius:5px; font-size:14px;">
-          <option value="Not Started">Not Started</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-        </select>
-        <label for="addRemarks">Remarks:</label>
-        <textarea id="addRemarks" style="display:block; width:100%; padding:8px; margin-top:5px;
-          border:1px solid #ccc; border-radius:5px; resize:none; overflow:hidden;
-          min-height:50px; max-height:500px; line-height:1.4; font-family:inherit; font-size:14px;"></textarea>
-        <div id="loadingIndicator" style="display:none; color:#555; text-align:center;">⏳ Saving...</div>
-      </div>
-      <div style="margin-top:15px; text-align:right;">
-        <button id="saveEditBtn" style="padding:6px 12px; background:#4CAF50; color:#fff; border:none; border-radius:5px;">Save</button>
-        <button id="cancelEditBtn" style="padding:6px 12px; background:#ccc; border:none; border-radius:5px;">Cancel</button>
-      </div>
-    </div>
-  </div>
-`;
-document.body.insertAdjacentHTML("beforeend", modalHTML);
-
-const modalOverlay = document.getElementById("modalOverlay");
-const editStatus = document.getElementById("editStatus");
-const addRemarks = document.getElementById("addRemarks");
-const saveEditBtn = document.getElementById("saveEditBtn");
-const cancelEditBtn = document.getElementById("cancelEditBtn");
-const loadingIndicator = document.getElementById("loadingIndicator");
-
-// Auto resize remarks box
-addRemarks.addEventListener("input", () => {
-  addRemarks.style.height = "auto";
-  const newHeight = Math.min(addRemarks.scrollHeight, 500);
-  addRemarks.style.height = newHeight + "px";
-  addRemarks.style.overflowY = addRemarks.scrollHeight > 500 ? "auto" : "hidden";
-});
-
-// ✅ Add new task
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const task = {
-    action: "add",
-    taskName: document.getElementById("taskName").value.trim(),
-    priority: document.getElementById("priority").value,
-    assignedBy: document.getElementById("assignedBy").value.trim(),
-    assignTo: document.getElementById("assignTo").value,
-    dueDate: document.getElementById("dueDate").value,
-    notes: document.getElementById("notes").value.trim(),
-  };
-
-  if (!task.taskName) {
-    responseMsg.textContent = "⚠️ Task name is required!";
-    return;
-  }
-
-  responseMsg.textContent = "⏳ Saving task...";
-  try {
-    await fetch(scriptURL, {
-      method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: JSON.stringify(task),
-    });
-    responseMsg.textContent = "✅ Task saved successfully!";
-    setTimeout(() => (responseMsg.textContent = ""), 3000);
-    form.reset();
-    setTimeout(fetchTasks, 800);
-  } catch (err) {
-    responseMsg.textContent = "❌ Error: " + err.message;
-  }
-});
-
-
-// ✅ Fetch all tasks
-async function fetchTasks() {
-  taskList.innerHTML = "<p>Loading tasks...</p>";
-  try {
-    const res = await fetch(scriptURL);
-    const text = await res.text();
-    const jsonMatch = text.match(/\{.*\}|\[.*\]/s);
-    if (!jsonMatch) throw new Error("Invalid JSON format");
-    allTasks = JSON.parse(jsonMatch[0]);
-
-    // 🧩 Populate "Assigned By" filter dynamically
-    const assignedByFilter = document.getElementById("assignedByFilter");
-    const uniqueAssigners = [
-      ...new Set(allTasks.map(t => (t["ASSIGNED BY"] || "").trim()).filter(v => v))
-    ];
-    assignedByFilter.innerHTML = `<option value="All">All</option>` +
-      uniqueAssigners.map(v => `<option value="${v}">${v}</option>`).join("");
-
-    renderTasks();
-  } catch (err) {
-    taskList.innerHTML = `<p>⚠️ Error fetching tasks: ${err.message}</p>`;
-  }
-}
-
-// ✅ Render tasks with filters
-function renderTasks() {
-  const statusFilter = document.getElementById("statusFilter").value;
-  const priorityFilter = document.getElementById("priorityFilter").value;
-  const assignedByFilter = document.getElementById("assignedByFilter").value;
-
-  let tasksToShow = allTasks;
-
-  if (statusFilter !== "All") {
-    tasksToShow = tasksToShow.filter(t => (t["STATUS"] || "Not Started") === statusFilter);
-  }
-  if (priorityFilter !== "All") {
-    tasksToShow = tasksToShow.filter(t => (t["PRIORITY"] || "").trim() === priorityFilter);
-  }
-  if (assignedByFilter !== "All") {
-    tasksToShow = tasksToShow.filter(t => (t["ASSIGNED BY"] || "").trim() === assignedByFilter);
-  }
-
-  taskList.innerHTML = "";
-  if (!tasksToShow.length) {
-    taskList.innerHTML = "<p>No tasks found.</p>";
-    return;
-  }
-
-  tasksToShow.forEach((t, index) => {
-    const div = document.createElement("div");
-    div.classList.add("task-item");
-
-    const status = (t["STATUS"] || "Not Started").trim();
-    let statusColor = "#999", bgColor = "#fff";
-    if (status === "Completed") { statusColor = "#4CAF50"; bgColor = "#e8f5e9"; }
-    else if (status === "In Progress") { statusColor = "#FFC107"; bgColor = "#fff9e6"; }
-    else if (status === "Not Started") { statusColor = "#F44336"; bgColor = "#fdecea"; }
-
-    div.style.borderLeft = `6px solid ${statusColor}`;
-    div.style.backgroundColor = bgColor;
-
-    const safe = str => str ? String(str).replace(/[&<>"]/g, c => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
-    }[c])) : "";
-
-    const isIT = t.source === "IT";
-
-    div.innerHTML = `
-      <div class="task-header">
-        ${safe(t["TASK NAME"])}
-        <span style="font-size:12px;color:#777;">(${safe(t.source) || "Unknown"})</span>
-      </div>
-      <div class="task-meta">
-        <b>Priority:</b> ${safe(t["PRIORITY"])} |
-        <b>Assigned By:</b> ${safe(t["ASSIGNED BY"]) || "-"} |
-        <b>Assigned To:</b> ${safe(t["ASSIGNED TO"]) || "-"} |
-        <b>Due:</b> ${safe(t["DUE DATE"]) || "-"} |
-        <b>Status:</b> <span style="color:${statusColor}; font-weight:600;">${safe(status)}</span>
-      </div>
-      ${t["NOTES"] ? `<div class="task-notes">🗒 ${safe(t["NOTES"])}</div>` : ""}
-      <div class="task-meta">🕒 ${safe(t["TIMESTAMP"]) || ""}</div>
-      <div class="task-actions">
-        ${
-          isIT
-            ? `
-              <button class="edit-btn" data-index="${index}" data-status="${safe(status)}" data-source="${t.source}">✏️ Edit</button>
-              <button class="delete-btn" data-index="${index}" data-source="${t.source}">🗑️ Delete</button>
-            `
-            : `<button disabled class="readonly-btn" style="background-color:#555; color:#fff; padding:10px;cursor:not-allowed;">🔒 Read-Only</button>`
-        }
-      </div>
-    `;
-
-    if (isIT) {
-      div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(index, status, t.source));
-      div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(index, t.source));
+    // 🔹 Update department display text (e.g. IT Department | John)
+    const deptName = document.getElementById("dept-name");
+    if (deptName) {
+      const deptFormatted = department + " Department";
+      deptName.textContent = `${deptFormatted} | ${name}`;
     }
 
-    taskList.appendChild(div);
-  });
-}
+    // 🔹 Enable mobile menu toggle AFTER header loads
+    const menuToggle = document.querySelector(".menu-toggle");
+    const subContent = document.querySelector(".sub_content");
+    if (menuToggle && subContent) {
+      menuToggle.addEventListener("click", () => {
+        subContent.classList.toggle("active");
+      });
+    }
+  })
+  .catch(err => console.error("Error loading header:", err));
 
-// ✅ Re-render on filter change
-document.getElementById("statusFilter").addEventListener("change", renderTasks);
-document.getElementById("priorityFilter").addEventListener("change", renderTasks);
-document.getElementById("assignedByFilter").addEventListener("change", renderTasks);
-
-// ✅ Open modal
-function openEditModal(index, currentStatus, source) {
-  editIndex = index;
-  editStatus.value = currentStatus;
-  addRemarks.value = allTasks[index]["NOTES"] || "";
-  modalOverlay.dataset.source = source;
-  modalOverlay.style.display = "flex";
-}
-
-// ✅ Close modal
-cancelEditBtn.addEventListener("click", () => modalOverlay.style.display = "none");
-
-// ✅ Save edit
-saveEditBtn.addEventListener("click", async () => {
-  if (editIndex === null) return;
-  const newStatus = editStatus.value;
-  const newRemarks = addRemarks.value.trim();
-  const source = modalOverlay.dataset.source;
-
-  loadingIndicator.style.display = "block";
-  saveEditBtn.disabled = true;
-
-  try {
-    await fetch(scriptURL, {
-      method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: JSON.stringify({
-        action: "update",
-        rowIndex: allTasks[editIndex].rowIndex,
-        status: newStatus,
-        notes: newRemarks,
-        source
-      })
-    });
-    modalOverlay.style.display = "none";
-    fetchTasks();
-  } catch (err) {
-    alert("❌ Error updating: " + err.message);
-  } finally {
-    loadingIndicator.style.display = "none";
-    saveEditBtn.disabled = false;
-  }
-});
-
-// ✅ Delete task
-async function deleteTask(index, source) {
-  if (!confirm("Are you sure you want to delete this task?")) return;
-  try {
-    await fetch(scriptURL, {
-      method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: JSON.stringify({
-        action: "delete",
-        rowIndex: allTasks[index].rowIndex,
-        source
-      })
-    });
-    fetchTasks();
-  } catch (err) {
-    alert("❌ Error deleting: " + err.message);
-  }
-}
-
-// ✅ Filters
-document.getElementById("statusFilter").addEventListener("change", renderTasks);
-document.getElementById("priorityFilter").addEventListener("change", renderTasks);
-
-// ✅ Load tasks on page load
-window.addEventListener("load", fetchTasks);
+  </script>
+</body>
+</html>
