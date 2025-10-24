@@ -16,36 +16,10 @@
 
 <body>
   <!-- ✅ HEADER -->
-  <header>
-  <div class="logo-container">
-    <img src="../img/Logo-for-the-header-1024x248.png" alt="EveHub Logo" class="logo">
-  </div>
-
+   <div id="header"></div>
   <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
   <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
-</a>
-
-  <h2 id="dept-name">Department | User</h2>
-
-  <div class="header-right">
-    <!-- 🔔 Notification -->
-    <div class="notification-container" data-count="0">
-      <span class="material-symbols-outlined" id="notif-icon">notifications_unread</span>
-      <span class="notification-count">0</span>
-
-      <!-- Dropdown -->
-      <div class="notif-dropdown" id="notif-list">
-        <p class="empty">No new notifications</p>
-      </div>
-    </div>
-
-    <!-- 🚪 Logout -->
-    <a href="../index.html" id="logout-link" title="Logout">
-      <span class="material-symbols-outlined">logout</span>
-    </a>
-  </div>
-</header>
-
+  </a>
 
 
   <div class="main_container">
@@ -142,39 +116,39 @@
 
   <!-- ✅ HEADER SCRIPT (merged logic) -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // 🔹 Auto-detect department from URL if needed
-      const pathParts = window.location.pathname.split("/");
-      const dept = pathParts.find(p =>
-        ["admin", "marketing", "maintenance", "it"].includes(p.toLowerCase())
-      );
+    // Load shared header
+  fetch("../header/header.html")
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById("header").innerHTML = data;
 
-      const deptNameMap = {
-        admin: "Admin Department",
-        marketing: "Marketing Department",
-        maintenance: "Maintenance Department",
-        housekeeping: "Housekeeping Department",
-        it: "IT Department"
-      };
+    // 🔹 Get department & name from localStorage
+    const department = localStorage.getItem("department");
+    const name = localStorage.getItem("name");
 
-      const deptElement = document.getElementById("dept-name");
-      const deptFormatted = deptNameMap[dept?.toLowerCase()] || "Department";
+    // Redirect to login if no credentials found
+    if (!department || !name) {
+      window.location.href = "../index.html";
+      return;
+    }
 
-      // 🔹 Load user info from localStorage
-      const department = localStorage.getItem("department");
-      const name = localStorage.getItem("name");
+    // 🔹 Update department display text (e.g. IT Department | John)
+    const deptName = document.getElementById("dept-name");
+    if (deptName) {
+      const deptFormatted = department + " Department";
+      deptName.textContent = `${deptFormatted} | ${name}`;
+    }
 
-      if (!department || !name) {
-        window.location.href = "../index.html";
-        return;
-      }
-
-      // 🔹 Combine both logic: header + user info
-      if (deptElement) {
-        const finalDept = department ? `${department.toUpperCase()} Department` : deptFormatted;
-        deptElement.textContent = `${finalDept} | ${name}`;
-      }
-    });
+    // 🔹 Enable mobile menu toggle AFTER header loads
+    const menuToggle = document.querySelector(".menu-toggle");
+    const subContent = document.querySelector(".sub_content");
+    if (menuToggle && subContent) {
+      menuToggle.addEventListener("click", () => {
+        subContent.classList.toggle("active");
+      });
+    }
+  })
+  .catch(err => console.error("Error loading header:", err));
   </script>
 </body>
 </html>
