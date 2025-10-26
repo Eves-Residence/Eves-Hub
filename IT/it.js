@@ -1,11 +1,11 @@
-// ✅ WORKING AS OF 21/10/2025 WITH "Assign To" AND "addRemarks"
+// ✅ WORKING AS OF 21/10/2025 WITH "Assign To", "addRemarks", AND READ-ONLY PROTECTION
 
 const scriptURL = "https://script.google.com/macros/s/AKfycbwmZ1-k28KAaQl4h5YMmEKz5NjW-1dmQMGE7VKmCZSKWXQ1Qw1VY2axegPwpDBChVQ/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
 
-// ✅ Add status & priority filters
+// ✅ Create single unified filter dropdown
 const filterContainer = document.createElement("div");
 filterContainer.classList.add("filter-container");
 filterContainer.innerHTML = `
@@ -33,7 +33,10 @@ filterContainer.innerHTML = `
 
       <label>Assigned By:</label>
       <select id="assignedByFilter">
-        <option value="All">All</option>
+        <option value="Marketing">Marketing</option>
+        <option value="Property Representative">Property Representative</option>
+        <option value="Accounting">Accounting</option>
+        <option value="IT">IT</option>
       </select>
 
       <button id="applyFilter">Apply</button>
@@ -41,27 +44,29 @@ filterContainer.innerHTML = `
     </div>
   </div>
 `;
+
 taskList.parentNode.insertBefore(filterContainer, taskList);
 
 // 🧠 Toggle filter menu visibility
-document.getElementById("filterBtn").addEventListener("click", () => {
+document.getElementById("filterBtn")?.addEventListener("click", () => {
   document.querySelector(".filter-menu").classList.toggle("active");
 });
 
 // ✅ Apply filters
-document.getElementById("applyFilter").addEventListener("click", () => {
+document.getElementById("applyFilter")?.addEventListener("click", () => {
   document.querySelector(".filter-menu").classList.remove("active");
   applyFilters();
 });
 
 // ✅ Clear filters
-document.getElementById("clearFilter").addEventListener("click", () => {
+document.getElementById("clearFilter")?.addEventListener("click", () => {
   document.getElementById("statusFilter").value = "All";
   document.getElementById("priorityFilter").value = "All";
   document.getElementById("assignedByFilter").value = "All";
   document.querySelector(".filter-menu").classList.remove("active");
   applyFilters();
 });
+
 
 
 // ✅ Popup modal
@@ -146,6 +151,7 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
+
 // ✅ Fetch all tasks
 async function fetchTasks() {
   taskList.innerHTML = "<p>Loading tasks...</p>";
@@ -155,23 +161,37 @@ async function fetchTasks() {
     const jsonMatch = text.match(/\{.*\}|\[.*\]/s);
     if (!jsonMatch) throw new Error("Invalid JSON format");
     allTasks = JSON.parse(jsonMatch[0]);
+
+    // 🧩 Populate "Assigned By" filter dynamically
+    const assignedByFilter = document.getElementById("assignedByFilter");
+    const uniqueAssigners = [
+      ...new Set(allTasks.map(t => (t["ASSIGNED BY"] || "").trim()).filter(v => v))
+    ];
+    assignedByFilter.innerHTML = `<option value="All">All</option>` +
+      uniqueAssigners.map(v => `<option value="${v}">${v}</option>`).join("");
+
     renderTasks();
   } catch (err) {
     taskList.innerHTML = `<p>⚠️ Error fetching tasks: ${err.message}</p>`;
   }
 }
 
-// ✅ Render tasks
+// ✅ Render tasks with filters
 function renderTasks() {
   const statusFilter = document.getElementById("statusFilter").value;
   const priorityFilter = document.getElementById("priorityFilter").value;
+  const assignedByFilter = document.getElementById("assignedByFilter").value;
 
   let tasksToShow = allTasks;
+
   if (statusFilter !== "All") {
     tasksToShow = tasksToShow.filter(t => (t["STATUS"] || "Not Started") === statusFilter);
   }
   if (priorityFilter !== "All") {
     tasksToShow = tasksToShow.filter(t => (t["PRIORITY"] || "").trim() === priorityFilter);
+  }
+  if (assignedByFilter !== "All") {
+    tasksToShow = tasksToShow.filter(t => (t["ASSIGNED BY"] || "").trim() === assignedByFilter);
   }
 
   taskList.innerHTML = "";
@@ -193,37 +213,58 @@ function renderTasks() {
     div.style.borderLeft = `6px solid ${statusColor}`;
     div.style.backgroundColor = bgColor;
 
-    const safe = str => str ? String(str).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]) : "";
+    const safe = str => str ? String(str).replace(/[&<>"]/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
+    }[c])) : "";
+
+    const isIT = t.source === "IT";
 
     div.innerHTML = `
-      <div class="task-header">${safe(t["TASK NAME"])}</div>
+      <div class="task-header">
+        ${safe(t["TASK NAME"])}
+        <span style="font-size:12px;color:#777;">(${safe(t.source) || "Unknown"})</span>
+      </div>
       <div class="task-meta">
         <b>Priority:</b> ${safe(t["PRIORITY"])} |
         <b>Assigned By:</b> ${safe(t["ASSIGNED BY"]) || "-"} |
-        <b>Assigned To:</b> ${safe(t["ASSIGNED TO"]) || "-"} 
+        <b>Assigned To:</b> ${safe(t["ASSIGNED TO"]) || "-"} |
         <b>Due:</b> ${safe(t["DUE DATE"]) || "-"} |
         <b>Status:</b> <span style="color:${statusColor}; font-weight:600;">${safe(status)}</span>
       </div>
       ${t["NOTES"] ? `<div class="task-notes">🗒 ${safe(t["NOTES"])}</div>` : ""}
       <div class="task-meta">🕒 ${safe(t["TIMESTAMP"]) || ""}</div>
       <div class="task-actions">
-        <button class="edit-btn" data-index="${index}" data-status="${safe(status)}">✏️ Edit</button>
-        <button class="delete-btn" data-index="${index}">🗑️ Delete</button>
+        ${
+          isIT
+            ? `
+              <button class="edit-btn" data-index="${index}" data-status="${safe(status)}" data-source="${t.source}">✏️ Edit</button>
+              <button class="delete-btn" data-index="${index}" data-source="${t.source}">🗑️ Delete</button>
+            `
+            : `<button disabled class="readonly-btn" style="background-color:#555; color:#fff; padding:10px;cursor:not-allowed;">🔒 Read-Only</button>`
+        }
       </div>
     `;
 
-    div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(index, status));
-    div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(index));
+    if (isIT) {
+      div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(index, status, t.source));
+      div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(index, t.source));
+    }
 
     taskList.appendChild(div);
   });
 }
 
+// ✅ Re-render on filter change
+document.getElementById("statusFilter").addEventListener("change", renderTasks);
+document.getElementById("priorityFilter").addEventListener("change", renderTasks);
+document.getElementById("assignedByFilter").addEventListener("change", renderTasks);
+
 // ✅ Open modal
-function openEditModal(index, currentStatus) {
+function openEditModal(index, currentStatus, source) {
   editIndex = index;
   editStatus.value = currentStatus;
   addRemarks.value = allTasks[index]["NOTES"] || "";
+  modalOverlay.dataset.source = source;
   modalOverlay.style.display = "flex";
 }
 
@@ -235,6 +276,7 @@ saveEditBtn.addEventListener("click", async () => {
   if (editIndex === null) return;
   const newStatus = editStatus.value;
   const newRemarks = addRemarks.value.trim();
+  const source = modalOverlay.dataset.source;
 
   loadingIndicator.style.display = "block";
   saveEditBtn.disabled = true;
@@ -246,9 +288,10 @@ saveEditBtn.addEventListener("click", async () => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: JSON.stringify({
         action: "update",
-        rowIndex: editIndex,
+        rowIndex: allTasks[editIndex].rowIndex,
         status: newStatus,
-        notes: newRemarks
+        notes: newRemarks,
+        source
       })
     });
     modalOverlay.style.display = "none";
@@ -262,14 +305,18 @@ saveEditBtn.addEventListener("click", async () => {
 });
 
 // ✅ Delete task
-async function deleteTask(index) {
+async function deleteTask(index, source) {
   if (!confirm("Are you sure you want to delete this task?")) return;
   try {
     await fetch(scriptURL, {
       method: "POST",
       mode: "cors",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: JSON.stringify({ action: "delete", rowIndex: index })
+      body: JSON.stringify({
+        action: "delete",
+        rowIndex: allTasks[index].rowIndex,
+        source
+      })
     });
     fetchTasks();
   } catch (err) {
@@ -283,5 +330,3 @@ document.getElementById("priorityFilter").addEventListener("change", renderTasks
 
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
-
-
