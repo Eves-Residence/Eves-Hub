@@ -35,10 +35,14 @@ function changeFrame(type) {
       newSrc = "https://docs.google.com/spreadsheets/d/1NhuvtNtXWxWPt05lAbrvRs99RnMffoKq8RVIXaFXR-Q/edit?usp=sharing";
       break;
 
+      case "green":
+      newSrc = "https://docs.google.com/spreadsheets/d/1HGtfKtk7mxAdqn3sDAV_GMV7iuOYkWYo-0R562rAFUE/edit?usp=sharing";
+      break;
+
     case "calendar":
       newSrc = "https://calendar.google.com/calendar/embed?src=f8939355c05bdafed63e7eb02789566c7ebe844c36005d3ce552d4d2fd6cba16%40group.calendar.google.com&ctz=Asia%2FManila";
       break;
-      
+
     default:
       newSrc = "https://tephdy.github.io/WEB-APP/";
   }
