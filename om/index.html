@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Operation Manager | EveHub</title>
+ <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+  <link rel="stylesheet" href="../css/department.css">
+  <link rel="stylesheet" href="../css/task.css">
+  <link rel="stylesheet" href="../css/header.css">
+  <script src="/js/header.js" defer></script>
+  <!-- JS for task manager -->
+  <script src="om.js" defer></script>
+  <script src="index.js" defer></script>
+</head>
+<body>
+  <div id="header"></div>
+  <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
+  <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
+</a>
+ 
+  <div class="main_container">
+    <div class="content resizable">
+      <div class="title">
+        <h1>Operation Manager</h1>
+        <p>All tools and files for Operation Manager.</p>
+      </div>
+
+      <div class="sub_content">
+        <div class="card"><a href="">Property Information Files</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('master'); return false;">Master List</a></div>
+
+        <div class="card"><a href="https://drive.google.com/drive/folders/1uXhNGPapLnYDvxXnGU5MzCM2ecint04e?usp=sharing">Viewing Schedule</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('waitlist'); return false;">Wait List</a></div>
+
+        <div class="card"><a href="https://drive.google.com/drive/folders/1SzEMdtEnluqixrB9Zyj_KC4OvgwwAW-M?usp=sharing">Promotional Content</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('bnb'); return false;">Bed and Bath Info</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('feedback'); return false;">Feedbacks</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('vacancy'); return false;">Upcoming Vacancy</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('search'); return false;">Search Engine</a></div>
+        
+      </div>
+
+      <iframe id="mainFrame" src=""></iframe>
+
+      <!-- ================= TASK MANAGER ================= -->
+      <div class="task-main-container">
+        <!-- Left: Form -->
+        <div class="todo-form-container">
+          <h1>📝 Task Manager</h1>
+          <form id="todo-form">
+            <label>Task Name</label>
+            <input type="text" id="taskName" required>
+
+            <label>Priority</label>
+            <select id="priority">
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+
+            <label>Assigned By</label>
+            <input type="text" id="assignedBy" required>
+
+            <label>Assigned To</label>
+            <select id="assignTo" required>
+              <option value="Secretary">Secretary</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Property Representative">Property Representative</option>
+              <option value="Accounting">Accounting</option>
+              <option value="IT">IT</option>
+            </select>
+
+            <label>Due Date</label>
+            <input type="date" id="dueDate" required>
+
+            <label>Details</label>
+            <textarea id="notes" rows="3" style="
+              width:100%;
+              padding:8px;
+              border:1px solid #ccc;
+              border-radius:5px;
+              resize:none;
+              overflow:hidden;
+              min-height:100px;
+              max-height:300px;
+              font-family:inherit;
+              font-size:14px;
+              line-height:1.4;
+              box-sizing:border-box;"></textarea>
+
+            <button type="submit">Save Task</button>
+          </form>
+          <p id="response" class="response"></p>
+        </div>
+
+        <!-- Right: Task List -->
+        <div class="task-list-container">
+          <h1>📋 Task List</h1>
+          <div id="taskList" class="task-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content resizable">
+      <iframe 
+        src="https://calendar.google.com/calendar/embed?src=72f953a746a1c56de7225299edb3e7a945a086eeb832ec6287fa40e8eb714ef8%40group.calendar.google.com&ctz=Asia%2FManila" 
+        frameborder="0" scrolling="no">
+      </iframe>
+    </div>
+
+    <footer>
+      <p>© 2025 Eve's Residences. All rights reserved.</p> 
+      <p>Developed by Eve's Residences IT Department.</p> 
+    </footer>
+  </div>
+
+  <script>
+    // Load shared header
+  fetch("../header/header.html")
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById("header").innerHTML = data;
+
+    // 🔹 Get department & name from localStorage
+    const department = localStorage.getItem("department");
+    const name = localStorage.getItem("name");
+
+    // Redirect to login if no credentials found
+    if (!department || !name) {
+      window.location.href = "../index.html";
+      return;
+    }
+
+    // 🔹 Update department display text (e.g. IT Department | John)
+    const deptName = document.getElementById("dept-name");
+    if (deptName) {
+      const deptFormatted = department.toUpperCase() + " Department";
+      deptName.textContent = `${deptFormatted} | ${name}`;
+    }
+
+    // 🔹 Enable mobile menu toggle AFTER header loads
+    const menuToggle = document.querySelector(".menu-toggle");
+    const subContent = document.querySelector(".sub_content");
+    if (menuToggle && subContent) {
+      menuToggle.addEventListener("click", () => {
+        subContent.classList.toggle("active");
+      });
+    }
+  })
+  .catch(err => console.error("Error loading header:", err));
+  </script>
+</body>
+</html>
