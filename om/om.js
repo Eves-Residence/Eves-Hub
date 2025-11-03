@@ -1,4 +1,4 @@
-/* ======= SECRETARY FRONT-END (sec.js) =======
+/* ======= OM FRONT-END (sec.js) =======
    Robust fetch, filters, modal, edit/delete, read-only protection
    Paste/replace your existing sec.js with this file.
 */
