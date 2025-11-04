@@ -1,0 +1,36 @@
+.sub_content {
+  position: fixed;
+  margin-top: 70px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #1e1e1e;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 9999;
+  box-shadow: 0 -3px 10px rgba(0,0,0,0.3);
+}
+
+.sub_content .card {
+  background: #333;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: color 2s ease-in-out;
+}
+
+.sub_content .card:hover {
+  background: #9ff210;
+}
+
+.sub_content .card a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: color 1s ease-in-out;
+}
+.sub_content .card:hover a {
+  color: #333;
+}
