@@ -17,7 +17,7 @@ body {
 
 /* ========== MAIN CONTAINER ========== */
 .main_container {
-  margin-top: 50px;
+  margin-top: 100px;
   display: flex;
   justify-content: center;
   align-items: stretch;
@@ -162,3 +162,4 @@ footer {
   width: 35px;
   margin-top: 12px;
 }
+
