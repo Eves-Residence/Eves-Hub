@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>Marketing Department | EveHub</title>
-  <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
+  <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="../css/department.css">
   <link rel="stylesheet" href="../css/header.css">
   <link rel="stylesheet" href="../css/task.css">
   <link rel="stylesheet" href="../css/desktop.css">
-  <script src="/js/header.js" defer></script>
-  <!-- JS for task manager -->
   <script src="marketing.js" defer></script>
+  <script src="/js/header.js" defer></script>
 </head>
 <body>
   <div id="header"></div>
@@ -38,9 +37,17 @@
 
         <div class="card"><a href="#" onclick="changeFrame('bnb'); return false;">Bed and Bath Info</a></div>
 
+        <div class="card"><a href="#" onclick="changeFrame('feedback'); return false;">Feedbacks</a></div>
+
         <div class="card"><a href="#" onclick="changeFrame('vacancy'); return false;">Upcoming Vacancy</a></div>
         
         <div class="card"><a href="#" onclick="changeFrame('search'); return false;">Search Engine</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('attendance'); return false;">Attendance</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('off'); return false;">Off/Absent Form</a></div>
+
+        <div class="card"><a href="#" onclick="changeFrame('ca'); return false;">Cash Advance/Loan</a></div>
       </div>
 
       <iframe id="mainFrame" src=""></iframe>
@@ -65,8 +72,8 @@
 
             <label>Assigned To</label>
             <select id="assignTo" required>
-              <option value="Secretaey">Secretary</option>
               <option value="Marketing">Marketing</option>
+              <option value="Secretary">Secretary</option>
               <option value="Propperty Representative">Propperty Representative</option>
               <option value="Accounting">Accounting</option>
               <option value="IT">IT</option>
@@ -133,7 +140,7 @@ src=7137dc2d42770e37e88ced5ae69e61975b63c4767c5abd73a5be3019759ef8b9%40group.cal
   </div>
 
   <script>
-     // Load shared header
+  // Load shared header
   fetch("../header/header.html")
   .then(res => res.text())
   .then(data => {
@@ -152,7 +159,7 @@ src=7137dc2d42770e37e88ced5ae69e61975b63c4767c5abd73a5be3019759ef8b9%40group.cal
     // 🔹 Update department display text (e.g. IT Department | John)
     const deptName = document.getElementById("dept-name");
     if (deptName) {
-      const deptFormatted = department.toUpperCase() + " Department";
+      const deptFormatted = department + " Department";
       deptName.textContent = `${deptFormatted} | ${name}`;
     }
 
@@ -170,11 +177,3 @@ src=7137dc2d42770e37e88ced5ae69e61975b63c4767c5abd73a5be3019759ef8b9%40group.cal
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
