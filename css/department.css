@@ -68,7 +68,7 @@ body {
   border-radius: 10px;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  font-weight: bold;
+  /* font-weight: bold; */
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   display: flex;
@@ -162,4 +162,5 @@ footer {
   width: 35px;
   margin-top: 12px;
 }
+
 
