@@ -25,7 +25,7 @@ const access = {
     }
 };
 
-// === LOGIN FUNCTION ===
+// --- LOGIN FUNCTION ---
 function login() {
     const dept = document.getElementById("dept").value;
     const accessType = document.getElementById("accessType").value;
@@ -79,22 +79,25 @@ function login() {
         let redirectPath = "";
         
         if (accessType === "desktop") {
-            // Desktop: Absolute path from root
-            redirectPath = `/${dept}/index.html`; 
+            // 🎯 FIX: Remove leading slash for reliable GitHub Pages redirection.
+            // Example path: om/index.html
+            redirectPath = `${dept}/index.html`; 
         } else if (accessType === "mobile") {
-            // Mobile App: FIXING back to Absolute Path from root (most reliable)
+            // Mobile App: FIXING to use paths relative to the project root.
             const mobilePaths = {
-                "IT": "/mobile_app/it/index.html",
-                "secretary": "/mobile_app/secretary/index.html",
-                "marketing": "/mobile_app/marketing/index.html",
-                "om": "/mobile_app/om/index.html",
-                "pr": "/mobile_app/pr/index.html",
+                // Example path: mobile_app/it/index.html
+                "IT": "mobile_app/it/index.html",
+                "secretary": "mobile_app/secretary/index.html",
+                "marketing": "mobile_app/marketing/index.html",
+                "om": "mobile_app/om/index.html",
+                "pr": "mobile_app/pr/index.html",
             };
             redirectPath = mobilePaths[dept] || ""; 
         }
 
         // Redirect if a valid path is defined
         if (redirectPath) {
+            // Using window.location.href relies on the browser correctly resolving the relative path
             window.location.href = redirectPath;
         } else if (accessType === "mobile") {
             error.textContent = "Login successful. No specific mobile app path found for this department.";
