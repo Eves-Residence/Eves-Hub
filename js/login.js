@@ -85,11 +85,11 @@ function login() {
             // Mobile App: Path lookup based on department
             // 🎯 FIX: Renaming destination files to index.html for automatic loading
             const mobilePaths = {
-                "IT": "/mobile_app/it/index.html",
-                "secretary": "/mobile_app/secretary/index.html",
-                "marketing": "/mobile_app/marketing/index.html",
-                "om": "/mobile_app/om/index.html",
-                "pr": "/mobile_app/pr/index.html",
+                "IT": "../mobile_app/it/index.html",
+                "secretary": "../mobile_app/secretary/index.html",
+                "marketing": "../mobile_app/marketing/index.html",
+                "om": "../mobile_app/om/index.html",
+                "pr": "../mobile_app/pr/index.html",
             };
             redirectPath = mobilePaths[dept] || ""; 
         }
