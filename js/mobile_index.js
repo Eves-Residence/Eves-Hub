@@ -69,10 +69,11 @@ function setupTaskFormToggle() {
 
 // --- Main Application Fetch Chain (Streamlined for hardcoded Task HTML) ---
 
-// Load shared header
+// 🎯 FIX: Adjusted path to handle the depth of /mobile_app/IT/
+// It needs to go up two levels (to /Eves-Hub/) and then find /header/mobile_header.html
 fetch("../../header/mobile_header.html")
 .then(res => {
-    if (!res.ok) throw new Error(`Header fetch failed: ${res.status}`);
+    if (!res.ok) throw new Error(`Header fetch failed: ${res.status} for path: ${res.url}`);
     return res.text();
 })
 .then(data => {
@@ -138,7 +139,6 @@ fetch("../../header/mobile_header.html")
     }
     
     // 🟢 Load task data only after setting up the views
-    // This is the CRITICAL line that retrieves your tasks.
     if (typeof fetchTasks === 'function') {
         fetchTasks();
     }
@@ -147,6 +147,4 @@ fetch("../../header/mobile_header.html")
     showTaskManager(); 
 
 })
-
 .catch(err => console.error("Error loading header component:", err.message));
-
