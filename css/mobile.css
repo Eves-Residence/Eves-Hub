@@ -1,0 +1,293 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+main{
+    margin-top: 60px;
+    padding: 30px;
+    overflow-x: hidden;
+}
+
+.task-content{
+    display: flex;
+    flex-direction: column;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+ form input, select{
+    padding: 15px;
+    /* border: none; */
+ }
+
+ form button{
+    padding: 10px;
+    background-color: #a9ec35;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    width: 200px;
+    border-radius: 10px;
+ }
+
+ .form-btn{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  
+ }
+
+ .cancel-btn{
+  background-color: rgb(231, 58, 58) !important;
+ }
+
+ .task-list-container{
+    margin-top: 20px;
+ }
+
+ /* ✅ Task list styling */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.task-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background: #fafafa;
+  position: relative;
+}
+
+.task-item.completed {
+  background: #e5ffd5;
+  text-decoration: line-through;
+}
+
+.task-header {
+  font-weight: bold;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.add-task{
+    width: auto;
+    padding: 10px 25px;
+    background-color: #a9ec35;
+    display: flex;
+    flex-direction: row;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.task-meta {
+  font-size: 13px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.task-notes {
+  margin-top: 10px;
+  font-style: italic;
+  color: #555;
+}
+
+.task-remarks {
+  margin-top: 10px;
+}
+
+/* ✅ Priority colors */
+.high {
+  border-left: 6px solid #ff3b30;
+}
+.medium {
+  border-left: 6px solid #ffcc00;
+}
+.low {
+  border-left: 6px solid #34c759;
+}
+
+/* ✅ Buttons inside tasks */
+.task-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.task-actions button {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.edit-btn {
+  background: #ffd60a;
+  border: none;
+  cursor: pointer;
+}
+.delete-btn {
+  background: #ff453a;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background: #ffcd00;
+}
+.delete-btn:hover {
+  background: #ff2d55;
+}
+
+/* ✅ Compact unified filter dropdown */
+.filter-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.filter-dropdown {
+  position: relative;
+}
+
+#filterBtn {
+  background: #ffffff;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: 0.2s ease;
+}
+
+.filter:hover{
+  color: #000;
+}
+
+/* #filterBtn:hover {
+  background: #dcdcdc;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+} */
+
+/* Dropdown menu */
+.filter-menu {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 220px;
+}
+
+.filter-menu.active {
+  display: block;
+}
+
+.filter-menu label {
+  display: block;
+  font-weight: 500;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.filter-menu select {
+  width: 100%;
+  padding: 4px;
+  margin-top: 3px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+}
+
+.filter-menu button {
+  margin-top: 8px;
+  width: 48%;
+  background: #a9ec35;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 10px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.filter-menu button:hover {
+  background: #92cf2a;
+}
+
+.filter-menu #clearFilter {
+  background: #ccc;
+  color: #000;
+}
+
+.filter-menu #clearFilter:hover {
+  background: #aaa;
+}
+
+/* ✅ Scrollbar styling */
+.task-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.task-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+/* ✅ Responsive */
+@media (max-width: 768px) {
+  .task-main-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #filterBtn {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .filter-menu {
+    min-width: 180px;
+    top: 30px;
+  }
+}
+
+/* Add this to your CSS file */
+.is-hidden {
+    display: none !important;
+}
+
+iframe {
+  margin-top: 20px;
+  width: 100%;
+  border: none;
+  height: 100vh;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+}
+
