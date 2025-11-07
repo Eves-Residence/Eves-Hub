@@ -25,6 +25,34 @@ const access = {
     }
 };
 
+// 🎯 FIX: Calculate the base repository path dynamically for GitHub Pages deployments.
+function getBasePath() {
+    // Get the path part of the URL (e.g., '/repository-name/index.html')
+    const path = window.location.pathname;
+    
+    // Split the path and filter out empty strings (like the leading '/')
+    const segments = path.split('/').filter(Boolean);
+    
+    // If hosted at the root domain (e.g., user.github.io), segments is empty.
+    if (segments.length === 0 || path.endsWith('/')) {
+        return '/'; 
+    }
+    
+    // If hosted as a project page (e.g., user.github.io/repo-name/index.html)
+    // The first segment is the repository name. We return it with surrounding slashes.
+    // Example: path='/repo-name/index.html' -> segments=['repo-name', 'index.html']
+    // We only need '/repo-name/'
+    if (segments.length > 0) {
+        // Return '/repo-name/'
+        return '/' + segments[0] + '/';
+    }
+
+    return '/'; // Default to root
+}
+
+const BASE_REPO_PATH = getBasePath();
+// Example BASE_REPO_PATH might be '/' or '/Eves-Residence/'
+
 // --- LOGIN FUNCTION ---
 function login() {
     const dept = document.getElementById("dept").value;
@@ -75,29 +103,28 @@ function login() {
         localStorage.setItem("name", name);
         localStorage.setItem("accessType", accessType);
 
-        // Determine the redirection path
-        let redirectPath = "";
+        // Determine the redirection path (Relative path from deployment root)
+        let finalSegmentPath = "";
         
         if (accessType === "desktop") {
-            // 🎯 FIX: Remove leading slash for reliable GitHub Pages redirection.
-            // Example path: om/index.html
-            redirectPath = `${dept}/index.html`; 
+            // Path: dept/index.html
+            finalSegmentPath = `${dept}/index.html`; 
         } else if (accessType === "mobile") {
-            // Mobile App: FIXING to use paths relative to the project root.
+            // Mobile App: Path lookup based on department (mobile_app/dept/index.html)
             const mobilePaths = {
-                // Example path: mobile_app/it/index.html
                 "IT": "mobile_app/it/index.html",
                 "secretary": "mobile_app/secretary/index.html",
                 "marketing": "mobile_app/marketing/index.html",
                 "om": "mobile_app/om/index.html",
                 "pr": "mobile_app/pr/index.html",
             };
-            redirectPath = mobilePaths[dept] || ""; 
+            finalSegmentPath = mobilePaths[dept] || ""; 
         }
 
-        // Redirect if a valid path is defined
-        if (redirectPath) {
-            // Using window.location.href relies on the browser correctly resolving the relative path
+        // 🎯 FINAL REDIRECT: Use the calculated base path + the final segment path.
+        if (finalSegmentPath) {
+            // Construct full path, ensuring no double slashes if the base path ends in one.
+            const redirectPath = BASE_REPO_PATH + finalSegmentPath.replace(/^\//, '');
             window.location.href = redirectPath;
         } else if (accessType === "mobile") {
             error.textContent = "Login successful. No specific mobile app path found for this department.";
