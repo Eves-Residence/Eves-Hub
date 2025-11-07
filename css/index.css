@@ -172,10 +172,10 @@ footer {
     ✅ RESPONSIVE MOBILE VERSION (UP & DOWN LAYOUT)
 ============================================================================ */
 @media (max-width: 768px) {
-
+    /* 🎯 FIX 1: Ensure body does not restrict layout flow on small screens */
     body {
-        /* Align items to top to start layout from the top edge */
         align-items: flex-start;
+        justify-content: flex-start; /* Stop horizontal centering on mobile */
         padding: 0;
     }
 
@@ -183,30 +183,28 @@ footer {
     .container {
         flex-direction: column;
         width: 100%;
-        max-width: 100%; /* Take full width */
-        min-height: 100vh; /* Ensure it covers the whole screen vertically */
+        max-width: 100%; 
+        min-height: 100vh; 
         border-radius: 0;
         box-shadow: none;
-        background: none; /* Make container transparent to allow gradient below */
+        background: none; 
     }
 
     /* ✅ IMAGE ON TOP (Left-Side) */
     .left-side {
-        /* Set height based on screenshot visual */
         height: 30vh; 
         flex: none;
         background: linear-gradient(135deg, #e8f4e9, #c7f0c0);
         padding: 40px 20px 0;
         
-        /* 🎯 CRITICAL: Create the curved bottom cutout */
+        /* CRITICAL: Create the curved bottom cutout */
         border-radius: 0 0 50px 50px; 
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         position: relative;
-        z-index: 2; /* Ensure it sits above the form visually */
+        z-index: 2; 
     }
 
     .left-side img {
-        /* Ensure the image scales well within the limited space */
         max-width: 80%;
         height: 100%;
         object-fit: contain;
@@ -232,6 +230,8 @@ footer {
 
     .login-card {
         max-width: 100%;
+        /* 🎯 FIX 2: Ensure the card has margin for proper spacing from edges */
+        margin: 0 auto; 
     }
 
     .login-card h1 {
@@ -259,7 +259,7 @@ footer {
 @media (max-width: 480px) {
 
     .left-side {
-        height: 35vh; /* Increase height slightly for smaller screens */
+        height: 35vh; 
         border-radius: 0 0 40px 40px; 
     }
 
