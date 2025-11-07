@@ -1,26 +1,3 @@
-// Utility function to determine the base path (e.g., /Eves-Hub/) for GitHub Pages
-function getRepoBasePath() {
-    const hostname = window.location.hostname;
-    const pathname = window.location.pathname;
-    
-    // Check if hosted on a user/org domain (e.g., eves-residence.github.io)
-    if (hostname.endsWith('.github.io')) {
-        // The first path segment is the repository name (e.g., Eves-Hub).
-        const segments = pathname.split('/').filter(s => s.length > 0);
-        
-        if (segments.length > 0) {
-            // Returns /Eves-Hub/
-            return '/' + segments[0] + '/'; 
-        }
-    }
-    // Default case for localhost or root user page (return /)
-    return '/'; 
-}
-
-const BASE_PATH = getRepoBasePath();
-const HEADER_FETCH_URL = BASE_PATH + "../header/mobile_header.html";
-// Assuming header/mobile_header.html is located directly under the repository root.
-
 // Function to handle switching to the iframe view (no changes needed)
 function showIframe(url) {
     const taskContentContainer = document.querySelector('.task');
@@ -90,12 +67,14 @@ function setupTaskFormToggle() {
 }
 
 
-// --- Main Application Fetch Chain (Streamlined for hardcoded Task HTML) ---
+// --- Main Application Fetch Chain ---
 
-// Load shared header using the dynamically calculated absolute path
-fetch(HEADER_FETCH_URL) 
+// 🎯 FINAL RELATIVE PATH FIX: Assuming the path is only two levels up (../../) 
+// and that the browser handles the root /Eves-Hub/ correctly.
+fetch("../../header/mobile_header.html") 
 .then(res => {
-    if (!res.ok) throw new Error(`Header fetch failed: ${res.status} for path: ${res.url}`);
+    // This provides better debugging output
+    if (!res.ok) throw new Error(`Header fetch failed: ${res.status} for path: ${res.url}`); 
     return res.text();
 })
 .then(data => {
