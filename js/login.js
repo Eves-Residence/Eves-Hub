@@ -21,7 +21,7 @@ const access = {
     },
     IT: {
         password: "hackerboi2499",
-        names: [] // No restriction (anyone with password can log in)
+        names: ["Teph Dy"] // No restriction (anyone with password can log in)
     }
 };
 
@@ -105,3 +105,4 @@ function login() {
         error.textContent = "Invalid department or password.";
     }
 }
+
