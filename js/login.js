@@ -21,7 +21,7 @@ const access = {
     },
     IT: {
         password: "hackerboi2499",
-        names: ["Teph Dy"] // No restriction (anyone with password can log in)
+        names: [] // No restriction (anyone with password can log in)
     }
 };
 
@@ -79,18 +79,18 @@ function login() {
         let redirectPath = "";
         
         if (accessType === "desktop") {
-            // Desktop: Redirects to the department's main index file
-            redirectPath = `${dept}/index.html`;
+            // FIX: Use absolute path (starting from root) to ensure GitHub Pages finds the folder.
+            // Example: /om/index.html
+            redirectPath = `/${dept}/index.html`; 
         } else if (accessType === "mobile") {
-            // Mobile App: Path lookup based on department
+            // Mobile App: Path lookup based on department (already absolute)
             const mobilePaths = {
-                "IT": "../mobile_app/it/mobile_it.html",
-                "secretary": "../mobile_app/secretary/mobile_secretary.html",
-                "marketing": "../mobile_app/marketing/mobile_marketing.html",
-                "om": "../mobile_app/om/mobile_om.html",
-                "pr": "../mobile_app/pr/mobile_pr.html",
+                "IT": "/mobile_app/it/mobile_it.html",
+                "secretary": "/mobile_app/secretary/mobile_secretary.html",
+                "marketing": "/mobile_app/marketing/mobile_marketing.html",
+                "om": "/mobile_app/om/mobile_om.html",
+                "pr": "/mobile_app/pr/mobile_pr.html",
             };
-            // Set the path from the map, using the selected department code (e.g., 'om')
             redirectPath = mobilePaths[dept] || ""; 
         }
 
@@ -98,11 +98,9 @@ function login() {
         if (redirectPath) {
             window.location.href = redirectPath;
         } else if (accessType === "mobile") {
-            // Fallback for mobile if a department path is missing
             error.textContent = "Login successful. No specific mobile app path found for this department.";
         }
     } else {
         error.textContent = "Invalid department or password.";
     }
 }
-
