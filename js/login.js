@@ -79,17 +79,16 @@ function login() {
         let redirectPath = "";
         
         if (accessType === "desktop") {
-            // Desktop: Already uses index.html
+            // Desktop: Absolute path from root
             redirectPath = `/${dept}/index.html`; 
         } else if (accessType === "mobile") {
-            // Mobile App: Path lookup based on department
-            // 🎯 FIX: Renaming destination files to index.html for automatic loading
+            // Mobile App: FIXING back to Absolute Path from root (most reliable)
             const mobilePaths = {
-                "IT": "../mobile_app/it/index.html",
-                "secretary": "../mobile_app/secretary/index.html",
-                "marketing": "../mobile_app/marketing/index.html",
-                "om": "../mobile_app/om/index.html",
-                "pr": "../mobile_app/pr/index.html",
+                "IT": "/mobile_app/it/index.html",
+                "secretary": "/mobile_app/secretary/index.html",
+                "marketing": "/mobile_app/marketing/index.html",
+                "om": "/mobile_app/om/index.html",
+                "pr": "/mobile_app/pr/index.html",
             };
             redirectPath = mobilePaths[dept] || ""; 
         }
