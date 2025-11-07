@@ -84,11 +84,11 @@ function login() {
         } else if (accessType === "mobile") {
             // Mobile App: Path lookup based on department
             const mobilePaths = {
-                "IT": "/mobile_app/it/mobile_it.html",
-                "secretary": "/mobile_app/secretary/mobile_secretary.html",
-                "marketing": "/mobile_app/marketing/mobile_marketing.html",
-                "om": "/mobile_app/om/mobile_om.html",
-                "pr": "/mobile_app/pr/mobile_pr.html",
+                "IT": "../mobile_app/it/mobile_it.html",
+                "secretary": "../mobile_app/secretary/mobile_secretary.html",
+                "marketing": "../mobile_app/marketing/mobile_marketing.html",
+                "om": "../mobile_app/om/mobile_om.html",
+                "pr": "../mobile_app/pr/mobile_pr.html",
             };
             // Set the path from the map, using the selected department code (e.g., 'om')
             redirectPath = mobilePaths[dept] || ""; 
