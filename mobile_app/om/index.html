@@ -3,13 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT DEPARTMENT | EVESHUB</title>
-    <link rel="stylesheet" href="/css/mobile.css">
-    <script src="/om/om.js" defer></script>
+    <title>OPERATION MANAGER | EVESHUB</title>
+    <!-- Assets linked with absolute paths to work across different departments -->
+    <link rel="stylesheet" href="../../css/mobile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/mobile_header.css">
+    
+    <!-- Assuming this script contains fetchTasks() and task-specific logic -->
+    <script src="../om/om.js" defer></script>
 </head>
 <body>
 
-<div id="header"></div>
+<!-- ============== EMBEDDED HEADER CONTENT (Replaces <div id="header">) ============== -->
+<header>
+    <div class="logo-container">
+        <img src="../img/logo.png" alt="EveHub Logo" class="logo">
+    </div>
+
+    <h2 id="dept-name" class="header-title">Department | <span id="user">User</span></h2>
+
+    <div class="header-right">
+        <div class="header_icons">
+            <div class="notification-container" data-count="0">
+                <span class="material-symbols-outlined" id="notif-icon" >notifications_unread</span>
+                <span class="notification-count">0</span>
+            </div>
+
+            <div id="menu-icon">
+                <span class="material-symbols-outlined">
+                menu
+                </span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<menu id="main-menu" class="hidden-menu"> 
+    <div class="menu_content">
+        
+        <div class="menu-link">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true" target="_blank">Attendance</a>
+        </div>
+
+        <div class="menu-link">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true" target="_blank">Off / Absent</a>
+        </div>
+
+        <div class="menu-link">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true" target="_blank">Cash Advance/Loan</a>
+        </div>
+
+        <div class="menu-link">
+            <a href="#">Task Manager</a> 
+        </div>
+        
+    </div>
+
+    <div class="logout">
+        <a href="/index.html">Logout</a>
+    </div>
+</menu>
+<!-- ========================================================================= -->
+
 <main>
     <div class="task">
 
@@ -85,7 +141,135 @@
     </div>
 </main>
 
-    
-<script src="/js/mobile_index.js" defer></script>
+<!-- 🎯 EMBEDDED JAVASCRIPT FOR ACTIVATION -->
+<script>
+    // Utility functions for view switching (Defined locally for reliability)
+
+    function showIframe(url) {
+        const taskContentContainer = document.querySelector('.task');
+        const iframeContainer = document.querySelector('.frames');
+        const mainFrame = document.getElementById('mainFrame');
+        const mainMenu = document.getElementById('main-menu');
+
+        if (taskContentContainer && iframeContainer && mainFrame && mainMenu) {
+            taskContentContainer.style.display = 'none';
+            iframeContainer.style.display = 'block';
+            mainFrame.src = url;
+            mainMenu.classList.add('hidden-menu');
+        }
+    }
+
+    function showTaskManager() {
+        const taskContentContainer = document.querySelector('.task');
+        const iframeContainer = document.querySelector('.frames');
+        const mainFrame = document.getElementById('mainFrame');
+        const mainMenu = document.getElementById('main-menu');
+
+        if (taskContentContainer && iframeContainer && mainFrame && mainMenu) {
+            iframeContainer.style.display = 'none';
+            mainFrame.src = ''; 
+            taskContentContainer.style.display = 'block';
+            mainMenu.classList.add('hidden-menu');
+            
+            const taskFormContainer = document.querySelector('.task-content .hide');
+            const taskListContainer = document.querySelector('.task-list-container');
+            if (taskFormContainer && taskListContainer) {
+                taskFormContainer.classList.add('is-hidden');
+                taskListContainer.classList.remove('is-hidden');
+            }
+        }
+    }
+
+    function setupTaskFormToggle() {
+        const showFormBtn = document.getElementById('show-form');
+        const taskFormContainer = document.querySelector('.task-content .hide'); 
+        const taskListContainer = document.querySelector('.task-list-container');
+        const todoForm = document.getElementById('todo-form');
+        
+        if (taskFormContainer) {
+            taskFormContainer.classList.add('is-hidden'); 
+        }
+
+        if (showFormBtn && taskFormContainer && taskListContainer) {
+            showFormBtn.addEventListener('click', () => {
+                taskFormContainer.classList.toggle('is-hidden'); 
+                taskListContainer.classList.toggle('is-hidden'); 
+            });
+        }
+
+        const cancelButton = document.getElementById('cancel-task-btn');
+        if (cancelButton && taskFormContainer && todoForm && taskListContainer) {
+            cancelButton.addEventListener('click', () => {
+                taskFormContainer.classList.add('is-hidden'); 
+                taskListContainer.classList.remove('is-hidden'); 
+                todoForm.reset();
+            });
+        }
+    }
+
+    // --- MAIN ACTIVATION LOGIC (Runs once the DOM is ready) ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // 🔹 Update Department/Login Logic
+        const department = localStorage.getItem("department");
+        const name = localStorage.getItem("name");
+
+        if (department && name) {
+            const deptName = document.getElementById("dept-name");
+            if (deptName) {
+                const deptFormatted = department + " Department";
+                deptName.textContent = `${deptFormatted} | ${name}`;
+            }
+        }
+
+        // 🎯 Menu Toggle Logic
+        const menuIcon = document.getElementById('menu-icon');
+        const mainMenu = document.getElementById('main-menu');
+        
+        if (menuIcon && mainMenu) {
+            menuIcon.addEventListener('click', () => {
+                mainMenu.classList.toggle('hidden-menu');
+            });
+        }
+
+        // 🟢 CRITICAL: Attach listeners to the Menu Links
+        document.querySelectorAll('#main-menu a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                const linkText = link.textContent.trim();
+
+                const formUrls = {
+                    'Attendance': 'https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true',
+                    'Off / Absent': 'https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true',
+                    'Cash Advance/Loan': 'https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true'
+                };
+                
+                if (linkText.includes('Attendance')) {
+                    showIframe(formUrls['Attendance']);
+                } else if (linkText.includes('Off')) {
+                    showIframe(formUrls['Off / Absent']);
+                } else if (linkText.includes('Cash Advance')) {
+                    showIframe(formUrls['Cash Advance/Loan']);
+                } else if (linkText.includes('Task Manager')) {
+                    showTaskManager();
+                } else {
+                    window.location.href = link.getAttribute('href'); // Logout
+                }
+            });
+        });
+        
+        // 🟢 Setup Task Form Toggle
+        setupTaskFormToggle();
+        
+        // 🟢 Load task data only after setting up the views (function assumed in /IT/it.js)
+        if (typeof fetchTasks === 'function') {
+            fetchTasks();
+        }
+        
+        // 🟢 INITIAL VIEW
+        showTaskManager(); 
+    });
+</script>
 </body>
 </html>
