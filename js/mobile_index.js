@@ -18,7 +18,7 @@ function getRepoBasePath() {
 }
 
 const BASE_PATH = getRepoBasePath();
-const HEADER_FETCH_URL = BASE_PATH + "header/mobile_header.html";
+const HEADER_FETCH_URL = BASE_PATH + "../header/mobile_header.html";
 // Assuming header/mobile_header.html is located directly under the repository root.
 
 // Function to handle switching to the iframe view (no changes needed)
