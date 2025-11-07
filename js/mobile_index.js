@@ -71,7 +71,7 @@ function setupTaskFormToggle() {
 
 // 🎯 FIX: Adjusted path to handle the depth of /mobile_app/IT/
 // It needs to go up two levels (to /Eves-Hub/) and then find /header/mobile_header.html
-fetch("../../header/mobile_header.html")
+fetch("../header/mobile_header.html")
 .then(res => {
     if (!res.ok) throw new Error(`Header fetch failed: ${res.status} for path: ${res.url}`);
     return res.text();
@@ -148,3 +148,4 @@ fetch("../../header/mobile_header.html")
 
 })
 .catch(err => console.error("Error loading header component:", err.message));
+
