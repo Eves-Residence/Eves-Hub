@@ -1,178 +1,274 @@
 /* ==============================
-   GENERAL PAGE LAYOUT
+    GLOBAL RESET
 ============================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-  background-color: #f4f7f9;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #e8f5e9, #f4f7f9);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* ==============================
-   CONTAINER
+    MAIN CONTAINER
 ============================== */
 .container {
-  display: flex;
-  width: 80%;
-  max-width: 1000px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+    display: flex;
+    flex-direction: row; /* ✅ Desktop: side-by-side */
+    width: 80%;
+    max-width: 1000px;
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
 /* ==============================
-   LEFT SIDE IMAGE SECTION
+    LEFT SIDE (IMAGE)
 ============================== */
 .left-side {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #eaf4fc;
-  padding: 30px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #eaf4fc;
+    padding: 30px;
 }
 
 .left-side img {
-  width: 100%;
-  max-width: 400px;
-  height: auto;
-  object-fit: contain;
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    object-fit: contain;
 }
 
 /* ==============================
-   RIGHT SIDE LOGIN SECTION
+    RIGHT SIDE (FORM)
 ============================== */
 .right-side {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
 }
 
-/* ==============================
-   LOGIN CARD
-============================== */
 .login-card {
-  width: 100%;
-  max-width: 350px;
-  text-align: center;
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
 }
 
 .login-card h1 {
-  color: #000000;
-  margin-bottom: 10px;
-  font-weight: 600;
+    color: #000000;
+    font-size: 26px;
+    margin-bottom: 10px;
 }
 
 .login-card p {
-  color: #555;
-  margin-bottom: 20px;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
 }
 
 /* ==============================
-   FORM INPUTS AND SELECT
+    FORM ELEMENTS
 ============================== */
 .login-card select,
-.login-card input,
-.login-card button {
-  width: 100%;
-  box-sizing: border-box;
-  margin: 10px 0;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 15px;
-  outline: none;
+.login-card input {
+    width: 100%;
+    margin: 10px 0;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 15px;
+    background: #fafafa;
+    transition: 0.2s;
+    color: #333; /* Default text color for selected value */
 }
 
-/* Inputs & Select Fields */
-.login-card input,
+.login-card select:focus,
+.login-card input:focus {
+    border-color: #a9ec35;
+    box-shadow: 0 0 6px rgba(169, 236, 53, 0.4);
+    outline: none;
+}
+
+/* 🎯 NEW: Placeholder Styling for Input Fields */
+.login-card input::placeholder {
+    color: #999; /* Example placeholder color */
+    opacity: 1; /* Standard property for Firefox */
+}
+
+/* 🎯 NEW: Placeholder Styling for Select Fields */
+/* Targets the disabled, unselected option (the placeholder) */
+.login-card select option:first-of-type:disabled {
+    color: #999; /* Match input placeholder color */
+    display: none; /* Hide the disabled option from the dropdown list */
+}
+
+/* 🎯 NEW: Control the text color of the select box itself */
+/* When the default option is selected, make the text gray */
 .login-card select {
-  border: 1px solid #ccc;
-  background-color: #fff;
-  transition: border 0.3s;
+    /* Set color for the select box itself */
+    color: #333; 
 }
 
-.login-card input:focus,
-.login-card select:focus {
-  border-color: #a9ec35;
+/* If the selected value is the default placeholder value (empty value attribute) */
+.login-card select:required:invalid {
+    color: #999; 
 }
 
-/* Custom Dropdown Arrow */
-.login-card select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpolygon points='0,0 16,0 8,8' fill='%23777'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 12px;
-  padding-right: 30px;
-}
 
 /* ==============================
-   BUTTON STYLE
+    BUTTON
 ============================== */
 .login-card button {
-  background: #a9ec35;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s;
-  font-weight: 500;
+    width: 100%;
+    background: #a9ec35;
+    color: #000;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(169, 236, 53, 0.3);
 }
 
 .login-card button:hover {
-  background: #8bc724;
+    background: #8bc724;
+    box-shadow: 0 6px 12px rgba(139, 199, 36, 0.4);
 }
 
 /* ==============================
-   ERROR TEXT
+    ERROR TEXT
 ============================== */
 #error {
-  color: red;
-  margin-top: 10px;
-  font-size: 14px;
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
 }
 
 /* ==============================
-   FOOTER
+    FOOTER
 ============================== */
 footer {
-  text-align: center;
-  font-size: 12px;
-  color: #888;
-  margin-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    margin-top: 20px;
 }
 
-/* ==============================
-   RESPONSIVE DESIGN
-============================== */
+/* ============================================================================
+    ✅ RESPONSIVE MOBILE VERSION (UP & DOWN LAYOUT)
+============================================================================ */
 @media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    width: 90%;
-    height: auto;
-  }
 
-  .left-side {
-    padding: 20px;
-  }
+    body {
+        background: #f6faf7;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: stretch;
+    }
 
-  .left-side img {
-    max-width: 250px;
-  }
+    /* ✅ Stack top (image) + bottom (form) */
+    .container {
+        flex-direction: column;
+        width: 100%;
+        max-width: 480px;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+    }
 
-  .right-side {
-    padding: 30px 20px;
-  }
+    /* ✅ IMAGE ON TOP */
+    .left-side {
+        flex: none;
+        height: 38%;
+        background: linear-gradient(135deg, #eaf4fc, #c5f0c0);
+        padding: 30px 20px 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-  .login-card {
-    max-width: 100%;
-  }
+    .left-side img {
+        max-width: 220px;
+        width: 70%;
+    }
+
+    /* ✅ FORM BELOW */
+    .right-side {
+        flex: 1;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 35px 25px;
+        background: #ffffff;
+        border-radius: 25px 25px 0 0;
+        margin-top: -20px;
+        box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .login-card {
+        max-width: 100%;
+    }
+
+    .login-card h1 {
+        font-size: 24px;
+        margin-top: 10px;
+    }
+
+    .login-card p {
+        font-size: 13px;
+    }
+
+    .login-card input,
+    .login-card select,
+    .login-card button {
+        font-size: 15px;
+        padding: 13px;
+    }
+
+    footer {
+        font-size: 11px;
+        margin-top: 15px;
+    }
+}
+
+/* ============================================================================
+    ✅ EXTRA SMALL DEVICES
+============================================================================ */
+@media (max-width: 480px) {
+
+    .left-side {
+        height: 33%;
+    }
+
+    .left-side img {
+        max-width: 150px;
+    }
+
+    .login-card h1 {
+        font-size: 22px;
+    }
+
+    .login-card p {
+        font-size: 12px;
+    }
+
+    footer {
+        font-size: 10px;
+    }
 }
