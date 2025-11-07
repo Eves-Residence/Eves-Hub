@@ -79,17 +79,17 @@ function login() {
         let redirectPath = "";
         
         if (accessType === "desktop") {
-            // FIX: Use absolute path (starting from root) to ensure GitHub Pages finds the folder.
-            // Example: /om/index.html
+            // Desktop: Already uses index.html
             redirectPath = `/${dept}/index.html`; 
         } else if (accessType === "mobile") {
-            // Mobile App: Path lookup based on department (already absolute)
+            // Mobile App: Path lookup based on department
+            // 🎯 FIX: Renaming destination files to index.html for automatic loading
             const mobilePaths = {
-                "IT": "/mobile_app/it/mobile_it.html",
-                "secretary": "/mobile_app/secretary/mobile_secretary.html",
-                "marketing": "/mobile_app/marketing/mobile_marketing.html",
-                "om": "/mobile_app/om/mobile_om.html",
-                "pr": "/mobile_app/pr/mobile_pr.html",
+                "IT": "/mobile_app/it/index.html",
+                "secretary": "/mobile_app/secretary/index.html",
+                "marketing": "/mobile_app/marketing/index.html",
+                "om": "/mobile_app/om/index.html",
+                "pr": "/mobile_app/pr/index.html",
             };
             redirectPath = mobilePaths[dept] || ""; 
         }
