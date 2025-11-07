@@ -173,7 +173,7 @@ footer {
 /* ============================================================================
     ✅ RESPONSIVE MOBILE VERSION (UP & DOWN LAYOUT)
 ============================================================================ */
-@media (max-width: 768px) {
+@media (max-width: 450px) {
 
     body {
         background: #f6faf7;
@@ -272,3 +272,4 @@ footer {
         font-size: 10px;
     }
 }
+
