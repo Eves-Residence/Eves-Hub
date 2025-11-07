@@ -70,7 +70,7 @@ function setupTaskFormToggle() {
 // --- Main Application Fetch Chain (Streamlined for hardcoded Task HTML) ---
 
 // Load shared header
-fetch("../..//header/mobile_header.html")
+fetch("../../header/mobile_header.html")
 .then(res => {
     if (!res.ok) throw new Error(`Header fetch failed: ${res.status}`);
     return res.text();
@@ -149,3 +149,4 @@ fetch("../..//header/mobile_header.html")
 })
 
 .catch(err => console.error("Error loading header component:", err.message));
+
