@@ -6,46 +6,56 @@
   <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-  <div class="container">
-    
-    <!-- LEFT SIDE (image in HTML now) -->
-    <div class="left-side">
-      <img src="img/undraw_enter-password_1kl4.png" alt="Login illustration">
-    </div>
 
-    <!-- RIGHT SIDE (form) -->
-    <div class="right-side">
-      <div class="login-card">
-        <h1>🏢 EveHub</h1>
-        <p>Login with your department access.</p>
+  <div class="app-wrapper">
 
-        <select id="dept">
-          <option value="" disabled selected>Select Department</option>
-          <option value="om">Operation Manager</option>
-          <option value="pr">Property Representative</option>
-          <option value="marketing">Marketing</option>
-          <option value="secretary">Secretary</option>
-          <option value="IT">IT</option>
-        </select>
-
-        <input type="text" id="name" placeholder="Enter your name">
-        <input type="password" id="password" placeholder="Enter password">
-
-        <button onclick="login()">Access</button>
-
-        <p id="error"></p>
+    <div class="container">
+      
+      <!-- LEFT SIDE (image) -->
+      <div class="left-side">
+        <img src="/img/undraw_enter-password_1kl4.png" alt="Login illustration">
       </div>
 
-      <footer>
-        <p>© 2025 Eve's Residences. All rights reserved.</p> 
-        <p>Developed by Eve's Residences IT Department.</p> 
-      </footer>
+      <!-- RIGHT SIDE (form) -->
+      <div class="right-side">
+        <div class="login-card">
+          <h1>🏢 EveHub</h1>
+          <p>Login with your department access.</p>
+
+          <select id="dept">
+            <option value="" disabled selected>Select Department</option>
+            <option value="om">Operation Manager</option>
+            <option value="pr">Property Representative</option>
+            <option value="marketing">Marketing</option>
+            <option value="secretary">Secretary</option>
+            <option value="IT">IT</option>
+          </select>
+
+          <!-- NEW DROPDOWN ADDED HERE -->
+          <select id="accessType">
+            <option value="" disabled selected>Select Access Type</option>
+            <option value="desktop">Desktop Version</option>
+            <option value="mobile">Mobile App Version</option>
+          </select>
+
+          <input type="text" id="name" placeholder="Enter your name">
+          <input type="password" id="password" placeholder="Enter password">
+
+          <button onclick="login()">Access</button>
+
+          <p id="error"></p>
+        </div>
+
+        <footer>
+          <p>© 2025 Eve's Residences. All rights reserved.</p> 
+          <p>Developed by Eve's Residences IT Department.</p> 
+        </footer>
+      </div>
+
     </div>
+
   </div>
 
   <script src="js/login.js"></script>
 </body>
 </html>
-
-
-
