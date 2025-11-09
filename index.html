@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <title>EveConnect | Department Access</title>
   <link rel="stylesheet" href="css/index.css">
-  <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+  <!-- Link Material Icons for the eye icon -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 
@@ -40,7 +41,16 @@
           </select>
 
           <input type="text" id="name" placeholder="Enter your name">
-          <input type="password" id="password" placeholder="Enter password">
+          
+          <!-- 🎯 NEW: Password Input Wrapper -->
+          <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Enter password">
+            <!-- 🎯 Show/Hide Icon (Using Material Icon as an example) -->
+            <span class="material-icons password-toggle" onclick="togglePasswordVisibility()">
+              visibility_off
+            </span>
+          </div>
+          <!-- END NEW WRAPPER -->
 
           <button onclick="login()">Access</button>
 
@@ -60,9 +70,3 @@
   <script src="js/login.js"></script>
 </body>
 </html>
-
-
-
-
-
-
