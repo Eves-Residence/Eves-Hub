@@ -31,19 +31,19 @@
         }
 
         .logo {
-            height: 70px;
+            height: 40px;
             width: auto;
         }
 
         #dept-name {
             text-transform: uppercase;
-            font-size: 16px;
+            font-size: 12px;
             text-align: center;
         }
 
         /* ICONS */
         .material-symbols-outlined {
-            font-size: 30px;
+            font-size: 25px;
             color: black;
             cursor: pointer;
             transition: color 0.2s ease;
@@ -69,7 +69,7 @@
 
             /* CRITICAL POSITIONING */
             position: fixed;
-            top: 80px;  /* Starts below the header */
+            top: 50px;  /* Starts below the header */
             right: 0;   /* Anchors the menu to the right edge */
             bottom: 0;  /* Ensures full height from 'top' to bottom */
             left: 0;    
