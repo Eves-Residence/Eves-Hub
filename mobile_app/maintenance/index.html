@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance | EveConnect</title>
+    <!-- Assets linked with absolute paths to work across different departments -->
+    <link rel="stylesheet" href="/css/mobile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="shortcut icon" href="../../img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/mobile_header.css">
+    
+    <!-- We will use the embedded script only -->
+</head>
+<body>
+
+<!-- ============== EMBEDDED HEADER CONTENT (Replaces <div id="header">) ============== -->
+<header>
+    <div class="logo-container">
+        <img src="../img/logo.png" alt="EveHub Logo" class="logo">
+    </div>
+
+    <h2 id="dept-name" class="header-title">Department | <span id="user">User</span></h2>
+
+    <div class="header-right">
+        <div class="header_icons">
+            <div class="notification-container" data-count="0">
+                <span class="material-symbols-outlined" id="notif-icon" >notifications_unread</span>
+                <!-- <span class="notification-count">0">0</span> -->
+            </div>
+
+            <div id="menu-icon">
+                <span class="material-symbols-outlined">
+                menu
+                </span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<menu id="main-menu" class="hidden-menu"> 
+    <div class="menu_content">
+        
+        <div class="menu-link">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true" target="_blank">Attendance</a>
+        </div>
+
+        <div class="menu-link">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true" target="_blank">Off / Absent</a>
+        </div>
+
+        <div class="menu-link">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true" target="_blank">Cash Advance/Loan</a>
+        </div>
+
+        <div class="menu-link">
+            <!-- 🎯 This link now calls the placeholder view via JS -->
+            <a href="#" id="task-manager-link">Task Manager</a> 
+        </div>
+        
+    </div>
+
+    <div class="logout">
+        <a href="/index.html">Logout</a>
+    </div>
+</menu>
+<!-- ========================================================================= -->
+
+<main>
+    <div class="task">
+
+        <div class="task-content">
+        <div class="hide is-hidden" id="task-form-container">
+            <h1>📝 Task Manager</h1>
+
+            <form id="todo-form">
+                    <label>Task Name</label>
+                    <input type="text" id="taskName" placeholder="Task Name" required>
+
+                    <label>Priority</label>
+                    <select id="priority">
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                    </select>
+
+                    <label>Assigned By</label>
+                    <input type="text" placeholder="Assigned By" id="assignedBy" required>
+
+                    <label>Assigned To</label>
+                    <select id="assignTo" required>
+                    <option value="Secretary">Secretary</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Property Representative">Property Representative</option>
+                    <option value="Accounting">Accounting</option>
+                    <option value="IT">IT</option>
+                    </select>
+
+                    <label>Due Date</label>
+                    <input type="date" id="dueDate" required>
+
+                    <label>Details</label>
+                    <textarea id="notes" rows="3" style="
+                    width:100%;
+                    padding:8px;
+                    border:1px solid #ccc;
+                    border-radius:5px;
+                    resize:none;
+                    overflow:hidden;
+                    min-height:100px;
+                    max-height:300px;
+                    font-family:inherit;
+                    font-size:14px;
+                    line-height:1.4;
+                    box-sizing:border-box;"></textarea>
+
+                    <div class="form-btn">
+                        <button type="submit">Save Task</button>
+                        
+                        <!-- ❌ CANCEL BUTTON REMOVED AS REQUESTED -->
+                    </div>
+                </form>
+            <p id="response" class="response"></p>
+            </div>
+        </div>
+
+            <!-- Right: Task List -->
+            <div class="task-list-container">
+            <div class="task-header">
+                <h1>📋 Task List</h1>
+                <!-- 🎯 This button calls the show_form1 function -->
+                <div class="add-task" id="show_form1" onclick="show_form1()">+
+                </div>
+            </div>
+            <div id="taskList" class="task-list"></div>
+                <!-- Placeholder starts hidden -->
+                <div class="placeholder-hidden" id="placeholder">
+                    <img src="/img/coming_soon.png" alt="">
+                    <h1>Coming Soon..</h1>
+                    <p>This page is under construction.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="frames">
+        <iframe id="mainFrame" src=""></iframe>
+    </div>
+</main>
+
+<!-- 🎯 EMBEDDED JAVASCRIPT FOR ACTIVATION -->
+<script>
+    // =========================================================================
+    // UTILITY FUNCTIONS
+    // =========================================================================
+
+    function showIframe(url) {
+        const taskContentContainer = document.querySelector('.task');
+        const iframeContainer = document.querySelector('.frames');
+        const mainFrame = document.getElementById('mainFrame');
+        const mainMenu = document.getElementById('main-menu');
+
+        if (taskContentContainer && iframeContainer && mainFrame && mainMenu) {
+            taskContentContainer.style.display = 'none';
+            iframeContainer.style.display = 'block';
+            mainFrame.src = url;
+            mainMenu.classList.add('hidden-menu');
+        }
+    }
+
+    function showTaskManager() {
+        const taskContentContainer = document.querySelector('.task');
+        const iframeContainer = document.querySelector('.frames');
+        const mainFrame = document.getElementById('mainFrame');
+        const mainMenu = document.getElementById('main-menu');
+
+        if (taskContentContainer && iframeContainer && mainFrame && mainMenu) {
+            iframeContainer.style.display = 'none';
+            mainFrame.src = ''; 
+            taskContentContainer.style.display = 'block';
+            mainMenu.classList.add('hidden-menu');
+            
+            // On showing the Task Manager view, ensure the form is hidden and list is shown
+            const taskFormContainer = document.querySelector('.task-content .hide');
+            const taskListContainer = document.querySelector('.task-list-container');
+            if (taskFormContainer && taskListContainer) {
+                taskFormContainer.classList.add('is-hidden');
+                taskListContainer.classList.remove('is-hidden');
+            }
+        }
+    }
+    
+    // 🎯 PLACEHOLDER VISIBILITY TOGGLE (True = Show, False = Hide)
+    function togglePlaceholder(show) {
+        const placeholder = document.getElementById('placeholder');
+        if (placeholder) {
+            if (show) {
+                // SHOW: Remove the hidden class
+                placeholder.classList.remove('placeholder-hidden');
+                placeholder.classList.add('placeholder');
+            } else {
+                // HIDE: Add the hidden class
+                placeholder.classList.add('placeholder-hidden');
+                placeholder.classList.remove('placeholder');
+            }
+        }
+    }
+
+    // 🎯 KEY FIX: MAIN FUNCTION CALLED BY THE "ADD TASK" BUTTON (show_form1)
+    function show_form1() {
+        // 🎯 ACTION: Force Placeholder to SHOW.
+        togglePlaceholder(true);
+        
+        // 🎯 ACTION: Hide the form, if visible (to ensure button doesn't confuse UI)
+        const taskFormContainer = document.querySelector('.task-content .hide');
+        if (taskFormContainer) {
+            taskFormContainer.classList.add('is-hidden');
+        }
+    }
+    
+    // 🎯 CONVENIENCE FUNCTION to show the Placeholder View and hide the menu
+    function showPlaceholderView() {
+        showTaskManager(); // Ensure main task view is active
+        togglePlaceholder(true); // Force placeholder to show
+        
+        // Hide the menu
+        const mainMenu = document.getElementById('main-menu');
+        if (mainMenu) mainMenu.classList.add('hidden-menu');
+    }
+
+    // --- MAIN ACTIVATION LOGIC (Runs once the DOM is ready) ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // 🔹 Update Department/Login Logic
+        const department = localStorage.getItem("department");
+        const name = localStorage.getItem("name");
+
+        if (department && name) {
+            const deptName = document.getElementById("dept-name");
+            if (deptName) {
+                const deptFormatted = department + " Department";
+                deptName.textContent = `${deptFormatted} | ${name}`;
+            }
+        }
+
+        // 🎯 Menu Toggle Logic
+        const menuIcon = document.getElementById('menu-icon');
+        const mainMenu = document.getElementById('main-menu');
+        
+        if (menuIcon && mainMenu) {
+            menuIcon.addEventListener('click', () => {
+                mainMenu.classList.toggle('hidden-menu');
+            });
+        }
+
+        // 🟢 CRITICAL: Attach listeners to the Menu Links
+        document.querySelectorAll('#main-menu a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                const linkText = link.textContent.trim();
+
+                const formUrls = {
+                    'Attendance': 'https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true',
+                    'Off / Absent': 'https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true',
+                    'Cash Advance/Loan': 'https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true'
+                };
+                
+                if (linkText.includes('Attendance') || linkText.includes('Off') || linkText.includes('Cash Advance')) {
+                    showIframe(formUrls[linkText]);
+                } else if (linkText.includes('Task Manager')) {
+                    // 🎯 FIX: Task Manager menu link now shows the placeholder
+                    showPlaceholderView();
+                } else {
+                    window.location.href = link.getAttribute('href'); // Logout
+                }
+            });
+        });
+        
+        // 🟢 INITIAL STATE: Force Placeholder to be HIDDEN (Normal state is hidden)
+        togglePlaceholder(false); 
+        
+        // 🟢 INITIAL VIEW
+        showTaskManager(); 
+    });
+</script>
