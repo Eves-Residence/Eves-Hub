@@ -92,13 +92,13 @@ function login() {
         } else if (accessType === "mobile") {
             // Mobile App: FIXING back to Absolute Path from root (most reliable)
             const mobilePaths = {
-                "IT": "../../mobile_app/it/index.html",
-                "secretary": "../../mobile_app/secretary/index.html",
-                "marketing": "../../mobile_app/marketing/index.html",
-                "om": "../../mobile_app/om/index.html",
-                "pr": "../../mobile_app/pr/index.html",
-                "maintenance": "../../mobile_app/maintenance/index.html",
-                "accounting": "../../mobile_app/accounting/index.html"
+                "IT": "mobile_app/it/index.html",
+                "secretary": "mobile_app/secretary/index.html",
+                "marketing": "mobile_app/marketing/index.html",
+                "om": "mobile_app/om/index.html",
+                "pr": "mobile_app/pr/index.html",
+                "maintenance": "mobile_app/maintenance/index.html",
+                "accounting": "mobile_app/accounting/index.html"
             };
             redirectPath = mobilePaths[dept] || ""; 
         }
@@ -129,4 +129,5 @@ function togglePasswordVisibility() {
         }
     }
 }
+
 
