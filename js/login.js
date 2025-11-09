@@ -118,4 +118,21 @@ function login() {
     } else {
         error.textContent = "Invalid department or password.";
     }
+};
+
+// 🎯 NEW FUNCTION: Toggle Password Visibility (Needed if this script is used on a page with a password field)
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.querySelector('.password-toggle');
+
+    if (passwordInput && toggleIcon) {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.textContent = 'visibility'; // Change icon to open eye
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.textContent = 'visibility_off'; // Change icon back to closed eye
+        }
+    }
 }
+
