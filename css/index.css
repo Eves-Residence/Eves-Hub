@@ -275,7 +275,7 @@ footer {
     .login-card select,
     .login-card button {
         font-size: 35px;
-        padding: 35px;
+        padding: 45px;
         border-radius: 10px;
     }
 
@@ -311,5 +311,6 @@ footer {
         font-size: 22px;
     }
 }
+
 
 
