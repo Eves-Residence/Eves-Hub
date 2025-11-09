@@ -126,6 +126,33 @@ body {
     color: #999; 
 }
 
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    margin: 10px 0;
+}
+
+/* 🎯 NEW: Password Toggle Icon Styling */
+.password-toggle {
+    position: absolute;
+    right: 55px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666; /* Color for the eye icon */
+    font-size: 20px;
+    transition: color 0.2s;
+    user-select: none;
+}
+
+.password-wrapper .material-icons{
+    font-size: 60px;
+}
+
+.password-toggle:hover {
+    color: #333;
+}
+
 
 /* ==============================
     BUTTON
@@ -284,3 +311,4 @@ footer {
         font-size: 22px;
     }
 }
+
