@@ -237,8 +237,13 @@ footer {
     }
 
     .login-card h1 {
-        font-size: 24px;
-        margin-top: 5px;
+        font-size: 6rem;
+        margin-top: 35px;
+    }
+
+    .login-card p {
+        font-size: 3rem;
+        margin-top: 35px;
     }
 
     .login-card input,
