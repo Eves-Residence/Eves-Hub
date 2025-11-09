@@ -91,7 +91,7 @@ body {
 .login-card input {
     width: 100%;
     margin: 10px 0;
-    padding: 14px;
+    padding: 15px;
     border: 1px solid #ccc;
     border-radius: 12px;
     font-size: 15px;
@@ -135,7 +135,7 @@ body {
 /* 🎯 NEW: Password Toggle Icon Styling */
 .password-toggle {
     position: absolute;
-    right: 55px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
@@ -143,10 +143,6 @@ body {
     font-size: 20px;
     transition: color 0.2s;
     user-select: none;
-}
-
-.password-wrapper .material-icons{
-    font-size: 60px;
 }
 
 .password-toggle:hover {
@@ -283,6 +279,10 @@ footer {
         border-radius: 10px;
     }
 
+    .password-wrapper .material-icons{
+    font-size: 60px;
+    }
+
     footer {
         font-size: 11px;
         margin-top: 30px;
@@ -311,4 +311,3 @@ footer {
         font-size: 22px;
     }
 }
-
