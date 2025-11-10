@@ -8,7 +8,7 @@
 }
 
 main{
-    margin-top: 40px;
+    margin-top: 50px;
     padding: 30px;
     overflow-x: hidden;
 }
@@ -90,6 +90,7 @@ form{
   font-size: 16px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   /* align-items: center; */
 }
 
@@ -271,6 +272,27 @@ form{
 .task-list::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 10px;
+}
+
+.placeholder{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self:center;
+  height: 50vh;
+}
+
+.placeholder-hidden{
+   display: none;
+}
+
+.placeholder img{
+  width: 100%;
+  height: auto;
+}
+
+.placeholder h1, p{
+  text-align: center;
 }
 
 /* ✅ Responsive */
