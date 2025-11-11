@@ -1,5 +1,5 @@
 // FULL UPDATED script — fixes filter not working and keeps UI unchanged
-const scriptURL = "https://script.google.com/macros/s/AKfycbzPcKdldqfQubGsoWLZaAJm2Bar9ySajpAvAKWeJW3QiqFkY0mnSdOdJG6m-vmEDsduuQ/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxFZbQt22HjFUioRxSOD1Fep_Brt5zjujIlIh9Q7dDidCXNkmI9ws5nw29D4r_hMoL7kQ/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
