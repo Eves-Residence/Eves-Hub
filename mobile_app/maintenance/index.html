@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAINTENANCE DEPARTMENT | EveConnect</title>
+    <title>Maintenance | EveConnect</title>
     <!-- Assets linked with absolute paths to work across different departments -->
     <link rel="stylesheet" href="../../css/mobile.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <link rel="shortcut icon" href="./../img/logo.png" type="image/x-icon">
-    <link rel="stylesheet" href="./../css/mobile_header.css">
-    
-    <!-- Assuming this script contains fetchTasks() and task-specific logic -->
+    <link rel="shortcut icon" href="../../img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/mobile_header.css">
     <script src="maintenance.js" defer></script>
 </head>
 <body>
 
+<!-- ============== EMBEDDED HEADER CONTENT (Replaces <div id="header">) ============== -->
 <header>
     <div class="logo-container">
-        <img src="./../img/logo.png" alt="EveHub Logo" class="logo">
+        <img src="/img/logo.png" alt="EveHub Logo" class="logo">
     </div>
 
     <h2 id="dept-name" class="header-title">Department | <span id="user">User</span></h2>
@@ -142,7 +141,9 @@
 
 <!-- 🎯 EMBEDDED JAVASCRIPT FOR ACTIVATION -->
 <script>
-    // Utility functions for view switching (Defined locally for reliability)
+    // =========================================================================
+    // UTILITY FUNCTIONS
+    // =========================================================================
 
     function showIframe(url) {
         const taskContentContainer = document.querySelector('.task');
@@ -170,6 +171,7 @@
             taskContentContainer.style.display = 'block';
             mainMenu.classList.add('hidden-menu');
             
+            // On showing the Task Manager view, ensure the form is hidden and list is shown
             const taskFormContainer = document.querySelector('.task-content .hide');
             const taskListContainer = document.querySelector('.task-list-container');
             if (taskFormContainer && taskListContainer) {
@@ -178,32 +180,43 @@
             }
         }
     }
+    
+    // 🎯 PLACEHOLDER VISIBILITY TOGGLE (True = Show, False = Hide)
+    function togglePlaceholder(show) {
+        const placeholder = document.getElementById('placeholder');
+        if (placeholder) {
+            if (show) {
+                // SHOW: Remove the hidden class
+                placeholder.classList.remove('placeholder-hidden');
+                placeholder.classList.add('placeholder');
+            } else {
+                // HIDE: Add the hidden class
+                placeholder.classList.add('placeholder-hidden');
+                placeholder.classList.remove('placeholder');
+            }
+        }
+    }
 
-    function setupTaskFormToggle() {
-        const showFormBtn = document.getElementById('show-form');
-        const taskFormContainer = document.querySelector('.task-content .hide'); 
-        const taskListContainer = document.querySelector('.task-list-container');
-        const todoForm = document.getElementById('todo-form');
+    // 🎯 KEY FIX: MAIN FUNCTION CALLED BY THE "ADD TASK" BUTTON (show_form1)
+    function show_form1() {
+        // 🎯 ACTION: Force Placeholder to SHOW.
+        togglePlaceholder(true);
         
+        // 🎯 ACTION: Hide the form, if visible (to ensure button doesn't confuse UI)
+        const taskFormContainer = document.querySelector('.task-content .hide');
         if (taskFormContainer) {
-            taskFormContainer.classList.add('is-hidden'); 
+            taskFormContainer.classList.add('is-hidden');
         }
-
-        if (showFormBtn && taskFormContainer && taskListContainer) {
-            showFormBtn.addEventListener('click', () => {
-                taskFormContainer.classList.toggle('is-hidden'); 
-                taskListContainer.classList.toggle('is-hidden'); 
-            });
-        }
-
-        const cancelButton = document.getElementById('cancel-task-btn');
-        if (cancelButton && taskFormContainer && todoForm && taskListContainer) {
-            cancelButton.addEventListener('click', () => {
-                taskFormContainer.classList.add('is-hidden'); 
-                taskListContainer.classList.remove('is-hidden'); 
-                todoForm.reset();
-            });
-        }
+    }
+    
+    // 🎯 CONVENIENCE FUNCTION to show the Placeholder View and hide the menu
+    function showPlaceholderView() {
+        showTaskManager(); // Ensure main task view is active
+        togglePlaceholder(true); // Force placeholder to show
+        
+        // Hide the menu
+        const mainMenu = document.getElementById('main-menu');
+        if (mainMenu) mainMenu.classList.add('hidden-menu');
     }
 
     // --- MAIN ACTIVATION LOGIC (Runs once the DOM is ready) ---
@@ -244,31 +257,21 @@
                     'Cash Advance/Loan': 'https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true'
                 };
                 
-                if (linkText.includes('Attendance')) {
-                    showIframe(formUrls['Attendance']);
-                } else if (linkText.includes('Off')) {
-                    showIframe(formUrls['Off / Absent']);
-                } else if (linkText.includes('Cash Advance')) {
-                    showIframe(formUrls['Cash Advance/Loan']);
+                if (linkText.includes('Attendance') || linkText.includes('Off') || linkText.includes('Cash Advance')) {
+                    showIframe(formUrls[linkText]);
                 } else if (linkText.includes('Task Manager')) {
-                    showTaskManager();
+                    // 🎯 FIX: Task Manager menu link now shows the placeholder
+                    showPlaceholderView();
                 } else {
                     window.location.href = link.getAttribute('href'); // Logout
                 }
             });
         });
         
-        // 🟢 Setup Task Form Toggle
-        setupTaskFormToggle();
-        
-        // 🟢 Load task data only after setting up the views (function assumed in /IT/it.js)
-        if (typeof fetchTasks === 'function') {
-            fetchTasks();
-        }
+        // 🟢 INITIAL STATE: Force Placeholder to be HIDDEN (Normal state is hidden)
+        togglePlaceholder(false); 
         
         // 🟢 INITIAL VIEW
         showTaskManager(); 
     });
 </script>
-</body>
-</html>
