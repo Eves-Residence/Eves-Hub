@@ -2,7 +2,7 @@
 
 // DO NOT CHANGE THIS FILE NAME OR PATH TO ENSURE PROPER FUNCTIONALITY
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbx8Wur4JIusxFHjpijTcQSS3Fec0SZiRtEB5jL1lfcGmk_CW6yPW2sFGKjOmdkQfVLp/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycby37nFYHzcefhlsg-8xu6YiCIFbRtEeWQKbWSEt72Ycd12Q3ETaNA80O0o7EC-JyOWX/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
