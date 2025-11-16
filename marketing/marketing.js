@@ -380,3 +380,4 @@ async function deleteTask(index) {
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
 
+
