@@ -45,7 +45,10 @@ function changeFrame(type) {
     case "ca":
       newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true";
       break;
-      
+
+    case "bnb_dates":
+      newSrc = "https://calendar.google.com/calendar/embed?src=00c9b4f66e0573f992bb911bb11ddc608ccb021f2be44fa6cfdc633de1463f82%40group.calendar.google.com&ctz=Asia%2FManila";
+   
     default:
       newSrc = "https://tephdy.github.io/WEB-APP/";
   }
@@ -376,3 +379,4 @@ async function deleteTask(index) {
 
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
+
