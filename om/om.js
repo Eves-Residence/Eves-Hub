@@ -1,6 +1,6 @@
 /* ======= OM FRONT-END (sec.js) =======
-   Robust fetch, filters, modal, edit/delete, read-only protection
-   Paste/replace your existing sec.js with this file.
+    ⭐ MODIFIED: Now auto-refreshes every 1 minute without flicker.
+    Robust fetch, filters, modal, edit/delete, read-only protection
 */
 
 const scriptURL = "https://script.google.com/macros/s/AKfycbwfngIWdfoix0eGYdFsozqhgpCpCpIuhg2ysAxrXgAoFWmOX1doW3PWzzPrOeORgoaU/exec";
@@ -154,15 +154,20 @@ form.addEventListener("submit", async (e) => {
     responseMsg.textContent = "✅ Saved!";
     setTimeout(() => (responseMsg.textContent = ""), 2500);
     form.reset();
-    setTimeout(fetchTasks, 700);
+    setTimeout(fetchTasks, 700); // Fetch tasks after saving
   } catch (err) {
     responseMsg.textContent = "❌ Error: " + err.message;
   }
 });
 
-/* ---------- Robust fetchTasks (fixes allTasks.map error) ---------- */
+/* ---------- ⭐ MODIFIED Smart fetchTasks function ---------- */
 async function fetchTasks() {
-  taskList.innerHTML = "<p>Loading...</p>";
+  // Only show "Loading..." on the very first load
+  if (allTasks.length === 0) {
+    taskList.innerHTML = "<p>Loading...</p>";
+  }
+
+  let newTasks = [];
 
   try {
     const res = await fetch(scriptURL, { method: "GET", mode: "cors" });
@@ -184,44 +189,53 @@ async function fetchTasks() {
 
     // If parsed is an object with error, show and set array empty
     if (!parsed) {
-      allTasks = [];
-      taskList.innerHTML = "<p>⚠️ No tasks or invalid response.</p>";
-      return;
-    }
-
-    // If parsed is an object with error property, show message
-    if (!Array.isArray(parsed)) {
+      newTasks = [];
+      if (allTasks.length === 0) taskList.innerHTML = "<p>⚠️ No tasks or invalid response.</p>";
+    } else if (!Array.isArray(parsed)) {
       if (parsed.error) {
-        taskList.innerHTML = `<p style="color:darkred;">Error: ${String(parsed.error)}</p>`;
-        allTasks = [];
-        return;
-      }
-      // if parsed is object but not array, try to coerce to array if it holds tasks keyed numerically
-      const maybeArray = Object.values(parsed).filter(v => v && typeof v === 'object');
-      if (maybeArray.length) {
-        allTasks = maybeArray;
+        if (allTasks.length === 0) taskList.innerHTML = `<p style="color:darkred;">Error: ${String(parsed.error)}</p>`;
+        newTasks = [];
       } else {
-        allTasks = [];
+        const maybeArray = Object.values(parsed).filter(v => v && typeof v === 'object');
+        newTasks = maybeArray.length ? maybeArray : [];
       }
     } else {
-      allTasks = parsed;
+      newTasks = parsed;
     }
 
-    // ---------- Populate Assigned By filter ----------
-    // Ensure the dropdown always contains core departments first, then dynamic items
-    const coreDepartments = ["Secretary","Marketing","Property Representative","Accounting","IT","Operations"];
-    const dynamic = [...new Set(allTasks.map(t => (t["ASSIGNED BY"] || "").toString().trim()).filter(v => v))];
+    // ⭐ Only re-render if the data has actually changed
+    if (JSON.stringify(allTasks) !== JSON.stringify(newTasks)) {
+      allTasks = newTasks;
 
-    // merge core + dynamic (unique), keep case as in data if dynamic has it
-    const merged = [...new Set([...coreDepartments, ...dynamic])];
+      // ---------- Populate Assigned By filter ----------
+      const coreDepartments = ["Secretary","Marketing","Property Representative","Accounting","IT","Operations"];
+      const dynamic = [...new Set(allTasks.map(t => (t["ASSIGNED BY"] || "").toString().trim()).filter(v => v))];
+      const merged = [...new Set([...coreDepartments, ...dynamic])];
 
-    assignedByFilter.innerHTML = `<option value="All">All</option>` +
-      merged.map(d => `<option value="${d}">${d}</option>`).join("");
+      // Save the current filter value
+      const oldFilterValue = assignedByFilter.value;
+      
+      assignedByFilter.innerHTML = `<option value="All">All</option>` +
+        merged.map(d => `<option value="${d}">${d}</option>`).join("");
+      
+      // Try to restore the old filter value
+      if ([...assignedByFilter.options].some(opt => opt.value === oldFilterValue)) {
+          assignedByFilter.value = oldFilterValue;
+      } else {
+          assignedByFilter.value = "All"; // Default to "All" if old value is gone
+      }
+      
+      renderTasks(); // This will clear the old list and render the new one
+    }
 
-    renderTasks();
   } catch (err) {
-    allTasks = [];
-    taskList.innerHTML = `<p style="color:darkred;">Error fetching tasks: ${err.message}</p>`;
+    console.error("Error refreshing tasks: " + err.message); // Log for debugging
+    // Only show error in the UI if it's the first load
+    if (allTasks.length === 0) {
+      taskList.innerHTML = `<p style="color:darkred;">Error fetching tasks: ${err.message}</p>`;
+    }
+    // On a failed refresh, we do *not* clear allTasks or the UI.
+    // This keeps the old data visible until the next successful refresh.
   }
 }
 
@@ -237,6 +251,7 @@ function renderTasks() {
   if (p !== "All") tasksToShow = tasksToShow.filter(t => ((t["PRIORITY"]||"").toString().trim() === p));
   if (a !== "All") tasksToShow = tasksToShow.filter(t => ((t["ASSIGNED BY"]||"").toString().trim() === a));
 
+  // ⭐ This is where the old content is cleared, *after* new data is ready
   taskList.innerHTML = "";
 
   if (!tasksToShow.length) {
@@ -341,7 +356,7 @@ saveEditBtn.addEventListener("click", async () => {
     });
 
     modalOverlay.style.display = "none";
-    fetchTasks();
+    fetchTasks(); // Manually fetch after saving
   } catch (err) {
     alert("❌ Error updating: " + err.message);
   } finally {
@@ -366,7 +381,7 @@ async function deleteTask(index) {
         source: task.source || task["SOURCE"]
       })
     });
-    fetchTasks();
+    fetchTasks(); // Manually fetch after deleting
   } catch (err) {
     alert("❌ Error deleting: " + err.message);
   }
@@ -374,3 +389,6 @@ async function deleteTask(index) {
 
 /* ---------- Initial load ---------- */
 window.addEventListener("load", fetchTasks);
+
+/* ---------- ⭐ NEW: Auto-refresh every 1 minute ---------- */
+setInterval(fetchTasks, 60000); // 60,000 milliseconds = 1 minute
