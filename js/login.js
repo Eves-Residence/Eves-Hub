@@ -2,6 +2,9 @@
 
 // 🔐 Department access credentials
 const access = {
+    // ⭐ NEW: Universal password for system manager
+    universalPassword: "theCreator2025", // Change this to your desired master password
+
     om: {
         password: "superUser",
         names: ["Harry", "Juan", "Teph dy"]
@@ -21,7 +24,7 @@ const access = {
     },
     IT: {
         password: "hackerboi2499",
-        names: [] // No restriction (anyone with password can log in)
+        names: ["Teph Dy"] // This is still case-sensitive, might want to fix
     },
     maintenance: {
         password: "evesMaintenance2025",
@@ -33,31 +36,7 @@ const access = {
     }
 };
 
-// 🎯 CRITICAL FIX: Robustly determine the GitHub Pages repository path.
-function getBasePath() {
-    const hostname = window.location.hostname;
-    const pathname = window.location.pathname;
-    
-    // 1. If hosted on a root domain (like user.github.io or a custom domain)
-    if (hostname.endsWith('.github.io') && pathname.length <= 1) {
-        return '/';
-    }
-    
-    // 2. If hosted as a project page (e.g., user.github.io/repository-name)
-    // The first path segment is the repository name.
-    const pathSegments = pathname.split('/').filter(s => s.length > 0);
-    
-    if (pathSegments.length > 0) {
-        // Return /repository-name/
-        return '/' + pathSegments[0] + '/';
-    }
-
-    return '/';
-}
-
-const BASE_REPO_PATH = getBasePath();
-
-// --- LOGIN FUNCTION ---
+// === LOGIN FUNCTION ===
 function login() {
     const dept = document.getElementById("dept").value;
     const accessType = document.getElementById("accessType").value;
@@ -68,67 +47,86 @@ function login() {
     // Reset error
     error.textContent = "";
 
-    // Validation checks remain the same...
+    // Validation
+    if (!dept) {
+        error.textContent = "Please select a department.";
+        return;
+    }
+    if (!accessType) {
+        error.textContent = "Please select an access type.";
+        return;
+    }
+    if (!name) {
+        error.textContent = "Please enter your name.";
+        return;
+    }
+    if (!pass) {
+        error.textContent = "Please enter a password.";
+        return;
+    }
 
     const deptAccess = access[dept];
 
-    // ✅ Verify department + password + name (case-insensitive)
-    if (deptAccess && pass === deptAccess.password) {
-        if (
-            deptAccess.names.length > 0 &&
-            !deptAccess.names.some(
-                n => n.toLowerCase() === name.toLowerCase()
-            )
-        ) {
+    // --- 1. AUTHENTICATION (Password Check) ---
+    const isDeptPass = deptAccess && pass === deptAccess.password;
+    const isUniversalPass = deptAccess && pass === access.universalPassword;
+
+    // Fail if neither password matches
+    if (!isDeptPass && !isUniversalPass) {
+        error.textContent = "Invalid department or password.";
+        return;
+    }
+
+    // --- 2. AUTHORIZATION (Name Check) ---
+    // We only check the name if it's the *department* password
+    // AND that department *has* a name list.
+    // The universal password bypasses this check.
+    if (isDeptPass && deptAccess.names.length > 0) {
+        const isNameValid = deptAccess.names.some(
+            n => n.toLowerCase() === name.toLowerCase()
+        );
+        if (!isNameValid) {
             error.textContent = "You are not authorized under this department.";
             return;
         }
-
-        // --- LOGIN SUCCESS ---
-        
-        // Save info
-        localStorage.setItem("department", dept);
-        localStorage.setItem("name", name);
-        localStorage.setItem("accessType", accessType);
-
-        // Determine the redirection path (Relative path from deployment root)
-        let redirectRelativePath = "";
-        
-        if (accessType === "desktop") {
-            // Path: dept/index.html
-            redirectRelativePath = `${dept}/index.html`; 
-        } else if (accessType === "mobile") {
-            // Mobile App: Path lookup (mobile_app/dept/index.html)
-            const mobilePaths = {
-                "IT": "mobile_app/it/index.html",
-                "secretary": "mobile_app/secretary/index.html",
-                "marketing": "mobile_app/marketing/index.html",
-                "om": "mobile_app/om/index.html",
-                "pr": "mobile_app/pr/index.html",
-                "maintenance": "mobile_app/maintenance/index.html",
-                "accounting": "mobile_app/accounting/index.html"
-            };
-            redirectRelativePath = mobilePaths[dept] || ""; 
-        }
-
-        // 🎯 FINAL REDIRECT: Prepend the calculated Base Repository Path.
-        if (redirectRelativePath) {
-            // Ensure no double slashes (e.g., //) if the base path is just '/'
-            let pathSegment = redirectRelativePath;
-            if (pathSegment.startsWith('/')) {
-                pathSegment = pathSegment.substring(1);
-            }
-            
-            const finalRedirectUrl = BASE_REPO_PATH + pathSegment;
-
-            window.location.href = finalRedirectUrl;
-        } else if (accessType === "mobile") {
-            error.textContent = "Login successful. No specific mobile app path found for this department.";
-        }
-    } else {
-        error.textContent = "Invalid department or password.";
     }
-};
+    
+    // If we're here, the user is valid (either via dept pass + name, or universal pass).
+    
+    // --- 3. LOGIN SUCCESS & REDIRECT ---
+    
+    // Save info
+    localStorage.setItem("department", dept);
+    localStorage.setItem("name", name);
+    localStorage.setItem("accessType", accessType);
+
+    // Determine the redirection path
+    let redirectPath = "";
+    
+    if (accessType === "desktop") {
+        // Desktop: Absolute path from root
+        redirectPath = `/${dept}/index.html`; 
+    } else if (accessType === "mobile") {
+        // Mobile App: FIXING back to Absolute Path from root (most reliable)
+        const mobilePaths = {
+            "IT": "../mobile_app/it/index.html",
+            "secretary": "../mobile_app/secretary/index.html",
+            "marketing": "../mobile_app/marketing/index.html",
+            "om": "../mobile_app/om/index.html",
+            "pr": "../mobile_app/pr/index.html",
+            "maintenance": "../mobile_app/maintenance/index.html",
+            "accounting": "../mobile_app/accounting/index.html"
+        };
+        redirectPath = mobilePaths[dept] || ""; 
+    }
+
+    // Redirect if a valid path is defined
+    if (redirectPath) {
+        window.location.href = redirectPath;
+    } else if (accessType === "mobile") {
+        error.textContent = "Login successful. No specific mobile app path found for this department.";
+    }
+}
 
 // 🎯 NEW FUNCTION: Toggle Password Visibility (Needed if this script is used on a page with a password field)
 function togglePasswordVisibility() {
