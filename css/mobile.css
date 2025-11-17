@@ -296,7 +296,7 @@ form{
 }
 
 .task-subheader{
-  width: 20vw;
+  width: 85vw;
   /* background-color: #9ff210; */
   position: relative;
   display: flex;
@@ -339,5 +339,6 @@ iframe {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   flex-grow: 1;
 }
+
 
 
