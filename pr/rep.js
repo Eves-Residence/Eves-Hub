@@ -1,5 +1,7 @@
 // FULL UPDATED script — fixes filter not working and keeps UI unchanged
-const scriptURL = "https://script.google.com/macros/s/AKfycbyK_kQUGwRuhvTfxvsjVrcyoBSZ8lbFPA0tXVmY9lttde7glR71Wv7SDXf6DiSV871i8w/exec";
+// ⭐ MODIFIED: Added 1-minute flicker-free auto-refresh.
+
+const scriptURL = "https.google.com/macros/s/AKfycbyK_kQUGwRuhvTfxvsjVrcyoBSZ8lbFPA0tXVmY9lttde7glR71Wv7SDXf6DiSV871i8w/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
@@ -168,7 +170,7 @@ form.addEventListener("submit", async (e) => {
     setTimeout(() => (responseMsg.textContent = ""), 3000);
 
     form.reset();
-    setTimeout(fetchTasks, 800);
+    setTimeout(fetchTasks, 800); // Manually trigger fetch after adding
 
   } catch (err) {
     responseMsg.textContent = "❌ Error: " + err.message;
@@ -176,42 +178,58 @@ form.addEventListener("submit", async (e) => {
 });
 
 // ----- Fetch tasks & populate Assigned By (fixed + dynamic) -----
+// ⭐ MODIFIED for non-flicker refresh
 async function fetchTasks() {
-  taskList.innerHTML = "<p>Loading...</p>";
+  // Only show "Loading..." on the very first load
+  if (allTasks.length === 0) {
+    taskList.innerHTML = "<p>Loading...</p>";
+  }
+  
+  let newTasks = [];
+
   try {
     const res = await fetch(scriptURL);
     const text = await res.text();
     const jsonMatch = text.match(/\{.*\}|\[.*\]/s);
     if (!jsonMatch) throw new Error("Invalid JSON");
 
-    allTasks = JSON.parse(jsonMatch[0]);
+    newTasks = JSON.parse(jsonMatch[0]); // Fetch into a temporary array
 
-    // fixed departments + dynamic merge
-    const fixedDepartments = [
-      "Secretary",
-      "Marketing",
-      "Property Representative",
-      "Accounting",
-      "IT"
-    ];
-    const dynamicDepartments = allTasks
-      .map(t => (t["ASSIGNED BY"] || "").trim())
-      .filter(v => v !== "");
-    const combinedDepartments = [...new Set([...fixedDepartments, ...dynamicDepartments])];
+    // ⭐ Only re-render if the data has actually changed
+    if (JSON.stringify(allTasks) !== JSON.stringify(newTasks)) {
+      allTasks = newTasks; // Update the main array
 
-    // populate assignedByFilter safely (preserve previously selected if possible)
-    const prev = assignedByFilter.value || "All";
-    assignedByFilter.innerHTML = `<option value="All">All</option>` +
-      combinedDepartments.map(d => `<option value="${d}">${d}</option>`).join("");
-    if ([...assignedByFilter.options].some(opt => opt.value === prev)) {
-      assignedByFilter.value = prev;
-    } else {
-      assignedByFilter.value = "All";
+      // fixed departments + dynamic merge
+      const fixedDepartments = [
+        "Secretary",
+        "Marketing",
+        "Property Representative",
+        "Accounting",
+        "IT"
+      ];
+      const dynamicDepartments = allTasks
+        .map(t => (t["ASSIGNED BY"] || "").trim())
+        .filter(v => v !== "");
+      const combinedDepartments = [...new Set([...fixedDepartments, ...dynamicDepartments])];
+
+      // populate assignedByFilter safely (preserve previously selected if possible)
+      const prev = assignedByFilter.value || "All";
+      assignedByFilter.innerHTML = `<option value="All">All</option>` +
+        combinedDepartments.map(d => `<option value="${d}">${d}</option>`).join("");
+      if ([...assignedByFilter.options].some(opt => opt.value === prev)) {
+        assignedByFilter.value = prev;
+      } else {
+        assignedByFilter.value = "All";
+      }
+
+      renderTasks(); // Render the new content
     }
-
-    renderTasks();
   } catch (err) {
-    taskList.innerHTML = `<p>Error: ${err.message}</p>`;
+    // On a failed refresh, log the error but *don't* wipe the screen
+    console.error("Task refresh failed:", err.message);
+    if (allTasks.length === 0) {
+      taskList.innerHTML = `<p>Error: ${err.message}</p>`;
+    }
   }
 }
 
@@ -235,7 +253,11 @@ function renderTasks() {
     return;
   }
 
-  tasksToShow.forEach((t, index) => {
+  tasksToShow.forEach((t) => {
+    // 🐞 BUG FIX: 'index' is for the *filtered* array. We need the original.
+    const originalIndex = allTasks.indexOf(t);
+    if (originalIndex === -1) return; // Safeguard
+
     const div = document.createElement("div");
     div.classList.add("task-item");
 
@@ -250,6 +272,7 @@ function renderTasks() {
 
     const safe = s => s ? String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])) : "";
 
+    // Edit permission: can edit only if ASSIGNED BY equals "Secretary" (case-insensitive)
     const canEdit = String(t["ASSIGNED BY"] || "").trim().toLowerCase() === "secretary";
 
     div.innerHTML = `
@@ -266,16 +289,18 @@ function renderTasks() {
       <div class="task-actions">
         ${
           canEdit
-            ? `<button class="edit-btn" data-index="${index}">✏️ Edit</button>
-               <button class="delete-btn" data-index="${index}">🗑️ Delete</button>`
+            // 🐞 BUG FIX: Use originalIndex to edit/delete the correct task
+            ? `<button class="edit-btn" data-index="${originalIndex}">✏️ Edit</button>
+               <button class="delete-btn" data-index="${originalIndex}">🗑️ Delete</button>`
             : `<button class="readonly-btn" disabled style="background:#555;color:white;">🔒 Read-Only</button>`
         }
       </div>
     `;
 
     if (canEdit) {
-      div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(index));
-      div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(index));
+      // 🐞 BUG FIX: Use originalIndex to edit/delete the correct task
+      div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(originalIndex));
+      div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(originalIndex));
     }
 
     taskList.appendChild(div);
@@ -305,6 +330,7 @@ saveEditBtn.onclick = async () => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: JSON.stringify({
         action: "update",
+        // 🐞 BUG FIX: Send the Sheet's row index, not the array index
         rowIndex: allTasks[editIndex].rowIndex,
         status: newStatus,
         notes: newRemarks
@@ -312,7 +338,7 @@ saveEditBtn.onclick = async () => {
     });
 
     modalOverlay.style.display = "none";
-    fetchTasks();
+    fetchTasks(); // Manually trigger fetch after saving
   } catch (err) {
     alert("Error updating: " + err.message);
   }
@@ -329,10 +355,11 @@ async function deleteTask(index) {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: JSON.stringify({
         action: "delete",
+        // 🐞 BUG FIX: Send the Sheet's row index, not the array index
         rowIndex: allTasks[index].rowIndex
       })
     });
-    fetchTasks();
+    fetchTasks(); // Manually trigger fetch after saving
   } catch (err) {
     alert("Error deleting: " + err.message);
   }
@@ -340,3 +367,6 @@ async function deleteTask(index) {
 
 // load
 window.addEventListener("load", fetchTasks);
+
+// ⭐ NEW: Auto-refresh every 1 minute
+setInterval(fetchTasks, 60000); // 60,000 milliseconds = 1 minute
