@@ -1,152 +1,381 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Accounting Department | EveConnect</title>
-  <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
-  <link rel="stylesheet" href="../css/department.css">
-  <link rel="stylesheet" href="../css/task.css">
-  <link rel="stylesheet" href="../css/header.css">
-  <link rel="stylesheet" href="../css/desktop.css">
-  <script src="index.js" defer></script>
-  <script src="accounting.js" defer></script>
-</head>
-<body>
-  <div id="header"></div>
- 
-  <div class="main_container">
-    <div class="content resizable">
-      <div class="title">
-        <h1>Accounting Department</h1>
-        <p>All tools and files for Accounting Department.</p>
-      </div>
+// FULL UPDATED script — fixes filter not working and keeps UI unchanged
+// ⭐ MODIFIED: Tasks are ONLY editable if created BY Accounting (source == "Accounting").
+// ⭐ MODIFIED: Added 30s flicker-free auto-refresh.
 
-      <div class="sub_content">
-        <div class="card"><a href="">Property Information Files</a></div>
+const scriptURL = "https://script.google.com/macros/s/AKfycbxnXQyBpfnesmJvFBs0vWvRnIZIvXrGpP1D3Nc5TWM4VWJSdd32kQGNeVTiV5IHwTIi/exec";
+const form = document.getElementById("todo-form");
+const taskList = document.getElementById("taskList");
+const responseMsg = document.getElementById("response");
 
-        <div class="card"><a href="#" onclick="changeFrame('master'); return false;">Master List</a></div>
+let allTasks = [];
+let editIndex = null;
 
-        <div class="card"><a href="#" onclick="changeFrame('bnb'); return false;">Bed and Bath Info</a></div>
-
-        <div class="card"><a href="#" onclick="changeFrame('attendance'); return false;">Attendance</a></div>
-
-        <div class="card"><a href="#" onclick="changeFrame('off'); return false;">Off/Absent Form</a></div>
-
-        <div class="card"><a href="#" onclick="changeFrame('ca'); return false;">Cash Advance/Loan</a></div>
-
-        <div class="card"><a href="#" onclick="changeFrame('bnb_dates'); return false;">BnB Dates</a></div>
-      </div>
-
-      <iframe id="mainFrame" src=""></iframe>
-
-      <div class="task-main-container">
-        <!-- ✅ Left: Form -->
-        <div class="todo-form-container">
-          <h1>📝 Task Manager</h1>
-          <form id="todo-form">
-            <label>Task Name</label>
-            <input type="text" id="taskName" required>
-
-            <label>Priority</label>
-            <select id="priority">
-              <option>High</option>
-              <option>Medium</option>
-              <option>Low</option>
-            </select>
-
-            <label>Assigned By</label>
-            <input type="text" id="assignedBy" required>
-
-            <label>Assigned To</label>
-            <select id="assignTo" required>
-              <option value="Secretary">Secretary</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Propperty Representative">Propperty Representative</option>
-              <option value="Accounting">Accounting</option>
-              <option value="IT">IT</option>
-              <option value="Maintenance">Maintenance</option>
-            </select>
-
-            <label>Due Date</label>
-            <input type="date" id="dueDate" required>
-
-            <label>Details</label>
-            <textarea id="notes" rows="3" style="
-              width:100%;
-              padding:8px;
-              border:1px solid #ccc;
-              border-radius:5px;
-              resize:none;
-              overflow:hidden;
-              min-height:100px;
-              max-height:300px;
-              font-family:inherit;
-              font-size:14px;
-              line-height:1.4;
-              box-sizing:border-box;"></textarea>
-
-            <button type="submit">Save Task</button>
-          </form>
-          <p id="response" class="response"></p>
-        </div>
-
-        <!-- ✅ Right: Task List -->
-        <div class="task-list-container">
-          <h1>📋 Task List</h1>
-          <div id="taskList" class="task-list"></div>
-        </div>
-      </div>
+// ----- CREATE FILTER UI (unchanged visually) -----
+const filterContainer = document.createElement("div");
+filterContainer.classList.add("filter-container");
+filterContainer.innerHTML = `
+  <div class="filter-dropdown">
+    <div class="task-subheader">
+      <p>All Task</p>
+      <button id="filterBtn">
+      <span class="material-symbols-outlined filter">filter_list</span>
+      Filter
+    </button>
     </div>
 
-    <div class="content resizable">
-      <iframe 
-        src="https://calendar.google.com/calendar/embed?src=00c9b4f66e0573f992bb911bb11ddc608ccb021f2be44fa6cfdc633de1463f82%40group.calendar.google.com&ctz=Asia%2FManila" 
-        frameborder="0" scrolling="no">
-      </iframe>
+    <div class="filter-menu">
+      <label>Status:</label>
+      <select id="statusFilter">
+        <option value="All">All</option>
+        <option value="Not Started">Not Started</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+
+      <label>Priority:</label>
+      <select id="priorityFilter">
+        <option value="All">All</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+
+      <label>Assigned By:</label>
+      <select id="assignedByFilter">
+        <option value="All">All</option>
+      </select>
+
+      <div style="margin-top:8px; display:flex; gap:8px;">
+        <button id="applyFilter">Apply</button>
+        <button id="clearFilter">Clear</button>
       </div>
-        <footer>
-            <p>© 2025 Eve's Residences. All rights reserved.</p> 
-            <p>Developed by Eve's Residences IT Department.</p> 
-      </footer>
+    </div>
   </div>
+`;
+taskList.parentNode.insertBefore(filterContainer, taskList);
 
+// scope frequently-used nodes to avoid global query mistakes
+const filterBtn = filterContainer.querySelector("#filterBtn");
+const filterMenu = filterContainer.querySelector(".filter-menu");
+const statusFilter = filterContainer.querySelector("#statusFilter");
+const priorityFilter = filterContainer.querySelector("#priorityFilter");
+const assignedByFilter = filterContainer.querySelector("#assignedByFilter");
+const applyFilterBtn = filterContainer.querySelector("#applyFilter");
+const clearFilterBtn = filterContainer.querySelector("#clearFilter");
 
-  <script>
-      // Load shared header
-  fetch("../header/header.html")
-  .then(res => res.text())
-  .then(data => {
-    document.getElementById("header").innerHTML = data;
+// Toggle filter menu visibility (scoped)
+filterBtn.addEventListener("click", (e) => {
+  filterMenu.classList.toggle("active");
+});
 
-    // 🔹 Get department & name from localStorage
-    const department = localStorage.getItem("department");
-    const name = localStorage.getItem("name");
+// Apply filters (alias so older code calling applyFilters() still works)
+function applyFilters() {
+  // hide menu and render tasks with current selections
+  filterMenu.classList.remove("active");
+  renderTasks();
+}
+applyFilterBtn.addEventListener("click", applyFilters);
 
-    // Redirect to login if no credentials found
-    if (!department || !name) {
-      window.location.href = "../index.html";
-      return;
+// Clear filters and re-render
+clearFilterBtn.addEventListener("click", () => {
+  statusFilter.value = "All";
+  priorityFilter.value = "All";
+  assignedByFilter.value = "All";
+  filterMenu.classList.remove("active");
+  renderTasks();
+});
+
+// Allow immediate rerender when selects change (optional convenience)
+statusFilter.addEventListener("change", renderTasks);
+priorityFilter.addEventListener("change", renderTasks);
+assignedByFilter.addEventListener("change", renderTasks);
+
+// ----- Modal HTML (keeps your original) -----
+const modalHTML = `
+  <div id="modalOverlay" style="display:none;
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
+    <div id="modalBox" style="
+      background:#fff; padding:20px; border-radius:10px;
+      box-shadow:0 0 20px rgba(0,0,0,0.3); width:100%; max-width:500px; box-sizing:border-box;">
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <h3>Edit Task Status</h3>
+
+        <label>Status:</label>
+        <select id="editStatus" style="padding:8px; width:100%;">
+          <option value="Not Started">Not Started</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+
+        <label>Remarks:</label>
+        <textarea id="addRemarks" style="
+          width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;
+          resize:none; min-height:80px; max-height:300px;"></textarea>
+
+        <div id="loadingIndicator" style="display:none; text-align:center;">⏳ Saving...</div>
+      </div>
+
+      <div style="margin-top:15px; text-align:right;">
+        <button id="saveEditBtn" style="padding:6px 12px; background:#4CAF50; color:white; border:none; border-radius:5px;">Save</button>
+        <button id="cancelEditBtn" style="padding:6px 12px; background:#ccc; border:none; border-radius:5px;">Cancel</button>
+      </div>
+    </div>
+  </div>
+`;
+document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+const modalOverlay = document.getElementById("modalOverlay");
+const editStatus = document.getElementById("editStatus");
+const addRemarks = document.getElementById("addRemarks");
+const saveEditBtn = document.getElementById("saveEditBtn");
+const cancelEditBtn = document.getElementById("cancelEditBtn");
+
+// Auto resize remarks
+addRemarks.addEventListener("input", () => {
+  addRemarks.style.height = "auto";
+  const newHeight = Math.min(addRemarks.scrollHeight, 300);
+  addRemarks.style.height = newHeight + "px";
+  addRemarks.style.overflowY = addRemarks.scrollHeight > 300 ? "auto" : "hidden";
+});
+
+// ----- Add new task -----
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const task = {
+    action: "add",
+    taskName: document.getElementById("taskName").value.trim(),
+    priority: document.getElementById("priority").value,
+    assignedBy: document.getElementById("assignedBy").value.trim(),
+    assignTo: document.getElementById("assignTo").value,
+    dueDate: document.getElementById("dueDate").value,
+    notes: document.getElementById("notes").value.trim(),
+  };
+
+  if (!task.taskName) {
+    responseMsg.textContent = "⚠️ Task name is required.";
+    return;
+  }
+
+  responseMsg.textContent = "⏳ Saving...";
+  try {
+    await fetch(scriptURL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: JSON.stringify(task)
+    });
+
+    responseMsg.textContent = "✅ Saved!";
+    setTimeout(() => (responseMsg.textContent = ""), 3000);
+
+    form.reset();
+    setTimeout(fetchTasks, 800); // Manually trigger fetch after adding
+
+  } catch (err) {
+    responseMsg.textContent = "❌ Error: " + err.message;
+  }
+});
+
+// ----- Fetch tasks & populate Assigned By (fixed + dynamic) -----
+// ⭐ MODIFIED for non-flicker refresh
+async function fetchTasks() {
+  // Only show "Loading..." on the very first load
+  if (allTasks.length === 0) {
+    taskList.innerHTML = "<p>Loading...</p>";
+  }
+  
+  let newTasks = [];
+
+  try {
+    const res = await fetch(scriptURL);
+    const text = await res.text();
+    const jsonMatch = text.match(/\{.*\}|\[.*\]/s);
+    if (!jsonMatch) throw new Error("Invalid JSON");
+
+    newTasks = JSON.parse(jsonMatch[0]); // Fetch into a temporary array
+
+    // ⭐ Only re-render if the data has actually changed
+    if (JSON.stringify(allTasks) !== JSON.stringify(newTasks)) {
+      allTasks = newTasks; // Update the main array
+
+      // fixed departments + dynamic merge
+      const fixedDepartments = [
+        "Secretary",
+        "Marketing",
+        "Property Representative",
+        "Accounting",
+        "IT"
+      ];
+      const dynamicDepartments = allTasks
+        .map(t => (t["ASSIGNED BY"] || "").trim())
+        .filter(v => v !== "");
+      const combinedDepartments = [...new Set([...fixedDepartments, ...dynamicDepartments])];
+
+      // populate assignedByFilter safely (preserve previously selected if possible)
+      const prev = assignedByFilter.value || "All";
+      assignedByFilter.innerHTML = `<option value="All">All</option>` +
+        combinedDepartments.map(d => `<option value="${d}">${d}</option>`).join("");
+      if ([...assignedByFilter.options].some(opt => opt.value === prev)) {
+        assignedByFilter.value = prev;
+      } else {
+        assignedByFilter.value = "All";
+      }
+
+      renderTasks(); // Render the new content
+    }
+  } catch (err) {
+    // On a failed refresh, log the error but *don't* wipe the screen
+    console.error("Task refresh failed:", err.message);
+    if (allTasks.length === 0) {
+      taskList.innerHTML = `<p>Error: ${err.message}</p>`;
+    }
+  }
+}
+
+// ----- Render tasks with filters -----
+function renderTasks() {
+  const sFilter = statusFilter.value;
+  const pFilter = priorityFilter.value;
+  const aFilter = assignedByFilter.value;
+
+  let tasksToShow = allTasks.slice();
+
+  if (sFilter !== "All") tasksToShow = tasksToShow.filter(t => ((t["STATUS"]||"").trim() === sFilter));
+  if (pFilter !== "All") tasksToShow = tasksToShow.filter(t => ((t["PRIORITY"]||"").trim() === pFilter));
+  if (aFilter !== "All") tasksToShow = tasksToShow.filter(t => ((t["ASSIGNED BY"]||"").trim() === aFilter));
+
+  taskList.innerHTML = "";
+
+  if (!tasksToShow.length) {
+    taskList.innerHTML = "<p>No tasks found.</p>";
+    return;
+  }
+
+  tasksToShow.forEach((t) => {
+    // 🐞 BUG FIX: 'index' is for the *filtered* array. We need the original.
+    const originalIndex = allTasks.indexOf(t);
+    if (originalIndex === -1) return; // Safeguard
+
+    const div = document.createElement("div");
+    div.classList.add("task-item");
+
+    const status = (t["STATUS"] || "Not Started").trim();
+    let color = "#999", bg = "#fff";
+    if (status === "Completed") { color = "#4CAF50"; bg = "#e8f5e9"; }
+    if (status === "In Progress") { color = "#FFC107"; bg = "#fff9e6"; }
+    if (status === "Not Started") { color = "#F44336"; bg = "#fdecea"; }
+
+    div.style.borderLeft = `6px solid ${color}`;
+    // div.style.backgroundColor = bg;
+
+    const safe = s => s ? String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])) : "";
+
+    // ⭐ MODIFIED LOGIC: Check 'source' property (case-insensitive)
+    // Only tasks *from* Accounting are editable.
+    const canEdit = String(t.source || "").trim().toLowerCase() === "accounting";
+
+    div.innerHTML = `
+      <div class="task-header">
+        ${safe(t["TASK NAME"])}
+        <span style="font-size:12px;color:#777;">(Source: ${safe(t.source) || "Unknown"})</span>
+      </div>
+      <div class="task-meta">
+        <b>Priority:</b> ${safe(t["PRIORITY"])} |
+        <b>Assigned By:</b> ${safe(t["ASSIGNED BY"])} |
+        <b>Assigned To:</b> ${safe(t["ASSIGNED TO"])} |
+        <b>Due:</b> ${safe(t["DUE DATE"])} |
+        <b>Status:</b> <span style="color:${color}; font-weight:bold;">${safe(status)}</span>
+      </div>
+      ${t["NOTES"] ? `<div class="task-notes">🗒 ${safe(t["NOTES"])}</div>` : ""}
+      <div class="task-meta">🕒 ${safe(t["TIMESTAMP"])}</div>
+      <div class="task-actions">
+        ${
+          canEdit
+            // 🐞 BUG FIX: Use originalIndex to edit/delete the correct task
+            ? `<button class="edit-btn" data-index="${originalIndex}">✏️ Edit</button>
+               <button class="delete-btn" data-index="${originalIndex}">🗑️ Delete</button>`
+            : `<button class="readonly-btn" disabled style="background:#555;color:white;">🔒 Read-Only</button>`
+        }
+      </div>
+    `;
+
+    if (canEdit) {
+      // 🐞 BUG FIX: Use originalIndex to edit/delete the correct task
+      div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(originalIndex));
+      div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(originalIndex));
     }
 
-    // 🔹 Update department display text (e.g. IT Department | John)
-    const deptName = document.getElementById("dept-name");
-    if (deptName) {
-      const deptFormatted = department.toUpperCase() + " Department";
-      deptName.textContent = `${deptFormatted} | ${name}`;
-    }
+    taskList.appendChild(div);
+  });
+}
 
-    // 🔹 Enable mobile menu toggle AFTER header loads
-    const menuToggle = document.querySelector(".menu-toggle");
-    const subContent = document.querySelector(".sub_content");
-    if (menuToggle && subContent) {
-      menuToggle.addEventListener("click", () => {
-        subContent.classList.toggle("active");
-      });
-    }
-  })
-  .catch(err => console.error("Error loading header:", err));
+// ----- Open / Save / Delete handlers -----
+function openEditModal(index) {
+  editIndex = index;
+  editStatus.value = allTasks[index]["STATUS"] || "Not Started";
+  // ⭐ Use "NOTES" column for remarks, matching the form
+  addRemarks.value = allTasks[index]["NOTES"] || "";
+  modalOverlay.style.display = "flex";
+}
+cancelEditBtn.onclick = () => modalOverlay.style.display = "none";
 
+saveEditBtn.onclick = async () => {
+  if (editIndex === null) return;
+  const newStatus = editStatus.value;
+  // ⭐ Send remarks back as "notes" to match backend logic
+  const newRemarks = addRemarks.value.trim();
+  const task = allTasks[editIndex]; // Get the task to access its source
 
-  </script>
-</body>
-</html>
+  document.getElementById("loadingIndicator").style.display = "block";
+  saveEditBtn.disabled = true;
+
+  try {
+    await fetch(scriptURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: JSON.stringify({
+        action: "update",
+        rowIndex: task.rowIndex,
+        status: newStatus,
+        notes: newRemarks, // ⭐ Pass remarks as "notes"
+        source: task.source // Pass the source back to the server
+      })
+    });
+
+    modalOverlay.style.display = "none";
+    fetchTasks(); // Manually trigger fetch after saving
+  } catch (err) {
+    alert("Error updating: " + err.message);
+  }
+
+  document.getElementById("loadingIndicator").style.display = "none";
+  saveEditBtn.disabled = false;
+};
+
+async function deleteTask(index) {
+  if (!confirm("Delete this task?")) return;
+  const task = allTasks[index]; // Get the task to access its source
+
+  try {
+    await fetch(scriptURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: JSON.stringify({
+        action: "delete",
+        rowIndex: task.rowIndex,
+        source: task.source // Pass the source back to the server
+      })
+    });
+    fetchTasks(); // Manually trigger fetch after saving
+  } catch (err) {
+    alert("Error deleting: " + err.message);
+  }
+}
+
+// load
+window.addEventListener("load", fetchTasks);
+
+// ⭐ NEW: Auto-refresh every 1 minute
+setInterval(fetchTasks, 30000); // 60,000 milliseconds = 1 minute
