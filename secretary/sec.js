@@ -243,7 +243,7 @@ function renderTasks() {
     if (status === "Not Started") { color = "#F44336"; bg = "#fdecea"; }
 
     div.style.borderLeft = `6px solid ${color}`;
-    div.style.backgroundColor = bg;
+    // div.style.backgroundColor = bg;
 
     const safe = s => s ? String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])) : "";
 
