@@ -1,4 +1,5 @@
 // ✅ WORKING AS OF 21/10/2025 WITH "Assign To", "addRemarks", AND READ-ONLY PROTECTION
+// ⭐ MODIFIED: Added 1-minute flicker-free auto-refresh and fixed filter bugs.
 
 // DO NOT CHANGE THIS FILE NAME OR PATH TO ENSURE PROPER FUNCTIONALITY
 
@@ -7,18 +8,18 @@ const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
 
+let allTasks = [];
+let editIndex = null;
+
 // ✅ Create single unified filter dropdown
 const filterContainer = document.createElement("div");
 filterContainer.classList.add("filter-container");
 filterContainer.innerHTML = `
   <div class="filter-dropdown">
-    <div class="task-subheader">
-      <p>All Task</p>
-      <button id="filterBtn">
+    <button id="filterBtn">
       <span class="material-symbols-outlined filter">filter_list</span>
       Filter
-      </button>
-    </div>
+    </button>
     <div class="filter-menu">
       <label>Status:</label>
       <select id="statusFilter">
@@ -60,7 +61,7 @@ document.getElementById("filterBtn")?.addEventListener("click", () => {
 // ✅ Apply filters
 document.getElementById("applyFilter")?.addEventListener("click", () => {
   document.querySelector(".filter-menu").classList.remove("active");
-  applyFilters();
+  renderTasks(); // 🐞 BUG FIX: Was calling undefined applyFilters()
 });
 
 // ✅ Clear filters
@@ -69,7 +70,7 @@ document.getElementById("clearFilter")?.addEventListener("click", () => {
   document.getElementById("priorityFilter").value = "All";
   document.getElementById("assignedByFilter").value = "All";
   document.querySelector(".filter-menu").classList.remove("active");
-  applyFilters();
+  renderTasks(); // 🐞 BUG FIX: Was calling undefined applyFilters()
 });
 
 
@@ -150,7 +151,7 @@ form.addEventListener("submit", async (e) => {
     responseMsg.textContent = "✅ Task saved successfully!";
     setTimeout(() => (responseMsg.textContent = ""), 3000);
     form.reset();
-    setTimeout(fetchTasks, 800);
+    setTimeout(fetchTasks, 800); // Manually trigger fetch after adding
   } catch (err) {
     responseMsg.textContent = "❌ Error: " + err.message;
   }
@@ -158,26 +159,52 @@ form.addEventListener("submit", async (e) => {
 
 
 // ✅ Fetch all tasks
+// ⭐ MODIFIED for non-flicker refresh
 async function fetchTasks() {
-  taskList.innerHTML = "<p>Loading tasks...</p>";
+  // Only show "Loading..." on the very first load
+  if (allTasks.length === 0) {
+    taskList.innerHTML = "<p>Loading tasks...</p>";
+  }
+
+  let newTasks = [];
+
   try {
     const res = await fetch(scriptURL);
     const text = await res.text();
     const jsonMatch = text.match(/\{.*\}|\[.*\]/s);
     if (!jsonMatch) throw new Error("Invalid JSON format");
-    allTasks = JSON.parse(jsonMatch[0]);
+    
+    newTasks = JSON.parse(jsonMatch[0]); // Fetch into a temporary array
 
-    // 🧩 Populate "Assigned By" filter dynamically
-    const assignedByFilter = document.getElementById("assignedByFilter");
-    const uniqueAssigners = [
-      ...new Set(allTasks.map(t => (t["ASSIGNED BY"] || "").trim()).filter(v => v))
-    ];
-    assignedByFilter.innerHTML = `<option value="All">All</option>` +
-      uniqueAssigners.map(v => `<option value="${v}">${v}</option>`).join("");
+    // ⭐ Only re-render if the data has actually changed
+    if (JSON.stringify(allTasks) !== JSON.stringify(newTasks)) {
+      allTasks = newTasks; // Update the main array
 
-    renderTasks();
+      // 🧩 Populate "Assigned By" filter dynamically
+      const assignedByFilter = document.getElementById("assignedByFilter");
+      const currentAssignedBy = assignedByFilter.value; // Save current filter
+      const uniqueAssigners = [
+        ...new Set(allTasks.map(t => (t["ASSIGNED BY"] || "").trim()).filter(v => v))
+      ];
+      
+      assignedByFilter.innerHTML = `<option value="All">All</option>` +
+        uniqueAssigners.map(v => `<option value="${v}">${v}</option>`).join("");
+      
+      // Try to restore the old filter value
+      if ([...assignedByFilter.options].some(opt => opt.value === currentAssignedBy)) {
+        assignedByFilter.value = currentAssignedBy;
+      } else {
+        assignedByFilter.value = "All";
+      }
+
+      renderTasks(); // Render the new content
+    }
   } catch (err) {
-    taskList.innerHTML = `<p>⚠️ Error fetching tasks: ${err.message}</p>`;
+    // On a failed refresh, log the error but *don't* wipe the screen
+    console.error("Task refresh failed:", err.message);
+    if (allTasks.length === 0) {
+      taskList.innerHTML = `<p>⚠️ Error fetching tasks: ${err.message}</p>`;
+    }
   }
 }
 
@@ -205,7 +232,11 @@ function renderTasks() {
     return;
   }
 
-  tasksToShow.forEach((t, index) => {
+  tasksToShow.forEach((t) => {
+    // 🐞 BUG FIX: Find the *original* index from the master 'allTasks' array
+    const originalIndex = allTasks.indexOf(t);
+    if (originalIndex === -1) return; // Safeguard
+
     const div = document.createElement("div");
     div.classList.add("task-item");
 
@@ -242,8 +273,8 @@ function renderTasks() {
         ${
           isMaintenance
             ? `
-              <button class="edit-btn" data-index="${index}" data-status="${safe(status)}" data-source="${t.source}">Edit</button>
-              <button class="delete-btn" data-index="${index}" data-source="${t.source}">Delete</button>
+              <button class="edit-btn" data-index="${originalIndex}" data-status="${safe(status)}" data-source="${t.source}">Edit</button>
+              <button class="delete-btn" data-index="${originalIndex}" data-source="${t.source}">Delete</button>
             `
             : `<button disabled class="readonly-btn" style="background-color:#555; color:#fff; padding:10px;cursor:not-allowed;">Read-Only</button>`
         }
@@ -251,8 +282,9 @@ function renderTasks() {
     `;
 
     if (isMaintenance) {
-      div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(index, status, t.source));
-      div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(index, t.source));
+      // 🐞 BUG FIX: Use originalIndex to edit/delete the correct task
+      div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(originalIndex, status, t.source));
+      div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(originalIndex, t.source));
     }
 
     taskList.appendChild(div);
@@ -293,6 +325,7 @@ saveEditBtn.addEventListener("click", async () => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: JSON.stringify({
         action: "update",
+        // 🐞 BUG FIX: Send the Sheet's row index, not the array index
         rowIndex: allTasks[editIndex].rowIndex,
         status: newStatus,
         notes: newRemarks,
@@ -300,7 +333,7 @@ saveEditBtn.addEventListener("click", async () => {
       })
     });
     modalOverlay.style.display = "none";
-    fetchTasks();
+    fetchTasks(); // Manually trigger fetch after saving
   } catch (err) {
     alert("❌ Error updating: " + err.message);
   } finally {
@@ -310,29 +343,32 @@ saveEditBtn.addEventListener("click", async () => {
 });
 
 // ✅ Delete task
-// client-side JS (fetchTasks context)
 async function deleteTask(index, source) {
     if (!confirm("Are you sure you want to delete this task?")) return;
     try {
         await fetch(scriptURL, {
             method: "POST",
-            // ... headers ...
+            mode: "cors", // Added mode
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }, // Added headers
             body: JSON.stringify({
                 action: "delete",
-                rowIndex: allTasks[index].rowIndex, // <-- This is likely causing an error!
+                // 🐞 BUG FIX: Send the Sheet's row index, not the array index
+                rowIndex: allTasks[index].rowIndex, 
                 source
             })
         });
-        fetchTasks();
+        fetchTasks(); // Manually trigger fetch after saving
     } catch (err) {
         alert("❌ Error deleting: " + err.message);
     }
 }
 
-// ✅ Filters
+// ✅ Filters (Listeners are now in renderTasks, but these are for the dropdowns themselves)
 document.getElementById("statusFilter").addEventListener("change", renderTasks);
 document.getElementById("priorityFilter").addEventListener("change", renderTasks);
 
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
 
+// ⭐ NEW: Auto-refresh every 1 minute
+setInterval(fetchTasks, 60000); // 60,000 milliseconds = 1 minute
