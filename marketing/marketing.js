@@ -34,7 +34,7 @@ function changeFrame(type) {
       newSrc = "https://calendar.google.com/calendar/embed?src=f8939355c05bdafed63e7eb02789566c7ebe844c36005d3ce552d4d2fd6cba16%40group.calendar.google.com&ctz=Asia%2FManila";
       break;
 
-      case "attendance":
+    case "attendance":
       newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true";
       break;
 
@@ -49,7 +49,7 @@ function changeFrame(type) {
     case "bnb_dates":
       newSrc = "https://calendar.google.com/calendar/embed?src=00c9b4f66e0573f992bb911bb11ddc608ccb021f2be44fa6cfdc633de1463f82%40group.calendar.google.com&ctz=Asia%2FManila";
       break;
-   
+      
     default:
       newSrc = "https://tephdy.github.io/WEB-APP/";
   }
@@ -227,47 +227,73 @@ form.addEventListener("submit", async (e) => {
 
 
 // ✅ FETCH TASKS (with ALL departments in Assigned By)
+// ⭐ MODIFIED for non-flicker refresh
 async function fetchTasks() {
-  taskList.innerHTML = "<p>Loading tasks...</p>";
+  // Only show "Loading..." on the very first load
+  if (allTasks.length === 0) {
+    taskList.innerHTML = "<p>Loading tasks...</p>";
+  }
+
+  let newTasks = [];
 
   try {
     const res = await fetch(scriptURL);
     const text = await res.text();
     const jsonMatch = text.match(/\{.*\}|\[.*\]/s);
-    allTasks = JSON.parse(jsonMatch[0]);
+    newTasks = JSON.parse(jsonMatch[0]); // Fetch into a temporary array
 
-    // ✅ Default departments ALWAYS included
-    const defaultDepartments = [
-      "Marketing",
-      "Secretary",
-      "Property Representative",
-      "IT"
-    ];
+    // ⭐ Only re-render if the data has actually changed
+    if (JSON.stringify(allTasks) !== JSON.stringify(newTasks)) {
+      allTasks = newTasks; // Update the main array
 
-    // ✅ Get departments from sheet
-    const sheetDepartments = [
-      ...new Set(
-        allTasks
-          .map(t => (t["ASSIGNED BY"] || "").trim())
-          .filter(v => v !== "")
-      )
-    ];
+      // ✅ Default departments ALWAYS included
+      const defaultDepartments = [
+        "Marketing",
+        "Secretary",
+        "Property Representative",
+        "IT",
+        "Maintenance",
+      ];
 
-    // ✅ Merge & remove duplicates
-    const mergedList = [...new Set([...defaultDepartments, ...sheetDepartments])];
+      // ✅ Get departments from sheet
+      const sheetDepartments = [
+        ...new Set(
+          allTasks
+            .map(t => (t["ASSIGNED BY"] || "").trim())
+            .filter(v => v !== "")
+        )
+      ];
 
-    // ✅ Sort alphabetically
-    mergedList.sort();
+      // ✅ Merge & remove duplicates
+      const mergedList = [...new Set([...defaultDepartments, ...sheetDepartments])];
 
-    // ✅ Update filter dropdown
-    assignedByFilter.innerHTML =
-      `<option value="All">All</option>` +
-      mergedList.map(d => `<option value="${d}">${d}</option>`).join("");
+      // ✅ Sort alphabetically
+      mergedList.sort();
 
-    renderTasks();
+      // ✅ Update filter dropdown
+      // Save the current filter value
+      const oldFilterValue = assignedByFilter.value;
+      
+      assignedByFilter.innerHTML =
+        `<option value="All">All</option>` +
+        mergedList.map(d => `<option value="${d}">${d}</option>`).join("");
+      
+      // Try to restore the old filter value
+      if ([...assignedByFilter.options].some(opt => opt.value === oldFilterValue)) {
+          assignedByFilter.value = oldFilterValue;
+      } else {
+          assignedByFilter.value = "All";
+      }
+
+      renderTasks(); // Render the new content
+    }
 
   } catch (err) {
-    taskList.innerHTML = `<p>⚠️ Error loading tasks</p>`;
+    // On a failed refresh, log the error but *don't* wipe the screen
+    console.error("Task refresh failed:", err.message);
+    if (allTasks.length === 0) {
+      taskList.innerHTML = `<p>⚠️ Error loading tasks</p>`;
+    }
   }
 }
 
@@ -292,6 +318,10 @@ function renderTasks() {
   }
 
   data.forEach((t, index) => {
+    // 🐞 BUG FIX: 'index' is for the *filtered* array. We need the original.
+    const originalIndex = allTasks.indexOf(t);
+    if (originalIndex === -1) return; // Safeguard
+
     const div = document.createElement("div");
     div.classList.add("task-item");
 
@@ -318,13 +348,14 @@ function renderTasks() {
       <div class="task-meta">🕒 ${t["TIMESTAMP"]}</div>
 
       <div class="task-actions">
-        <button class="edit-btn" data-index="${index}">✏️ Edit</button>
-        <button class="delete-btn" data-index="${index}">🗑️ Delete</button>
+        <button class="edit-btn" data-index="${originalIndex}">✏️ Edit</button>
+        <button class="delete-btn" data-index="${originalIndex}">🗑️ Delete</button>
       </div>
     `;
 
-    div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(index));
-    div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(index));
+    // 🐞 BUG FIX: Use originalIndex to edit/delete the correct task
+    div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(originalIndex));
+    div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(originalIndex));
 
     taskList.appendChild(div);
   });
@@ -344,6 +375,8 @@ cancelEditBtn.addEventListener("click", () => modalOverlay.style.display = "none
 
 // ✅ Save edit
 saveEditBtn.addEventListener("click", async () => {
+  if (editIndex === null) return; // Prevent saving if no index is set
+  
   const status = editStatus.value;
   const remarks = addRemarks.value.trim();
 
@@ -354,7 +387,8 @@ saveEditBtn.addEventListener("click", async () => {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: JSON.stringify({
       action: "update",
-      rowIndex: editIndex,
+      // 🐞 BUG FIX: Send the Sheet's row index, not the array index
+      rowIndex: allTasks[editIndex].rowIndex, 
       status,
       notes: remarks
     })
@@ -374,7 +408,8 @@ async function deleteTask(index) {
   await fetch(scriptURL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: JSON.stringify({ action: "delete", rowIndex: index })
+    // 🐞 BUG FIX: Send the Sheet's row index, not the array index
+    body: JSON.stringify({ action: "delete", rowIndex: allTasks[index].rowIndex })
   });
 
   fetchTasks();
@@ -384,7 +419,5 @@ async function deleteTask(index) {
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
 
-
-
-
-
+// ⭐ NEW: Auto-refresh every 1 minute
+setInterval(fetchTasks, 60000); // 60,000 milliseconds = 1 minute
