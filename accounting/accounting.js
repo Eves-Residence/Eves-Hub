@@ -1,5 +1,5 @@
 // FULL UPDATED script — fixes filter not working and keeps UI unchanged
-// ⭐ MODIFIED: Tasks assigned TO accounting are now editable.
+// MODIFIED: Tasks assigned TO accounting are now editable.
 const scriptURL = "https://script.google.com/macros/s/AKfycbx9lN99JLJj18roAXUJakaci70aZOrtrxkIDEn3lcrE7mtov1JjoMp53IkeVWHB7liL/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
@@ -347,3 +347,4 @@ async function deleteTask(index) {
 
 // load
 window.addEventListener("load", fetchTasks);
+
