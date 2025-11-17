@@ -254,7 +254,7 @@ function renderTasks() {
     else if (status === "Not Started") { statusColor = "#F44336"; bgColor = "#fdecea"; }
 
     div.style.borderLeft = `6px solid ${statusColor}`;
-    div.style.backgroundColor = bgColor;
+    // div.style.backgroundColor = bgColor;
 
     const safe = s => s === undefined || s === null ? "" : String(s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
