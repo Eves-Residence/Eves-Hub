@@ -3,7 +3,7 @@
    Paste/replace your existing sec.js with this file.
 */
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbzxASFS8paaBEjMEsbTyBGy1bgBccXnS5LAooL1PNbcshxzSuiM8LyXYEfwiZkpb1fR/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbwfngIWdfoix0eGYdFsozqhgpCpCpIuhg2ysAxrXgAoFWmOX1doW3PWzzPrOeORgoaU/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
