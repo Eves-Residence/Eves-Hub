@@ -211,7 +211,7 @@ function renderTasks() {
     else if (status === "Not Started") { statusColor = "#F44336"; bgColor = "#fdecea"; }
 
     div.style.borderLeft = `6px solid ${statusColor}`;
-    div.style.backgroundColor = bgColor;
+    // div.style.backgroundColor = bgColor;
 
     const safe = str => str ? String(str).replace(/[&<>"]/g, c => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
@@ -330,3 +330,4 @@ document.getElementById("priorityFilter").addEventListener("change", renderTasks
 
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
+
