@@ -300,7 +300,7 @@ function renderTasks() {
     if (status === "Not Started") { color = "#F44336"; bg = "#fdecea"; }
 
     div.style.borderLeft = `6px solid ${color}`;
-    div.style.background = bg;
+    // div.style.background = bg;
 
     div.innerHTML = `
       <div class="task-header">${t["TASK NAME"] || ""}</div>
@@ -380,6 +380,7 @@ async function deleteTask(index) {
 
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
+
 
 
 
