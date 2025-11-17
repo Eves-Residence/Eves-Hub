@@ -295,6 +295,18 @@ form{
   text-align: center;
 }
 
+.task-subheader{
+  width: 20vw;
+  /* background-color: #9ff210; */
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+
+}
+
 /* ✅ Responsive */
 @media (max-width: 768px) {
   .task-main-container {
@@ -327,4 +339,5 @@ iframe {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   flex-grow: 1;
 }
+
 
