@@ -105,7 +105,7 @@ function login() {
     
     if (accessType === "desktop") {
         // Desktop: Absolute path from root
-        redirectPath = `/${dept}/index.html`; 
+        redirectPath = `${dept}/index.html`; 
     } else if (accessType === "mobile") {
         // Mobile App: FIXING back to Absolute Path from root (most reliable)
         const mobilePaths = {
@@ -143,5 +143,6 @@ function togglePasswordVisibility() {
         }
     }
 }
+
 
 
