@@ -1,8 +1,8 @@
 // FULL UPDATED script — fixes filter not working and keeps UI unchanged
-// ⭐ MODIFIED: Tasks assigned TO accounting are now editable.
-// ⭐ MODIFIED: Added 1-minute flicker-free auto-refresh.
+// ⭐ MODIFIED: Tasks are ONLY editable if created BY Accounting (source == "Accounting").
+// ⭐ MODIFIED: Added 30s flicker-free auto-refresh.
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbx9lN99JLJj18roAXUJakaci70aZOrtrxkIDEn3lcrE7mtov1JjoMp53IkeVWHB7liL/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxnXQyBpfnesmJvFBs0vWvRnIZIvXrGpP1D3Nc5TWM4VWJSdd32kQGNeVTiV5IHwTIi/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
@@ -272,11 +272,15 @@ function renderTasks() {
 
     const safe = s => s ? String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])) : "";
 
-    // ⭐ MODIFIED LOGIC: Check 'ASSIGNED TO' for 'accounting' (case-insensitive)
-    const canEdit = String(t["ASSIGNED TO"] || "").trim().toLowerCase() === "accounting";
+    // ⭐ MODIFIED LOGIC: Check 'source' property (case-insensitive)
+    // Only tasks *from* Accounting are editable.
+    const canEdit = String(t.source || "").trim().toLowerCase() === "accounting";
 
     div.innerHTML = `
-      <div class="task-header">${safe(t["TASK NAME"])}</div>
+      <div class="task-header">
+        ${safe(t["TASK NAME"])}
+        <span style="font-size:12px;color:#777;">(Source: ${safe(t.source) || "Unknown"})</span>
+      </div>
       <div class="task-meta">
         <b>Priority:</b> ${safe(t["PRIORITY"])} |
         <b>Assigned By:</b> ${safe(t["ASSIGNED BY"])} |
@@ -311,6 +315,7 @@ function renderTasks() {
 function openEditModal(index) {
   editIndex = index;
   editStatus.value = allTasks[index]["STATUS"] || "Not Started";
+  // ⭐ Use "NOTES" column for remarks, matching the form
   addRemarks.value = allTasks[index]["NOTES"] || "";
   modalOverlay.style.display = "flex";
 }
@@ -319,7 +324,9 @@ cancelEditBtn.onclick = () => modalOverlay.style.display = "none";
 saveEditBtn.onclick = async () => {
   if (editIndex === null) return;
   const newStatus = editStatus.value;
+  // ⭐ Send remarks back as "notes" to match backend logic
   const newRemarks = addRemarks.value.trim();
+  const task = allTasks[editIndex]; // Get the task to access its source
 
   document.getElementById("loadingIndicator").style.display = "block";
   saveEditBtn.disabled = true;
@@ -330,9 +337,10 @@ saveEditBtn.onclick = async () => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: JSON.stringify({
         action: "update",
-        rowIndex: allTasks[editIndex].rowIndex,
+        rowIndex: task.rowIndex,
         status: newStatus,
-        notes: newRemarks
+        notes: newRemarks, // ⭐ Pass remarks as "notes"
+        source: task.source // Pass the source back to the server
       })
     });
 
@@ -348,13 +356,16 @@ saveEditBtn.onclick = async () => {
 
 async function deleteTask(index) {
   if (!confirm("Delete this task?")) return;
+  const task = allTasks[index]; // Get the task to access its source
+
   try {
     await fetch(scriptURL, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: JSON.stringify({
         action: "delete",
-        rowIndex: allTasks[index].rowIndex
+        rowIndex: task.rowIndex,
+        source: task.source // Pass the source back to the server
       })
     });
     fetchTasks(); // Manually trigger fetch after saving
@@ -367,4 +378,4 @@ async function deleteTask(index) {
 window.addEventListener("load", fetchTasks);
 
 // ⭐ NEW: Auto-refresh every 1 minute
-setInterval(fetchTasks, 60000); // 60,000 milliseconds = 1 minute
+setInterval(fetchTasks, 30000); // 60,000 milliseconds = 1 minute
