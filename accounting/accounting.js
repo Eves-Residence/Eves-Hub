@@ -1,4 +1,5 @@
 // FULL UPDATED script — fixes filter not working and keeps UI unchanged
+// ⭐ MODIFIED: Tasks assigned TO accounting are now editable.
 const scriptURL = "https://script.google.com/macros/s/AKfycbx9lN99JLJj18roAXUJakaci70aZOrtrxkIDEn3lcrE7mtov1JjoMp53IkeVWHB7liL/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
@@ -216,7 +217,6 @@ async function fetchTasks() {
 }
 
 // ----- Render tasks with filters -----
-// Note: Secretary can edit tasks that have ASSIGNED BY = "Secretary" (case-insensitive)
 function renderTasks() {
   const sFilter = statusFilter.value;
   const pFilter = priorityFilter.value;
@@ -235,7 +235,11 @@ function renderTasks() {
     return;
   }
 
-  tasksToShow.forEach((t, index) => {
+  tasksToShow.forEach((t) => {
+    // 🐞 BUG FIX: 'index' is for the *filtered* array. We need the original.
+    const originalIndex = allTasks.indexOf(t);
+    if (originalIndex === -1) return; // Safeguard
+
     const div = document.createElement("div");
     div.classList.add("task-item");
 
@@ -250,7 +254,8 @@ function renderTasks() {
 
     const safe = s => s ? String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])) : "";
 
-    const canEdit = String(t["ASSIGNED BY"] || "").trim().toLowerCase() === "secretary";
+    // ⭐ MODIFIED LOGIC: Check 'ASSIGNED TO' for 'accounting' (case-insensitive)
+    const canEdit = String(t["ASSIGNED TO"] || "").trim().toLowerCase() === "accounting";
 
     div.innerHTML = `
       <div class="task-header">${safe(t["TASK NAME"])}</div>
@@ -266,16 +271,18 @@ function renderTasks() {
       <div class="task-actions">
         ${
           canEdit
-            ? `<button class="edit-btn" data-index="${index}">✏️ Edit</button>
-               <button class="delete-btn" data-index="${index}">🗑️ Delete</button>`
+            // 🐞 BUG FIX: Use originalIndex to edit/delete the correct task
+            ? `<button class="edit-btn" data-index="${originalIndex}">✏️ Edit</button>
+               <button class="delete-btn" data-index="${originalIndex}">🗑️ Delete</button>`
             : `<button class="readonly-btn" disabled style="background:#555;color:white;">🔒 Read-Only</button>`
         }
       </div>
     `;
 
     if (canEdit) {
-      div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(index));
-      div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(index));
+      // 🐞 BUG FIX: Use originalIndex to edit/delete the correct task
+      div.querySelector(".edit-btn").addEventListener("click", () => openEditModal(originalIndex));
+      div.querySelector(".delete-btn").addEventListener("click", () => deleteTask(originalIndex));
     }
 
     taskList.appendChild(div);
