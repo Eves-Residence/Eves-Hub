@@ -1,5 +1,7 @@
 // FULL UPDATED script — fixes filter not working and keeps UI unchanged
-// MODIFIED: Tasks assigned TO accounting are now editable.
+// ⭐ MODIFIED: Tasks assigned TO accounting are now editable.
+// ⭐ MODIFIED: Added 1-minute flicker-free auto-refresh.
+
 const scriptURL = "https://script.google.com/macros/s/AKfycbx9lN99JLJj18roAXUJakaci70aZOrtrxkIDEn3lcrE7mtov1JjoMp53IkeVWHB7liL/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
@@ -169,7 +171,7 @@ form.addEventListener("submit", async (e) => {
     setTimeout(() => (responseMsg.textContent = ""), 3000);
 
     form.reset();
-    setTimeout(fetchTasks, 800);
+    setTimeout(fetchTasks, 800); // Manually trigger fetch after adding
 
   } catch (err) {
     responseMsg.textContent = "❌ Error: " + err.message;
@@ -177,42 +179,58 @@ form.addEventListener("submit", async (e) => {
 });
 
 // ----- Fetch tasks & populate Assigned By (fixed + dynamic) -----
+// ⭐ MODIFIED for non-flicker refresh
 async function fetchTasks() {
-  taskList.innerHTML = "<p>Loading...</p>";
+  // Only show "Loading..." on the very first load
+  if (allTasks.length === 0) {
+    taskList.innerHTML = "<p>Loading...</p>";
+  }
+  
+  let newTasks = [];
+
   try {
     const res = await fetch(scriptURL);
     const text = await res.text();
     const jsonMatch = text.match(/\{.*\}|\[.*\]/s);
     if (!jsonMatch) throw new Error("Invalid JSON");
 
-    allTasks = JSON.parse(jsonMatch[0]);
+    newTasks = JSON.parse(jsonMatch[0]); // Fetch into a temporary array
 
-    // fixed departments + dynamic merge
-    const fixedDepartments = [
-      "Secretary",
-      "Marketing",
-      "Property Representative",
-      "Accounting",
-      "IT"
-    ];
-    const dynamicDepartments = allTasks
-      .map(t => (t["ASSIGNED BY"] || "").trim())
-      .filter(v => v !== "");
-    const combinedDepartments = [...new Set([...fixedDepartments, ...dynamicDepartments])];
+    // ⭐ Only re-render if the data has actually changed
+    if (JSON.stringify(allTasks) !== JSON.stringify(newTasks)) {
+      allTasks = newTasks; // Update the main array
 
-    // populate assignedByFilter safely (preserve previously selected if possible)
-    const prev = assignedByFilter.value || "All";
-    assignedByFilter.innerHTML = `<option value="All">All</option>` +
-      combinedDepartments.map(d => `<option value="${d}">${d}</option>`).join("");
-    if ([...assignedByFilter.options].some(opt => opt.value === prev)) {
-      assignedByFilter.value = prev;
-    } else {
-      assignedByFilter.value = "All";
+      // fixed departments + dynamic merge
+      const fixedDepartments = [
+        "Secretary",
+        "Marketing",
+        "Property Representative",
+        "Accounting",
+        "IT"
+      ];
+      const dynamicDepartments = allTasks
+        .map(t => (t["ASSIGNED BY"] || "").trim())
+        .filter(v => v !== "");
+      const combinedDepartments = [...new Set([...fixedDepartments, ...dynamicDepartments])];
+
+      // populate assignedByFilter safely (preserve previously selected if possible)
+      const prev = assignedByFilter.value || "All";
+      assignedByFilter.innerHTML = `<option value="All">All</option>` +
+        combinedDepartments.map(d => `<option value="${d}">${d}</option>`).join("");
+      if ([...assignedByFilter.options].some(opt => opt.value === prev)) {
+        assignedByFilter.value = prev;
+      } else {
+        assignedByFilter.value = "All";
+      }
+
+      renderTasks(); // Render the new content
     }
-
-    renderTasks();
   } catch (err) {
-    taskList.innerHTML = `<p>Error: ${err.message}</p>`;
+    // On a failed refresh, log the error but *don't* wipe the screen
+    console.error("Task refresh failed:", err.message);
+    if (allTasks.length === 0) {
+      taskList.innerHTML = `<p>Error: ${err.message}</p>`;
+    }
   }
 }
 
@@ -319,7 +337,7 @@ saveEditBtn.onclick = async () => {
     });
 
     modalOverlay.style.display = "none";
-    fetchTasks();
+    fetchTasks(); // Manually trigger fetch after saving
   } catch (err) {
     alert("Error updating: " + err.message);
   }
@@ -339,7 +357,7 @@ async function deleteTask(index) {
         rowIndex: allTasks[index].rowIndex
       })
     });
-    fetchTasks();
+    fetchTasks(); // Manually trigger fetch after saving
   } catch (err) {
     alert("Error deleting: " + err.message);
   }
@@ -348,3 +366,5 @@ async function deleteTask(index) {
 // load
 window.addEventListener("load", fetchTasks);
 
+// ⭐ NEW: Auto-refresh every 1 minute
+setInterval(fetchTasks, 60000); // 60,000 milliseconds = 1 minute
