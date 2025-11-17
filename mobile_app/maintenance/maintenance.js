@@ -12,10 +12,13 @@ const filterContainer = document.createElement("div");
 filterContainer.classList.add("filter-container");
 filterContainer.innerHTML = `
   <div class="filter-dropdown">
-    <button id="filterBtn">
+    <div class="task-subheader">
+      <p>All Task</p>
+      <button id="filterBtn">
       <span class="material-symbols-outlined filter">filter_list</span>
       Filter
-    </button>
+      </button>
+    </div>
     <div class="filter-menu">
       <label>Status:</label>
       <select id="statusFilter">
@@ -332,3 +335,4 @@ document.getElementById("priorityFilter").addEventListener("change", renderTasks
 
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
+
