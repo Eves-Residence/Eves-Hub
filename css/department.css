@@ -107,6 +107,18 @@ footer {
   margin-top: 30px;
 }
 
+.task-subheader{
+  width: 20vw;
+  /* background-color: #9ff210; */
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+
+}
+
 /* RESPONSIVE ADJUSTMENTS */
 @media (max-width: 1024px) {
   .main_container {
@@ -162,5 +174,6 @@ footer {
   width: 35px;
   margin-top: 12px;
 }
+
 
 
