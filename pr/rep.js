@@ -1,7 +1,7 @@
 // FULL UPDATED script — fixes filter not working and keeps UI unchanged
 // ⭐ MODIFIED: Added 1-minute flicker-free auto-refresh.
 
-const scriptURL = "https.google.com/macros/s/AKfycbyK_kQUGwRuhvTfxvsjVrcyoBSZ8lbFPA0tXVmY9lttde7glR71Wv7SDXf6DiSV871i8w/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbyK_kQUGwRuhvTfxvsjVrcyoBSZ8lbFPA0tXVmY9lttde7glR71Wv7SDXf6DiSV871i8w/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
