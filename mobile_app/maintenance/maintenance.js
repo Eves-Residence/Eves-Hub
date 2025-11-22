@@ -1,7 +1,4 @@
-// ✅ WORKING AS OF 21/10/2025 WITH "Assign To", "addRemarks", AND READ-ONLY PROTECTION
-// ⭐ MODIFIED: Removed JS-based filter creation (now in HTML)
-
-// DO NOT CHANGE THIS FILE NAME OR PATH TO ENSURE PROPER FUNCTIONALITY
+// ✅ FULL CODE - Fixed filter options added.
 
 const scriptURL = "https://script.google.com/macros/s/AKfycby37nFYHzcefhlsg-8xu6YiCIFbRtEeWQKbWSEt72Ycd12Q3ETaNA80O0o7EC-JyOWX/exec";
 const form = document.getElementById("todo-form");
@@ -32,7 +29,7 @@ document.getElementById("clearFilter")?.addEventListener("click", () => {
 });
 
 
-// ✅ Popup modal
+// ✅ Popup modal (Kept the original structure)
 const modalHTML = `
   <div id="modalOverlay" style="display:none;
     position:fixed; top:0; left:0; width:100%; height:100%;
@@ -116,7 +113,6 @@ form.addEventListener("submit", async (e) => {
 
 
 // ✅ Fetch all tasks
-// ⭐ MODIFIED for non-flicker refresh
 async function fetchTasks() {
   // Only show "Loading..." on the very first load
   if (allTasks.length === 0) {
@@ -137,17 +133,29 @@ async function fetchTasks() {
     if (JSON.stringify(allTasks) !== JSON.stringify(newTasks)) {
       allTasks = newTasks; // Update the main array
 
-      // 🧩 Populate "Assigned By" filter dynamically
+      // Define the fixed list requested by the user
+      const fixedDepartments = [
+        "Secretary",
+        "Marketing",
+        "Property Representative",
+        "Accounting",
+        "IT"
+      ];
+
       const assignedByFilter = document.getElementById("assignedByFilter");
       const currentAssignedBy = assignedByFilter.value; // Save current filter
-      const uniqueAssigners = [
-        ...new Set(allTasks.map(t => (t["ASSIGNED BY"] || "").trim()).filter(v => v))
-      ];
       
-      // We only append unique assigners not already in the HTML static list if necessary,
-      // or just overwrite it like before. Overwriting is safer to ensure sync with Sheet.
+      // Get unique assigners from the sheet data
+      const dynamicAssigners = allTasks
+        .map(t => (t["ASSIGNED BY"] || "").trim())
+        .filter(v => v);
+
+      // ✅ Combine fixed departments with dynamic assigners, ensuring uniqueness
+      const combinedAssigners = [...new Set([...fixedDepartments, ...dynamicAssigners])];
+
+
       assignedByFilter.innerHTML = `<option value="All">All</option>` +
-        uniqueAssigners.map(v => `<option value="${v}">${v}</option>`).join("");
+        combinedAssigners.map(v => `<option value="${v}">${v}</option>`).join("");
       
       // Try to restore the old filter value
       if ([...assignedByFilter.options].some(opt => opt.value === currentAssignedBy)) {
@@ -201,18 +209,28 @@ function renderTasks() {
 
     const status = (t["STATUS"] || "Not Started").trim();
     let statusColor = "#999", bgColor = "#fff";
+    
+    // ⭐ COPIED COLOR FUNCTIONALITY: Border and Background color based on Status
     if (status === "Completed") { statusColor = "#4CAF50"; bgColor = "#e8f5e9"; }
     else if (status === "In Progress") { statusColor = "#FFC107"; bgColor = "#fff9e6"; }
     else if (status === "Not Started") { statusColor = "#F44336"; bgColor = "#fdecea"; }
 
     div.style.borderLeft = `6px solid ${statusColor}`;
-    div.style.backgroundColor = bgColor;
+    // ✅ Applied Background Color
+    div.style.backgroundColor = bgColor; 
 
     const safe = str => str ? String(str).replace(/[&<>"]/g, c => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
     }[c])) : "";
 
-    const isMaintenance = t.source === "Maintenance";
+    // ⭐ NEW READ-ONLY LOGIC: Check for self-assignment (Assigned By === Assigned To)
+    const assignedBy = (t["ASSIGNED BY"] || "").trim();
+    const assignedTo = (t["ASSIGNED TO"] || "").trim();
+    const assignedMatch = assignedBy === assignedTo;
+
+    // Task is only editable if it was sourced by Maintenance AND is self-assigned.
+    const isMaintenance = (t.source === "Maintenance") && assignedMatch;
+    // ⭐ END READ-ONLY LOGIC
 
     div.innerHTML = `
       <div class="task-header">
@@ -323,5 +341,5 @@ async function deleteTask(index, source) {
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
 
-// ⭐ NEW: Auto-refresh every 1 minute
+// ⭐ Auto-refresh every 1 minute
 setInterval(fetchTasks, 60000);
