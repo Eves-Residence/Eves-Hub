@@ -7,8 +7,8 @@
     <!-- Assets linked with absolute paths to work across different departments -->
     <link rel="stylesheet" href="/css/mobile.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <link rel="shortcut icon" href="../../img/logo.png" type="image/x-icon">
-    <link rel="stylesheet" href="../../css/mobile_header.css">
+    <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="/css/mobile_header.css">
     
     <!-- We will use the embedded script only -->
 </head>
@@ -17,7 +17,7 @@
 <!-- ============== EMBEDDED HEADER CONTENT (Replaces <div id="header">) ============== -->
 <header>
     <div class="logo-container">
-        <img src="../../img/logo.png" alt="EveHub Logo" class="logo">
+        <img src="/img/logo.png" alt="EveHub Logo" class="logo">
     </div>
 
     <h2 id="dept-name" class="header-title">Department | <span id="user">User</span></h2>
@@ -57,11 +57,15 @@
             <!-- 🎯 This link now calls the placeholder view via JS -->
             <a href="#" id="task-manager-link">Task Manager</a> 
         </div>
+
+        <div class="menu-link">
+            <a href="https://forms.gle/MTxYR14vfQP7RSDz5" target="_blank">Job Order</a>
+        </div>
         
     </div>
 
     <div class="logout">
-        <a href="../../index.html">Logout</a>
+        <a href="/index.html">Logout</a>
     </div>
 </menu>
 <!-- ========================================================================= -->
@@ -135,7 +139,7 @@
             <div id="taskList" class="task-list"></div>
                 <!-- Placeholder starts hidden -->
                 <div class="placeholder-hidden" id="placeholder">
-                    <img src="../../img/coming_soon.png" alt="">
+                    <img src="/img/coming_soon.png" alt="">
                     <h1>Coming Soon..</h1>
                     <p>This page is under construction.</p>
                 </div>
@@ -263,10 +267,11 @@
                 const formUrls = {
                     'Attendance': 'https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true',
                     'Off / Absent': 'https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true',
-                    'Cash Advance/Loan': 'https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true'
+                    'Cash Advance/Loan': 'https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true',
+                    'Job Order': 'https://forms.gle/MTxYR14vfQP7RSDz5'
                 };
                 
-                if (linkText.includes('Attendance') || linkText.includes('Off') || linkText.includes('Cash Advance')) {
+                if (linkText.includes('Attendance') || linkText.includes('Off') || linkText.includes('Cash Advance') || linkText.includes('Job Order')) {
                     showIframe(formUrls[linkText]);
                 } else if (linkText.includes('Task Manager')) {
                     // 🎯 FIX: Task Manager menu link now shows the placeholder
