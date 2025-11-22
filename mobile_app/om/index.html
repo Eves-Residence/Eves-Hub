@@ -41,6 +41,10 @@
 
 <menu id="main-menu" class="hidden-menu"> 
     <div class="menu_content">
+
+        <div class="menu-link">
+            <a href="https://calendar.google.com/calendar/embed?src=23195d0aba5de40a69bfc9fe008e82f4a1824526aeb5fd447527468549586af2%40group.calendar.google.com&ctz=Asia%2FManila" target="_blank">Job Order</a>
+        </div>
         
         <div class="menu-link">
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true" target="_blank">Attendance</a>
@@ -239,12 +243,16 @@
                 const linkText = link.textContent.trim();
 
                 const formUrls = {
+                    'Job Order': 'https://calendar.google.com/calendar/embed?src=23195d0aba5de40a69bfc9fe008e82f4a1824526aeb5fd447527468549586af2%40group.calendar.google.com&ctz=Asia%2FManila',
                     'Attendance': 'https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true',
                     'Off / Absent': 'https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true',
                     'Cash Advance/Loan': 'https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true'
                 };
-                
-                if (linkText.includes('Attendance')) {
+
+                if (linkText.includes('Job Order')) {
+                    showIframe(formUrls['Job Order']);
+                }
+                else if (linkText.includes('Attendance')) {
                     showIframe(formUrls['Attendance']);
                 } else if (linkText.includes('Off')) {
                     showIframe(formUrls['Off / Absent']);
