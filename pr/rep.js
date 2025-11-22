@@ -273,7 +273,13 @@ function renderTasks() {
     const safe = s => s ? String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])) : "";
 
     // Edit permission: can edit only if ASSIGNED BY equals "Secretary" (case-insensitive)
-    const canEdit = String(t["ASSIGNED BY"] || "").trim().toLowerCase() === "secretary";
+    const assignedByValue = String(t["ASSIGNED BY"] || "").trim().toLowerCase();
+
+    const canEdit = (
+        assignedByValue === "property representative" ||
+        assignedByValue === "property rep" ||
+        assignedByValue === "pr"
+    );
 
     div.innerHTML = `
       <div class="task-header">${safe(t["TASK NAME"])}</div>
