@@ -1,5 +1,5 @@
 // ✅ WORKING AS OF 21/10/2025 WITH "Assign To", "addRemarks", AND READ-ONLY PROTECTION
-// ⭐ MODIFIED: Added 1-minute flicker-free auto-refresh and fixed filter bugs.
+// ⭐ MODIFIED: Removed JS-based filter creation (now in HTML)
 
 // DO NOT CHANGE THIS FILE NAME OR PATH TO ENSURE PROPER FUNCTIONALITY
 
@@ -11,49 +11,7 @@ const responseMsg = document.getElementById("response");
 let allTasks = [];
 let editIndex = null;
 
-// ✅ Create single unified filter dropdown
-const filterContainer = document.createElement("div");
-filterContainer.classList.add("filter-container");
-filterContainer.innerHTML = `
-  <div class="filter-dropdown">
-    <button id="filterBtn">
-      <span class="material-symbols-outlined filter">filter_list</span>
-      Filter
-    </button>
-    <div class="filter-menu">
-      <label>Status:</label>
-      <select id="statusFilter">
-        <option value="All">All</option>
-        <option value="Not Started">Not Started</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Completed">Completed</option>
-      </select>
-
-      <label>Priority:</label>
-      <select id="priorityFilter">
-        <option value="All">All</option>
-        <option value="High">High</option>
-        <option value="Medium">Medium</option>
-        <option value="Low">Low</option>
-      </select>
-
-      <label>Assigned By:</label>
-      <select id="assignedByFilter">
-        <option value="Marketing">Marketing</option>
-        <option value="Property Representative">Property Representative</option>
-        <option value="Accounting">Accounting</option>
-        <option value="IT">IT</option>
-      </select>
-
-      <button id="applyFilter">Apply</button>
-      <button id="clearFilter">Clear</button>
-    </div>
-  </div>
-`;
-
-taskList.parentNode.insertBefore(filterContainer, taskList);
-
-// 🧠 Toggle filter menu visibility
+// 🧠 Toggle filter menu visibility (Attached to existing HTML elements)
 document.getElementById("filterBtn")?.addEventListener("click", () => {
   document.querySelector(".filter-menu").classList.toggle("active");
 });
@@ -61,7 +19,7 @@ document.getElementById("filterBtn")?.addEventListener("click", () => {
 // ✅ Apply filters
 document.getElementById("applyFilter")?.addEventListener("click", () => {
   document.querySelector(".filter-menu").classList.remove("active");
-  renderTasks(); // 🐞 BUG FIX: Was calling undefined applyFilters()
+  renderTasks(); 
 });
 
 // ✅ Clear filters
@@ -70,9 +28,8 @@ document.getElementById("clearFilter")?.addEventListener("click", () => {
   document.getElementById("priorityFilter").value = "All";
   document.getElementById("assignedByFilter").value = "All";
   document.querySelector(".filter-menu").classList.remove("active");
-  renderTasks(); // 🐞 BUG FIX: Was calling undefined applyFilters()
+  renderTasks(); 
 });
-
 
 
 // ✅ Popup modal
@@ -187,6 +144,8 @@ async function fetchTasks() {
         ...new Set(allTasks.map(t => (t["ASSIGNED BY"] || "").trim()).filter(v => v))
       ];
       
+      // We only append unique assigners not already in the HTML static list if necessary,
+      // or just overwrite it like before. Overwriting is safer to ensure sync with Sheet.
       assignedByFilter.innerHTML = `<option value="All">All</option>` +
         uniqueAssigners.map(v => `<option value="${v}">${v}</option>`).join("");
       
@@ -325,7 +284,6 @@ saveEditBtn.addEventListener("click", async () => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: JSON.stringify({
         action: "update",
-        // 🐞 BUG FIX: Send the Sheet's row index, not the array index
         rowIndex: allTasks[editIndex].rowIndex,
         status: newStatus,
         notes: newRemarks,
@@ -348,11 +306,10 @@ async function deleteTask(index, source) {
     try {
         await fetch(scriptURL, {
             method: "POST",
-            mode: "cors", // Added mode
-            headers: { "Content-Type": "application/x-www-form-urlencoded" }, // Added headers
+            mode: "cors", 
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }, 
             body: JSON.stringify({
                 action: "delete",
-                // 🐞 BUG FIX: Send the Sheet's row index, not the array index
                 rowIndex: allTasks[index].rowIndex, 
                 source
             })
@@ -363,12 +320,8 @@ async function deleteTask(index, source) {
     }
 }
 
-// ✅ Filters (Listeners are now in renderTasks, but these are for the dropdowns themselves)
-document.getElementById("statusFilter").addEventListener("change", renderTasks);
-document.getElementById("priorityFilter").addEventListener("change", renderTasks);
-
 // ✅ Load tasks on page load
 window.addEventListener("load", fetchTasks);
 
 // ⭐ NEW: Auto-refresh every 1 minute
-setInterval(fetchTasks, 60000); // 60,000 milliseconds = 1 minute
+setInterval(fetchTasks, 60000);
