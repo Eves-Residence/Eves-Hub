@@ -35,12 +35,24 @@ function changeFrame(type) {
       newSrc = "https://docs.google.com/spreadsheets/d/1NhuvtNtXWxWPt05lAbrvRs99RnMffoKq8RVIXaFXR-Q/edit?usp=sharing";
       break;
 
-      case "green":
-      newSrc = "https://docs.google.com/spreadsheets/d/1HGtfKtk7mxAdqn3sDAV_GMV7iuOYkWYo-0R562rAFUE/edit?usp=sharing";
+      case "acctSys":
+      newSrc = "https://docs.google.com/spreadsheets/d/1Ynoql5RQfIsL1eeo8SJ3adonkCD_4Q2HpMR_EDLVSAA/edit?usp=sharing";
       break;
 
     case "calendar":
       newSrc = "https://calendar.google.com/calendar/embed?src=f8939355c05bdafed63e7eb02789566c7ebe844c36005d3ce552d4d2fd6cba16%40group.calendar.google.com&ctz=Asia%2FManila";
+      break;
+
+    case "attendance":
+      newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true";
+      break;
+
+    case "off":
+      newSrc = "https://forms.gle/PHoJ54PEnM5jfm6fA";
+      break;
+
+    case "ca":
+      newSrc = "https://forms.gle/PHoJ54PEnM5jfm6fA";
       break;
 
     default:
