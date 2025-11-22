@@ -53,7 +53,7 @@ function changeFrame(type) {
       break;
 
     case "jo":
-      newSrc = "../JO/index.html";
+      newSrc = "https://eves-residence.github.io/JOB-ORDER/";
       break;
       
     default:
@@ -77,5 +77,6 @@ function changeFrame(type) {
   }, 200);
 
 }
+
 
 
