@@ -53,7 +53,7 @@ function changeFrame(type) {
       break;
 
     case "jo":
-      newSrc = "/JO/index.html";
+      newSrc = "../JO/index.html";
       break;
       
     default:
@@ -77,4 +77,5 @@ function changeFrame(type) {
   }, 200);
 
 }
+
 
