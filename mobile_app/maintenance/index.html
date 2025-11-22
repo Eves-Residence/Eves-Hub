@@ -3,35 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maintenance | EveConnect</title>
-    <!-- Assets linked with absolute paths to work across different departments -->
+    <title>MAINTENANCE | EveConnect</title>
     <link rel="stylesheet" href="../../css/mobile.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="shortcut icon" href="../../img/logo.png" type="image/x-icon">
     <link rel="stylesheet" href="../../css/mobile_header.css">
+    
     <script src="maintenance.js" defer></script>
+
+    <style>
+        /* CSS TO HANDLE THE FILTER DROPDOWN LAYOUT */
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .filter-container {
+            position: relative;
+        }
+
+        #filterBtn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 9999999;
+        }
+
+        .filter-menu {
+            display: none; /* Hidden by default */
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            width: 200px;
+            z-index: 100;
+        }
+
+        .filter-menu.active {
+            display: block; /* Show when active */
+        }
+
+        .filter-menu select {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        .filter-menu label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .filter-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .filter-actions button {
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            border: none;
+            font-size: 12px;
+        }
+
+        #applyFilter { background: #4CAF50; color: white; }
+        #clearFilter { background: #f44336; color: white; }
+    </style>
 </head>
 <body>
 
-<!-- ============== EMBEDDED HEADER CONTENT (Replaces <div id="header">) ============== -->
 <header>
     <div class="logo-container">
-        <img src="../../img/logo.png" alt="EveHub Logo" class="logo">
+        <img src="/img/logo.png" alt="EveHub Logo" class="logo">
     </div>
 
-    <h2 id="dept-name" class="header-title">Department | <span id="user">User</span></h2>
+    <h2 id="dept-name" class="header-title"> | <span id="user">User</span></h2>
 
     <div class="header-right">
         <div class="header_icons">
             <div class="notification-container" data-count="0">
                 <span class="material-symbols-outlined" id="notif-icon" >notifications_unread</span>
-                <!-- <span class="notification-count">0</span> -->
             </div>
 
             <div id="menu-icon">
-                <span class="material-symbols-outlined">
-                menu
-                </span>
+                <span class="material-symbols-outlined">menu</span>
             </div>
         </div>
     </div>
@@ -39,103 +113,101 @@
 
 <menu id="main-menu" class="hidden-menu"> 
     <div class="menu_content">
-
-        <div class="menu-link">
-            <a href="https://calendar.google.com/calendar/embed?src=23195d0aba5de40a69bfc9fe008e82f4a1824526aeb5fd447527468549586af2%40group.calendar.google.com&ctz=Asia%2FManila" target="_blank">Job Order</a>
-        </div>
-        
-        <div class="menu-link">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true" target="_blank">Attendance</a>
-        </div>
-
-        <div class="menu-link">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true" target="_blank">Off / Absent</a>
-        </div>
-
-        <div class="menu-link">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true" target="_blank">Cash Advance/Loan</a>
-        </div>
-
-        <div class="menu-link">
-            <a href="#">Task Manager</a> 
-        </div>
-        
+        <div class="menu-link"><a href="https://calendar.google.com/calendar/embed?src=23195d0aba5de40a69bfc9fe008e82f4a1824526aeb5fd447527468549586af2%40group.calendar.google.com&ctz=Asia%2FManila" target="_blank">Job Order</a></div>
+        <div class="menu-link"><a href="https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true" target="_blank">Attendance</a></div>
+        <div class="menu-link"><a href="https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true" target="_blank">Off / Absent</a></div>
+        <div class="menu-link"><a href="https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true" target="_blank">Cash Advance/Loan</a></div>
+        <div class="menu-link"><a href="#">Task Manager</a></div>
     </div>
-
-    <div class="logout">
-        <a href="/index.html">Logout</a>
-    </div>
+    <div class="logout"><a href="/index.html">Logout</a></div>
 </menu>
-<!-- ========================================================================= -->
 
 <main>
     <div class="task">
-
         <div class="task-content">
-        <div class="hide">
-            <h1>📝 Task Manager</h1>
-
-            <form id="todo-form">
+            <div class="hide">
+                <h1>📝 Task Manager</h1>
+                <form id="todo-form">
                     <label>Task Name</label>
-                    <input type="text" id="taskName" placeholder="Task Name" required>
+                    <input type="text" id="taskName" required>
 
                     <label>Priority</label>
                     <select id="priority">
-                    <option>High</option>
-                    <option>Medium</option>
-                    <option>Low</option>
+                        <option>High</option>
+                        <option>Medium</option>
+                        <option>Low</option>
                     </select>
 
                     <label>Assigned By</label>
-                    <input type="text" placeholder="Assigned By" id="assignedBy" required>
+                    <input type="text" id="assignedBy" required>
 
                     <label>Assigned To</label>
                     <select id="assignTo" required>
-                    <option value="Maintenance">Maintenance</option>
-                    <option value="Secretary">Secretary</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Property Representative">Property Representative</option>
-                    <option value="Accounting">Accounting</option>
-                    <option value="IT">IT</option>
+                        <option value="Secretary">Secretary</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Property Representative">Property Representative</option>
+                        <option value="Accounting">Accounting</option>
+                        <option value="IT">IT</option>
                     </select>
 
                     <label>Due Date</label>
                     <input type="date" id="dueDate" required>
 
                     <label>Details</label>
-                    <textarea id="notes" rows="3" style="
-                    width:100%;
-                    padding:8px;
-                    border:1px solid #ccc;
-                    border-radius:5px;
-                    resize:none;
-                    overflow:hidden;
-                    min-height:100px;
-                    max-height:300px;
-                    font-family:inherit;
-                    font-size:14px;
-                    line-height:1.4;
-                    box-sizing:border-box;"></textarea>
+                    <textarea id="notes" rows="3" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px; resize:none; overflow:hidden; min-height:100px; max-height:300px; font-family:inherit; font-size:14px; line-height:1.4; box-sizing:border-box;"></textarea>
 
                     <div class="form-btn">
                         <button type="submit">Save Task</button>
-                        
                         <button type="button" id="cancel-task-btn" class="cancel-btn">Cancel</button>
                     </div>
                 </form>
-            <p id="response" class="response"></p>
+                <p id="response" class="response"></p>
             </div>
         </div>
 
-            <!-- Right: Task List -->
-            <div class="task-list-container">
-                <div class="task-header">
-                    <h1>📋 Task List</h1>
-                    <div class="add-task" id="show-form">+
+        <div class="task-list-container">
+            <div class="task-header">
+                <h1>📋 Task List</h1>
+                
+                <div class="filter-container">
+                    <button id="filterBtn">
+                        <span class="material-symbols-outlined filter">filter_list</span> Filter
+                    </button>
+                    
+                    <div class="filter-menu">
+                        <label>Status:</label>
+                        <select id="statusFilter">
+                            <option value="All">All</option>
+                            <option value="Not Started">Not Started</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+
+                        <label>Priority:</label>
+                        <select id="priorityFilter">
+                            <option value="All">All</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+
+                        <label>Assigned By:</label>
+                        <select id="assignedByFilter">
+                            <option value="All">All</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Property Representative">Property Representative</option>
+                            <option value="Accounting">Accounting</option>
+                            <option value="IT">IT</option>
+                        </select>
+
+                        <div class="filter-actions">
+                            <button id="applyFilter">Apply</button>
+                            <button id="clearFilter">Clear</button>
+                        </div>
                     </div>
                 </div>
-                <div id="taskList" class="task-list"></div>
-            </div>
+                </div>
+            <div id="taskList" class="task-list"></div>
         </div>
     </div>
 
@@ -144,10 +216,8 @@
     </div>
 </main>
 
-<!-- 🎯 EMBEDDED JAVASCRIPT FOR ACTIVATION -->
 <script>
-     // Utility functions for view switching (Defined locally for reliability)
-
+    // Utility functions for view switching
     function showIframe(url) {
         const taskContentContainer = document.querySelector('.task');
         const iframeContainer = document.querySelector('.frames');
@@ -184,7 +254,7 @@
     }
 
     function setupTaskFormToggle() {
-        const showFormBtn = document.getElementById('show-form');
+        const showFormBtn = document.getElementById('show-form'); // Note: This ID seems missing in your HTML structure currently
         const taskFormContainer = document.querySelector('.task-content .hide'); 
         const taskListContainer = document.querySelector('.task-list-container');
         const todoForm = document.getElementById('todo-form');
@@ -210,10 +280,8 @@
         }
     }
 
-    // --- MAIN ACTIVATION LOGIC (Runs once the DOM is ready) ---
-
+    // --- MAIN ACTIVATION LOGIC ---
     document.addEventListener('DOMContentLoaded', () => {
-        // 🔹 Update Department/Login Logic
         const department = localStorage.getItem("department");
         const name = localStorage.getItem("name");
 
@@ -225,7 +293,6 @@
             }
         }
 
-        // 🎯 Menu Toggle Logic
         const menuIcon = document.getElementById('menu-icon');
         const mainMenu = document.getElementById('main-menu');
         
@@ -235,21 +302,18 @@
             });
         }
 
-        // 🟢 CRITICAL: Attach listeners to the Menu Links
         document.querySelectorAll('#main-menu a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                
                 const linkText = link.textContent.trim();
-
                 const formUrls = {
                     'Job Order': 'https://calendar.google.com/calendar/embed?src=23195d0aba5de40a69bfc9fe008e82f4a1824526aeb5fd447527468549586af2%40group.calendar.google.com&ctz=Asia%2FManila',
                     'Attendance': 'https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true',
                     'Off / Absent': 'https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true',
                     'Cash Advance/Loan': 'https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true'
                 };
-
-                if (linkText.includes('Job Order')) {
+                
+                 if (linkText.includes('Job Order')) {
                     showIframe(formUrls['Job Order']);
                 }
                 else if (linkText.includes('Attendance')) {
@@ -261,20 +325,19 @@
                 } else if (linkText.includes('Task Manager')) {
                     showTaskManager();
                 } else {
-                    window.location.href = link.getAttribute('href'); // Logout
+                    window.location.href = link.getAttribute('href');
                 }
             });
         });
         
-        // 🟢 Setup Task Form Toggle
         setupTaskFormToggle();
         
-        // 🟢 Load task data only after setting up the views (function assumed in /IT/it.js)
         if (typeof fetchTasks === 'function') {
             fetchTasks();
         }
         
-        // 🟢 INITIAL VIEW
         showTaskManager(); 
     });
 </script>
+</body>
+</html>
