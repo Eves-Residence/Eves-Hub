@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Secretary | EveConnect</title>
- <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
+  <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="../css/department.css">
@@ -11,9 +11,20 @@
   <link rel="stylesheet" href="../css/header.css">
   <link rel="stylesheet" href="../css/desktop.css">
   <script src="/js/header.js" defer></script>
-  <!-- JS for task manager -->
   <script src="sec.js" defer></script>
   <script src="index.js" defer></script>
+
+  <style>
+    /* Shared style for the bottom spreadsheet iframe */
+    #dataSheetFrame {
+        display: none; /* Hidden by default */
+        width: 100%;
+        height: 800px; 
+        border: none;
+        margin-top: 20px;
+        background-color: white;
+    }
+  </style>
 
 </head>
 <body>
@@ -30,21 +41,21 @@
       </div>
 
       <div class="sub_content">
+    
+        <div class="card"><a href="#" onclick="showAttendance(); return false;">Attendance</a></div>
 
-        <div class="card"><a href="#" onclick="changeFrame('attendance'); return false;">Attendance</a></div>
+        <div class="card"><a href="#" onclick="showOffForm(); return false;">Off/Absent Form</a></div>
 
-        <div class="card"><a href="#" onclick="changeFrame('off'); return false;">Off/Absent Form</a></div>
+        <div class="card"><a href="#" onclick="showCashAdvance(); return false;">Cash Advance/Loan</a></div>
 
-        <div class="card"><a href="#" onclick="changeFrame('ca'); return false;">Cash Advance/Loan</a></div>
-
-        <div class="card"><a href="#" onclick="changeFrame('jo'); return false;">Job Order Form</a></div>
+        <div class="card"><a href="#" onclick="changeFrame('jo'); hideSheet(); return false;">Job Order Form</a></div>
       </div>
 
       <iframe id="mainFrame" src=""></iframe>
 
-      <!-- ================= TASK MANAGER ================= -->
+      <iframe id="dataSheetFrame" src=""></iframe>
+
       <div class="task-main-container">
-        <!-- Left: Form -->
         <div class="todo-form-container">
           <h1>📝 Task Manager</h1>
           <form id="todo-form">
@@ -65,7 +76,7 @@
             <select id="assignTo" required>
               <option value="Secretary">Secretary</option>
               <option value="Marketing">Marketing</option>
-              <option value="Property Representative">Property Representative</option>
+              <option value="Property-Representative">Property Representative</option>
               <option value="Accounting">Accounting</option>
               <option value="IT">IT</option>
               <option value="Maintenance">Maintenance</option>
@@ -94,7 +105,6 @@
           <p id="response" class="response"></p>
         </div>
 
-        <!-- Right: Task List -->
         <div class="task-list-container">
           <h1>📋 Task List</h1>
           <div id="taskList" class="task-list"></div>
@@ -116,30 +126,57 @@
   </div>
 
   <script>
+    // --- SPREADSHEET DISPLAY LOGIC ---
+    
+    function showAttendance() {
+      changeFrame('attendance');
+      const sheetFrame = document.getElementById('dataSheetFrame');
+      sheetFrame.src = "https://docs.google.com/spreadsheets/d/1k-ryTpaGSjgv7Hl5v0phOpAkSXacHDyyr9bafTe4JbY/edit?widget=true&headers=false";
+      sheetFrame.style.display = "block";
+    }
+
+    function showOffForm() {
+      changeFrame('off');
+      const sheetFrame = document.getElementById('dataSheetFrame');
+      sheetFrame.src = "https://docs.google.com/spreadsheets/d/1inxxznuvGWAiHpjAtZA7j8L7gSETlPIs5SyZFUKO1ic/edit?widget=true&headers=false";
+      sheetFrame.style.display = "block";
+    }
+
+    function showCashAdvance() {
+      changeFrame('ca');
+      const sheetFrame = document.getElementById('dataSheetFrame');
+      // Added the Cash Advance spreadsheet link here
+      sheetFrame.src = "https://docs.google.com/spreadsheets/d/1l3G6SZyPcqpKSFyIDdZRO5Jmg2pgDG0SZwwshe7_hMM/edit?widget=true&headers=false";
+      sheetFrame.style.display = "block";
+    }
+
+    function hideSheet() {
+      const sheetFrame = document.getElementById('dataSheetFrame');
+      sheetFrame.style.display = "none";
+    }
+
+    // ---------------------------------------------------
+
     // Load shared header
   fetch("../header/header.html")
   .then(res => res.text())
   .then(data => {
     document.getElementById("header").innerHTML = data;
 
-    // 🔹 Get department & name from localStorage
     const department = localStorage.getItem("department");
     const name = localStorage.getItem("name");
 
-    // Redirect to login if no credentials found
     if (!department || !name) {
       window.location.href = "../index.html";
       return;
     }
 
-    // 🔹 Update department display text (e.g. IT Department | John)
     const deptName = document.getElementById("dept-name");
     if (deptName) {
       const deptFormatted = department.toUpperCase() + " Department";
       deptName.textContent = `${deptFormatted} | ${name}`;
     }
 
-    // 🔹 Enable mobile menu toggle AFTER header loads
     const menuToggle = document.querySelector(".menu-toggle");
     const subContent = document.querySelector(".sub_content");
     if (menuToggle && subContent) {
@@ -152,6 +189,3 @@
   </script>
 </body>
 </html>
-
-
-
