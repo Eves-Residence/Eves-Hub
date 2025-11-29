@@ -32,9 +32,9 @@ function changeFrame(type) {
       newSrc = "https://eves-residence.github.io/JOB-ORDER/";
       break;
 
-    case "feedback":
-      newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true";
-      break;
+    // case "feedback":
+    //   newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true";
+    //   break;
 
     default:
       newSrc = "https://tephdy.github.io/WEB-APP/";
@@ -56,6 +56,7 @@ function changeFrame(type) {
     };
   }, 200);
 }
+
 
 
 
