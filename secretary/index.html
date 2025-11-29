@@ -50,7 +50,7 @@
 
         <div class="card"><a href="#" onclick="changeFrame('jo'); hideSheet(); return false;">Job Order Form</a></div>
 
-        <div class="card"><a href="#" onclick="showStandardPage('feedback'); return false;">Feedback/Report</a></div>
+       <div class="card"><a href="#" onclick="showfeedback('feedback'); return false;">Feedback/Report</a></div>
       </div>
 
       <iframe id="mainFrame" src=""></iframe>
@@ -152,6 +152,10 @@
       sheetFrame.style.display = "block";
     }
 
+    function showfeedback() {
+      showFullSheet("https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true");
+    }
+
     function hideSheet() {
       const sheetFrame = document.getElementById('dataSheetFrame');
       sheetFrame.style.display = "none";
@@ -191,4 +195,5 @@
   </script>
 </body>
 </html>
+
 
