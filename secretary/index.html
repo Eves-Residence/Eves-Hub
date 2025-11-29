@@ -157,7 +157,10 @@
     }
 
     function showfeedback() {
-      showFullSheet("https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true");
+      changeFrame('feedback');
+      const sheetFrame = document.getElementById('dataSheetFrame');
+      sheetFrame.src = "https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true";
+      sheetFrame.style.display = "block";
     }
 
     function hideSheet() {
@@ -199,6 +202,7 @@
   </script>
 </body>
 </html>
+
 
 
 
