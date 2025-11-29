@@ -33,7 +33,7 @@ function changeFrame(type) {
       break;
 
     case "feedback":
-      newSrc = "https://forms.gle/ysXxkjrxrsoyTajR6";
+      newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true";
       break;
 
     default:
@@ -56,6 +56,7 @@ function changeFrame(type) {
     };
   }, 200);
 }
+
 
 
 
