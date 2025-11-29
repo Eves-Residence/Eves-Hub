@@ -32,6 +32,10 @@ function changeFrame(type) {
       newSrc = "https://eves-residence.github.io/JOB-ORDER/";
       break;
 
+    case "feedback":
+      newSrc = "https://forms.gle/ysXxkjrxrsoyTajR6";
+      break;
+
     default:
       newSrc = "https://tephdy.github.io/WEB-APP/";
   }
@@ -52,5 +56,6 @@ function changeFrame(type) {
     };
   }, 200);
 }
+
 
 
