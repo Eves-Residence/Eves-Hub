@@ -70,7 +70,7 @@ function changeFrame(type) {
 // ✅ TASK MANAGER — FIXED FILTER
 // ✅ WORKING AS OF 21/10/2025 WITH "Assign To" AND "addRemarks"
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbzPMrL6aWDR03ylZ3kHnB-w0F0MkPUIpAM6bwxdT0wgYrICCY52cc9FThMRpx7-7VNEXQ/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbw9xkKWD-C6xrupiZePXpQFYb8DKFk4wyxX-rU9wMK145h08VyI4l0hQHSB24a3tyw4pQ/exec";
 const form = document.getElementById("todo-form");
 const taskList = document.getElementById("taskList");
 const responseMsg = document.getElementById("response");
