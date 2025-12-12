@@ -12,6 +12,36 @@
   <script src="/js/header.js" defer></script>
 
   <style>
+    /* ✅ LOADING SCREEN OVERLAY */
+    #loading-overlay {
+      position: fixed;
+      top: 64px; /* Adjust based on your header height */
+      left: 280px; /* Adjust based on your sidebar width */
+      right: 0;
+      bottom: 0;
+      background: rgba(249, 250, 251, 0.9);
+      display: none; /* Hidden by default */
+      z-index: 100;
+      backdrop-filter: blur(6px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loader-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #E5E7EB;
+      border-top-color: #2563EB;
+      border-radius: 50%;
+      animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
     /* ✅ TELEGRAM FLOAT */
     .telegram-float {
       position: fixed; width: 60px; height: 60px; bottom: 40px; right: 40px;
@@ -56,12 +86,18 @@
     @media (max-width: 1024px) {
       .sidebar { transform: translateX(-100%); }
       .main_content_wrapper { margin-left: 0; width: 100%; }
+      #loading-overlay { left: 0; }
     }
   </style>
 </head>
 
 <body class="bg-[#F9FAFB]">
   <div id="header"></div>
+
+  <div id="loading-overlay">
+    <div class="loader-spinner"></div>
+    <p class="mt-4 text-sm font-bold text-blue-600 uppercase tracking-widest">Loading Content...</p>
+  </div>
 
   <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
@@ -143,7 +179,7 @@
             </div>
             <div>
               <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Details</label>
-              <textarea id="notes" rows="3" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none focus:ring-2 focus:ring-blue-500 resize-none" placeholder="Task description..."></textarea>
+              <textarea id="notes" rows="3" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500 resize-none" placeholder="Task description..."></textarea>
             </div>
             <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-100 active:scale-95">Save Task</button>
           </form>
@@ -152,9 +188,7 @@
 
         <div class="flex-1 w-full overflow-hidden">
           <div class="flex justify-between items-center mb-6">
-             <div class="flex gap-2">
-                
-             </div>
+             <div class="flex gap-2"></div>
           </div>
           <div id="taskList"></div>
         </div>
@@ -172,38 +206,47 @@
   </div>
 
   <script>
+    // ✅ REFERENCE ELEMENTS
+    const overlay = document.getElementById('loading-overlay');
+    const mainFrame = document.getElementById('mainFrame');
+
+    // ✅ AUTOMATICALLY HIDE LOADER WHEN IFRAME FINISHES LOADING
+    mainFrame.onload = function() {
+      overlay.style.display = 'none';
+      mainFrame.style.transition = "opacity 0.4s";
+      mainFrame.style.opacity = 1;
+    };
+
     function changeFrame(type, element) {
-      const iframe = document.getElementById("mainFrame");
       const sectionIframe = document.getElementById("section-iframe");
       const sectionCalendar = document.getElementById("section-calendar");
       const sectionTask = document.getElementById("section-task");
 
       [sectionIframe, sectionCalendar, sectionTask].forEach(sec => sec.classList.add('hidden'));
-      iframe.style.display = "none";
-      iframe.style.opacity = 0;
+      mainFrame.style.display = "none";
+      mainFrame.style.opacity = 0;
 
       let newSrc = "";
       switch (type) {
         case "calendar": sectionCalendar.classList.remove('hidden'); break;
         case "task": sectionTask.classList.remove('hidden'); if(typeof fetchTasks === 'function') fetchTasks(); break;
-        case "jo": newSrc = "https://eves-residence.github.io/JOB-ORDER"; break; // Replace with your JO source
-
+        case "jo": newSrc = "https://eves-residence.github.io/JOB-ORDER"; break;
         case "feedback": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true"; break;
-
         case "attendance": newSrc = "https://docs.google.com/spreadsheets/d/1k-ryTpaGSjgv7Hl5v0phOpAkSXacHDyyr9bafTe4JbY/edit?usp=sharing"; break;
-
         case "off": newSrc = "https://docs.google.com/spreadsheets/d/1inxxznuvGWAiHpjAtZA7j8L7gSETlPIs5SyZFUKO1ic/edit?usp=sharing"; break;
-        
         case "ca": newSrc = "https://docs.google.com/spreadsheets/d/1l3G6SZyPcqpKSFyIDdZRO5Jmg2pgDG0SZwwshe7_hMM/edit?usp=sharing"; break;
       }
 
       if (newSrc) {
+        // ✅ SHOW LOADING SCREEN
+        overlay.style.display = 'flex';
         sectionIframe.classList.remove('hidden');
-        iframe.style.display = "block";
+        mainFrame.style.display = "block";
+        
+        // Timeout to ensure display:flex renders before heavy src loading
         setTimeout(() => {
-          iframe.src = newSrc;
-          iframe.onload = () => { iframe.style.transition = "opacity 0.4s"; iframe.style.opacity = 1; };
-        }, 100);
+          mainFrame.src = newSrc;
+        }, 50);
       }
 
       document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
@@ -229,5 +272,3 @@
   </script>
 </body>
 </html>
-
-
