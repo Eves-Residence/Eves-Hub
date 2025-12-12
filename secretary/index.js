@@ -1,230 +1,341 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Secretary | EveConnect</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-  <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
+// ✅ IT TASK MANAGER - FULL SYSTEM 12/12/2025
+// MODIFIED: Horizontal Scroll Dashboard + View Modal + Reply Functionality
+// ⭐ MODIFIED: Full 1:1 Logic preservation + Modern Presentable Header
+// DO NOT CHANGE THIS FILE NAME OR PATH TO ENSURE PROPER FUNCTIONALITY
+
+const scriptURL = "https://script.google.com/macros/s/AKfycbxHH7p9HmFsx1mUlQ1wsSdkD9yDJmaKCfDS7AlRB9Nmr08C443fZmFyY2I5S9skZwu3FQ/exec";
+const form = document.getElementById("todo-form");
+const taskList = document.getElementById("taskList");
+const responseMsg = document.getElementById("response");
+
+let allTasks = []; 
+let editIndex = null;
+let replyIndex = null; 
+
+// ✅ 1. CSS INJECTION (Dashboard & Presentable Header Layout)
+const style = document.createElement('style');
+style.innerHTML = `
+  .main-dashboard-container { 
+    display: flex; 
+    gap: 20px; 
+    align-items: stretch; 
+    height: 500px; 
+    margin-top: 20px;
+  }
   
-  <script src="sec.js" defer></script>
-  <script src="/js/header.js" defer></script>
+  /* Modern Header Styling */
+  .filter-container {
+    background: #ffffff;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    border: 1px solid #eaedf2;
+  }
+  
+  .task-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #f0f2f5;
+    padding-bottom: 10px;
+  }
+  
+  .task-header-row p {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0;
+  }
 
-  <style>
-    /* ✅ TELEGRAM FLOAT */
-    .telegram-float {
-      position: fixed; width: 60px; height: 60px; bottom: 40px; right: 40px;
-      background-color: #2563EB; color: #fff; border-radius: 50px;
-      text-align: center; box-shadow: 2px 2px 3px #999; z-index: 1000;
-    }
-    .telegram-float img { width: 100%; height: 100%; padding: 10px; }
+  .filter-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+  }
 
-    /* ✅ SIDEBAR STYLES */
-    .sidebar {
-      width: 280px; background-color: #ffffff; border-right: 1px solid #e5e7eb;
-      height: calc(100vh - 64px); position: fixed; left: 0; top: 64px;
-      overflow-y: auto; z-index: 40;
-    }
-    .sidebar-link {
-      display: flex; align-items: center; padding: 10px 20px;
-      color: #4b5563; font-size: 13.5px; font-weight: 500; transition: all 0.2s;
-      border-radius: 8px; margin: 2px 10px; cursor: pointer; border: none; background: transparent; width: calc(100% - 20px); text-align: left;
-    }
-    .sidebar-link:hover { background-color: #f3f4f6; color: #2563eb; }
-    .sidebar-link.active { background-color: #eff6ff; color: #2563eb; font-weight: 600; }
-    .sidebar-group-label { padding: 18px 20px 8px; font-size: 10px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 
-    /* ✅ WIDE CONTENT WRAPPER */
-    .main_content_wrapper {
-      margin-left: 280px; padding: 24px; width: calc(100% - 280px); min-height: calc(100vh - 64px);
-    }
+  .filter-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-    #mainFrame { width: 100%; height: 85vh; border-radius: 12px; border: 1px solid #e5e7eb; background: white; display: none; opacity: 0; }
+  .filter-group select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e0;
+    background-color: #f8fafc;
+    font-size: 14px;
+    color: #2d3748;
+    outline: none;
+    min-width: 150px;
+  }
 
-    /* ✅ HORIZONTAL KANBAN LIST */
-    #taskList { display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1.5rem; align-items: flex-start; }
-    
-    .task-card { 
-      background: white; border-radius: 1rem; padding: 1rem; margin-bottom: 1rem; 
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); border-left: 5px solid #E5E7EB; 
-      width: 300px; min-width: 300px; flex-shrink: 0;
-      transition: all 0.3s ease; white-space: normal;
-    }
-    .task-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+  .action-buttons { display: flex; gap: 10px; }
+  .btn-apply { background: #3182ce; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .btn-clear { background: #edf2f7; color: #4a5568; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
 
-    @media (max-width: 1024px) {
-      .sidebar { transform: translateX(-100%); }
-      .main_content_wrapper { margin-left: 0; width: 100%; }
-    }
-  </style>
-</head>
+  #taskList { 
+    flex: 1; display: flex !important; flex-direction: row !important;
+    overflow-x: auto !important; overflow-y: hidden !important;
+    white-space: nowrap !important; padding: 10px !important;
+    gap: 20px !important; align-items: center !important;
+    background: #f0f2f5; border-radius: 10px; height: 100% !important;
+  }
+  #taskList::-webkit-scrollbar { height: 10px; }
+  #taskList::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
+  .task-item { white-space: normal !important; }
+`;
+document.head.appendChild(style);
 
-<body class="bg-[#F9FAFB]">
-  <div id="header"></div>
+// ✅ 2. PRESENTABLE FILTER UI
+const filterContainer = document.createElement("div");
+filterContainer.classList.add("filter-container");
+filterContainer.innerHTML = `
+  <div class="task-header-row">
+    <p>All Task Manager</p>
+    <div class="action-buttons">
+      <button class="btn-apply" id="applyFilter">Apply Filters</button>
+      <button class="btn-clear" id="clearFilter">Clear</button>
+    </div>
+  </div>
+  <div class="filter-toolbar">
+    <div class="filter-group">
+      <label>Status</label>
+      <select id="statusFilter">
+        <option value="All">All Statuses</option>
+        <option value="Not Started">Not Started</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Priority</label>
+      <select id="priorityFilter">
+        <option value="All">All Priorities</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Assigned By</label>
+      <select id="assignedByFilter">
+        <option value="All">All Departments</option>
+      </select>
+    </div>
+  </div>
+`;
+taskList.parentNode.insertBefore(filterContainer, taskList);
 
-  <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
-    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
-  </a>
+document.getElementById("applyFilter").addEventListener("click", renderTasks);
+document.getElementById("clearFilter").addEventListener("click", () => {
+  document.getElementById("statusFilter").value = "All";
+  document.getElementById("priorityFilter").value = "All";
+  document.getElementById("assignedByFilter").value = "All";
+  renderTasks();
+});
 
-  <div class="flex">
-    <aside class="sidebar mt-16">
-      <nav class="mt-2">
-        <div class="sidebar-group-label">Productivity</div>
-        <button onclick="changeFrame('calendar', this)" class="sidebar-link active">
-          <span class="material-symbols-outlined mr-3">calendar_month</span> Secretary Calendar
-        </button>
-        <button onclick="changeFrame('task', this)" class="sidebar-link">
-          <span class="material-symbols-outlined mr-3">assignment</span> Task Manager
-        </button>
-
-        <div class="sidebar-group-label">Forms & Applications</div>
-        <button onclick="changeFrame('jo', this)" class="sidebar-link">
-          <span class="material-symbols-outlined mr-3">assignment_turned_in</span> Job Order Form
-        </button>
-        <button onclick="changeFrame('feedback', this)" class="sidebar-link">
-          <span class="material-symbols-outlined mr-3">rate_review</span> Feedback/Report
-        </button>
-
-        <div class="sidebar-group-label">Spreadsheets & Finance</div>
-        <button onclick="changeFrame('attendance', this)" class="sidebar-link">
-          <span class="material-symbols-outlined mr-3">badge</span> Attendance
-        </button>
-        <button onclick="changeFrame('off', this)" class="sidebar-link">
-          <span class="material-symbols-outlined mr-3">person_off</span> Off/Absent Form
-        </button>
-        <button onclick="changeFrame('ca', this)" class="sidebar-link">
-          <span class="material-symbols-outlined mr-3">account_balance_wallet</span> Cash Advance/Loan
-        </button>
-      </nav>
-    </aside>
-
-    <main class="main_content_wrapper mt-16">
-      <div id="section-iframe" class="hidden">
-        <iframe id="mainFrame" src=""></iframe>
-      </div>
-
-      <div id="section-task" class="hidden flex flex-col xl:flex-row gap-8 items-start">
-        <div class="todo-form-container bg-white p-6 rounded-3xl shadow-sm border border-gray-100 w-full xl:w-[380px] xl:sticky xl:top-24">
-          <h1 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-            <span class="material-symbols-outlined text-blue-600">edit_square</span> Task Manager
-          </h1>
-          <form id="todo-form" class="space-y-4">
-            <div>
-              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Task Name</label>
-              <input type="text" id="taskName" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Priority</label>
-                <select id="priority" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
-                  <option>High</option><option>Medium</option><option selected>Low</option>
-                </select>
-              </div>
-              <div>
-                <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Due Date</label>
-                <input type="date" id="dueDate" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
-              </div>
-            </div>
-            <div>
-              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Assigned By</label>
-              <input type="text" id="assignedBy" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
-            </div>
-            <div>
-              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Assigned To</label>
-              <select id="assignTo" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
-                <option value="Secretary">Secretary</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Property Representative">Property Representative</option>
-                <option value="Accounting">Accounting</option>
-                <option value="IT">IT</option>
-                <option value="Maintenance">Maintenance</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Details</label>
-              <textarea id="notes" rows="3" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none focus:ring-2 focus:ring-blue-500 resize-none" placeholder="Task description..."></textarea>
-            </div>
-            <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-100 active:scale-95">Save Task</button>
-          </form>
-          <p id="response" class="mt-4 text-xs font-medium text-green-600 text-center"></p>
-        </div>
-
-        <div class="flex-1 w-full overflow-hidden">
-          <div class="flex justify-between items-center mb-6">
-             <div class="flex gap-2">
-                
-             </div>
-          </div>
-          <div id="taskList"></div>
-        </div>
-      </div>
-
-      <div id="section-calendar" class="w-full">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">📅 Secretary Calendar</h1>
-        <div class="bg-white p-2 rounded-2xl shadow-sm border h-[75vh]">
-          <iframe src="https://calendar.google.com/calendar/embed?src=08e9452d83d5dc0a473f7f8d8c9a20162bed560be6f2573bb858d42c052522e5%40group.calendar.google.com&ctz=Asia%2FManila" 
-            style="border: 0" width="100%" height="100%" frameborder="0" scrolling="no" class="rounded-xl">
-          </iframe>
-        </div>
-      </div>
-    </main>
+// ✅ 3. MODAL INJECTION (Edit, Reply, View)
+const modalHTML = `
+  <div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
+    <div style="background:#fff; padding:20px; border-radius:10px; width:90%; max-width:500px;">
+      <h3>Edit Status</h3>
+      <select id="editStatus" style="width:100%; padding:8px; margin-bottom:10px;"><option value="Not Started">Not Started</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select>
+      <textarea id="addRemarks" style="width:100%; padding:8px; height:80px; resize:none; border-radius:5px; border:1px solid #cbd5e0;"></textarea>
+      <div id="loadingIndicator" style="display:none; text-align:center;">⏳ Saving...</div>
+      <div style="text-align:right; margin-top:15px;"><button id="saveEditBtn" style="padding:6px 12px; background:#4CAF50; color:#fff; border:none; border-radius:5px;">Save</button><button id="cancelEditBtn" style="padding:6px 12px; background:#ccc; border:none; border-radius:5px; margin-left:10px;">Cancel</button></div>
+    </div>
   </div>
 
-  <script>
-    function changeFrame(type, element) {
-      const iframe = document.getElementById("mainFrame");
-      const sectionIframe = document.getElementById("section-iframe");
-      const sectionCalendar = document.getElementById("section-calendar");
-      const sectionTask = document.getElementById("section-task");
+  <div id="replyModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1001;">
+    <div style="background:#fff; padding:20px; border-radius:10px; width:90%; max-width:500px;">
+      <h3>Task Received (Reply)</h3>
+      <div id="replyTaskDetails" style="background:#f4f4f4; border:1px solid #ddd; padding:10px; max-height:200px; overflow-y:auto; font-size:13px; margin-bottom:10px; border-radius:5px;"></div>
+      <input type="date" id="replyDateReceived" style="width:100%; padding:8px; margin-bottom:10px;">
+      <div id="replyLoadingIndicator" style="display:none; text-align:center;">⏳ Saving...</div>
+      <div style="text-align:right;"><button id="saveReplyBtn" style="padding:6px 12px; background:#007bff; color:#fff; border:none; border-radius:5px;">Save Reply</button><button id="cancelReplyBtn" style="padding:6px 12px; background:#ccc; border:none; border-radius:5px; margin-left:10px;">Cancel</button></div>
+    </div>
+  </div>
 
-      [sectionIframe, sectionCalendar, sectionTask].forEach(sec => sec.classList.add('hidden'));
-      iframe.style.display = "none";
-      iframe.style.opacity = 0;
+  <div id="viewModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1002;">
+    <div style="background:#fff; padding:25px; border-radius:15px; width:90%; max-width:600px;">
+      <h3 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">Full Task Details</h3>
+      <div id="viewTaskContent" style="max-height:400px; overflow-y:auto; line-height:1.6; font-size:14px;"></div>
+      <div style="text-align:right; margin-top:20px;"><button onclick="document.getElementById('viewModalOverlay').style.display='none'" style="padding:8px 20px; background:#333; color:#fff; border:none; border-radius:8px;">Close</button></div>
+    </div>
+  </div>
+`;
+document.body.insertAdjacentHTML("beforeend", modalHTML);
 
-      let newSrc = "";
-      switch (type) {
-        case "calendar": sectionCalendar.classList.remove('hidden'); break;
-        case "task": sectionTask.classList.remove('hidden'); if(typeof fetchTasks === 'function') fetchTasks(); break;
-        case "jo": newSrc = "https://eves-residence.github.io/JOB-ORDER"; break; // Replace with your JO source
+const modalOverlay = document.getElementById("modalOverlay");
+const replyModalOverlay = document.getElementById("replyModalOverlay");
+const replyTaskDetails = document.getElementById("replyTaskDetails");
+const replyDateReceived = document.getElementById("replyDateReceived");
+const saveReplyBtn = document.getElementById("saveReplyBtn");
+const cancelReplyBtn = document.getElementById("cancelReplyBtn");
+const replyLoadingIndicator = document.getElementById("replyLoadingIndicator");
 
-        case "feedback": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true"; break;
+document.getElementById("cancelEditBtn").onclick = () => modalOverlay.style.display = "none";
+cancelReplyBtn.onclick = () => replyModalOverlay.style.display = "none";
+document.getElementById("saveEditBtn").onclick = saveEdit;
+saveReplyBtn.onclick = saveReply;
 
-        case "attendance": newSrc = "https://docs.google.com/spreadsheets/d/1k-ryTpaGSjgv7Hl5v0phOpAkSXacHDyyr9bafTe4JbY/edit?usp=sharing"; break;
+// ✅ 4. FETCH TASKS (Flicker-Free Logic)
+async function fetchTasks() {
+  if (allTasks.length === 0) taskList.innerHTML = "<p>Loading...</p>";
+  try {
+    const res = await fetch(scriptURL);
+    const text = await res.text();
+    const jsonMatch = text.match(/\{.*\}|\[.*\]/s);
+    if (!jsonMatch) throw new Error("Invalid JSON");
+    const newTasks = JSON.parse(jsonMatch[0]);
 
-        case "off": newSrc = "https://docs.google.com/spreadsheets/d/1inxxznuvGWAiHpjAtZA7j8L7gSETlPIs5SyZFUKO1ic/edit?usp=sharing"; break;
-        
-        case "ca": newSrc = "https://docs.google.com/spreadsheets/d/1l3G6SZyPcqpKSFyIDdZRO5Jmg2pgDG0SZwwshe7_hMM/edit?usp=sharing"; break;
-      }
-
-      if (newSrc) {
-        sectionIframe.classList.remove('hidden');
-        iframe.style.display = "block";
-        setTimeout(() => {
-          iframe.src = newSrc;
-          iframe.onload = () => { iframe.style.transition = "opacity 0.4s"; iframe.style.opacity = 1; };
-        }, 100);
-      }
-
-      document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
-      if (element) element.classList.add('active');
+    if (JSON.stringify(allTasks) !== JSON.stringify(newTasks)) {
+      allTasks = newTasks;
+      const assignedByFilter = document.getElementById("assignedByFilter");
+      const currentVal = assignedByFilter.value;
+      const combinedDepts = [...new Set(["Secretary","Marketing","Property Representative","Accounting","IT", ...allTasks.map(t => (t["ASSIGNED BY"] || "").trim()).filter(v => v !== "")])];
+      assignedByFilter.innerHTML = `<option value="All">All Departments</option>` + combinedDepts.map(v => `<option value="${v}">${v}</option>`).join("");
+      assignedByFilter.value = currentVal || "All";
+      renderTasks();
     }
+  } catch (err) { console.error("Fetch failed", err); }
+}
 
-    // Header logic
-    fetch("../header/header.html").then(res => res.text()).then(data => {
-      document.getElementById("header").innerHTML = data;
-      const dept = localStorage.getItem("department");
-      const name = localStorage.getItem("name");
-      if (!dept || !name) { window.location.href = "../index.html"; return; }
-      const deptName = document.getElementById("dept-name");
-      if (deptName) deptName.textContent = `${dept} Department | ${name}`;
-    });
+const safe = str => str ? String(str).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])) : "";
 
-    // Auto-resize notes
-    const notes = document.getElementById('notes');
-    notes.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
+// ✅ 5. RENDER TASKS (Design Fixes + Permissions)
+function renderTasks() {
+  const statusFilter = document.getElementById("statusFilter").value;
+  const priorityFilter = document.getElementById("priorityFilter").value;
+  const assignedByFilter = document.getElementById("assignedByFilter").value;
+
+  let filtered = allTasks;
+  if (statusFilter !== "All") filtered = filtered.filter(t => (t["STATUS"] || "Not Started") === statusFilter);
+  if (priorityFilter !== "All") filtered = filtered.filter(t => (t["PRIORITY"] || "").trim() === priorityFilter);
+  if (assignedByFilter !== "All") filtered = filtered.filter(t => (t["ASSIGNED BY"] || "").trim() === assignedByFilter);
+
+  taskList.innerHTML = "";
+  filtered.forEach((t) => {
+    const originalIndex = allTasks.indexOf(t);
+    const status = (t["STATUS"] || "Not Started").trim();
+    let statusColor = status === "Completed" ? "#4CAF50" : (status === "In Progress" ? "#FFC107" : "#F44336");
+
+    const canEdit = String(t["ASSIGNED BY"] || "").trim().toLowerCase() === "secretary";
+
+    const div = document.createElement("div");
+    div.style.cssText = `background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); border-left:8px solid ${statusColor}; display:flex; flex-direction:column; width:300px !important; height:320px !important; flex-shrink:0 !important;`;
+
+    div.innerHTML = `
+      <div style="padding:15px; flex:1; overflow:hidden; display:flex; flex-direction:column; gap:8px;">
+        <div style="font-weight:bold; font-size:16px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${safe(t["TASK NAME"])} <span style="font-size:11px; color:#888;">(${safe(t.source)})</span></div>
+        <div style="background:${statusColor}; color:#fff; padding:2px 10px; border-radius:20px; font-size:10px; width:fit-content;">${status}</div>
+        <div style="flex:1; overflow-y:auto; font-size:13px; color:#444; background:#fff9e6; padding:10px; border-radius:6px; white-space:normal;">🗒 ${safe(t["NOTES"] || "-")}</div>
+      </div>
+      <div style="padding:10px; border-top:1px solid #eee; display:flex; justify-content:space-between; align-items:center; background:#fafafa;">
+        <div style="font-size:10px; color:#aaa;">🕒 ${safe(t["TIMESTAMP"])}</div>
+        <div style="display:flex; gap:5px;">
+           <button onclick="openViewModal(${originalIndex})" style="padding:4px 8px; font-size:11px; background:#666; color:#fff; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">View</button>
+           ${canEdit ? `
+             <button onclick="openEditModal(${originalIndex}, '${status}', '${t.source}')" style="padding:4px 8px; font-size:11px; background:#007bff; color:#fff; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">Edit</button>
+             <button onclick="deleteTask(${originalIndex}, '${t.source}')" style="padding:4px 8px; font-size:11px; background:#f44336; color:#fff; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">Del</button>
+           ` : `
+             <button onclick="openReplyModal(${originalIndex})" style="padding:4px 8px; font-size:11px; background:#28a745; color:#fff; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">Reply</button>
+           `}
+        </div>
+      </div>
+    `;
+    taskList.appendChild(div);
+  });
+}
+
+// ✅ 6. LOGIC HELPERS (Preserved)
+function openViewModal(index) {
+  const t = allTasks[index];
+  document.getElementById("viewTaskContent").innerHTML = `<p><b>Task:</b> ${safe(t["TASK NAME"])}</p><p><b>Status:</b> ${safe(t["STATUS"])}</p><p><b>Assigned By:</b> ${safe(t["ASSIGNED BY"])}</p><p><b>Notes:</b> ${safe(t["NOTES"] || "-")}</p>${t["DATE RECEIVED"] ? `<p style="color:#28a745"><b>Confirmed Received:</b> ${safe(t["DATE RECEIVED"])}</p>`:''}`;
+  document.getElementById("viewModalOverlay").style.display = "flex";
+}
+
+function openEditModal(index, currentStatus, source) {
+  editIndex = index;
+  document.getElementById("editStatus").value = currentStatus;
+  document.getElementById("addRemarks").value = allTasks[index]["NOTES"] || "";
+  modalOverlay.dataset.source = source;
+  modalOverlay.style.display = "flex";
+}
+
+function openReplyModal(index) {
+  replyIndex = index;
+  const t = allTasks[index];
+  replyTaskDetails.innerHTML = `<p><b>Task:</b> ${safe(t["TASK NAME"])}</p><p><b>By:</b> ${safe(t["ASSIGNED BY"])}</p>`;
+  replyDateReceived.value = t["DATE RECEIVED"] || "";
+  replyModalOverlay.style.display = "flex";
+}
+
+async function saveEdit() {
+  if (editIndex === null) return;
+  document.getElementById("loadingIndicator").style.display = "block";
+  try {
+    await fetch(scriptURL, {
+      method: "POST", mode: "cors",
+      body: JSON.stringify({ action: "update", rowIndex: allTasks[editIndex].rowIndex, status: document.getElementById("editStatus").value, notes: document.getElementById("addRemarks").value.trim(), source: modalOverlay.dataset.source })
     });
-  </script>
-</body>
-</html>
+    modalOverlay.style.display = "none"; fetchTasks();
+  } catch (err) { alert(err.message); }
+  document.getElementById("loadingIndicator").style.display = "none";
+}
+
+async function saveReply() {
+  if (replyIndex === null || !replyDateReceived.value) return alert("Select a date.");
+  replyLoadingIndicator.style.display = "block";
+  try {
+    await fetch(scriptURL, {
+      method: "POST", mode: "cors",
+      body: JSON.stringify({ action: "reply", rowIndex: allTasks[replyIndex].rowIndex, source: allTasks[replyIndex].source, dateReceived: replyDateReceived.value })
+    });
+    replyModalOverlay.style.display = "none"; fetchTasks();
+  } catch (err) { alert(err.message); }
+  replyLoadingIndicator.style.display = "none";
+}
+
+async function deleteTask(index, source) {
+  if (!confirm("Delete?")) return;
+  try {
+    await fetch(scriptURL, { method: "POST", mode: "cors", body: JSON.stringify({ action: "delete", rowIndex: allTasks[index].rowIndex, source }) });
+    fetchTasks();
+  } catch (err) { alert(err.message); }
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const task = {
+    action: "add",
+    taskName: document.getElementById("taskName").value,
+    priority: document.getElementById("priority").value,
+    assignedBy: document.getElementById("assignedBy").value,
+    assignTo: document.getElementById("assignTo").value,
+    dueDate: document.getElementById("dueDate").value,
+    notes: document.getElementById("notes").value,
+  };
+  responseMsg.textContent = "⏳ Saving...";
+  try {
+    await fetch(scriptURL, { method: "POST", mode: "cors", body: JSON.stringify(task) });
+    responseMsg.textContent = "✅ Saved!";
+    form.reset();
+    setTimeout(fetchTasks, 800);
+  } catch (err) { responseMsg.textContent = "❌ Error: " + err.message; }
+});
+
+window.onload = fetchTasks;
+setInterval(fetchTasks, 60000);
