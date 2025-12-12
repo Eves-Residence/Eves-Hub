@@ -1,63 +1,230 @@
-// ===============================
-// IFRAME SWITCHER
-// ===============================
-function changeFrame(type) {
-  const iframe = document.getElementById("mainFrame");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Secretary | EveConnect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
+  
+  <script src="sec.js" defer></script>
+  <script src="/js/header.js" defer></script>
 
-  // Initially hide
-  iframe.style.opacity = 0;
-  iframe.style.display = "none";
+  <style>
+    /* ✅ TELEGRAM FLOAT */
+    .telegram-float {
+      position: fixed; width: 60px; height: 60px; bottom: 40px; right: 40px;
+      background-color: #2563EB; color: #fff; border-radius: 50px;
+      text-align: center; box-shadow: 2px 2px 3px #999; z-index: 1000;
+    }
+    .telegram-float img { width: 100%; height: 100%; padding: 10px; }
 
-  // Choose source
-  let newSrc = "";
-  switch (type) {
-      
-    case "calendar":
-      newSrc = "https://calendar.google.com/calendar/embed?src=f8939355c05bdafed63e7eb02789566c7ebe844c36005d3ce552d4d2fd6cba16%40group.calendar.google.com&ctz=Asia%2FManila";
-    break;
+    /* ✅ SIDEBAR STYLES */
+    .sidebar {
+      width: 280px; background-color: #ffffff; border-right: 1px solid #e5e7eb;
+      height: calc(100vh - 64px); position: fixed; left: 0; top: 64px;
+      overflow-y: auto; z-index: 40;
+    }
+    .sidebar-link {
+      display: flex; align-items: center; padding: 10px 20px;
+      color: #4b5563; font-size: 13.5px; font-weight: 500; transition: all 0.2s;
+      border-radius: 8px; margin: 2px 10px; cursor: pointer; border: none; background: transparent; width: calc(100% - 20px); text-align: left;
+    }
+    .sidebar-link:hover { background-color: #f3f4f6; color: #2563eb; }
+    .sidebar-link.active { background-color: #eff6ff; color: #2563eb; font-weight: 600; }
+    .sidebar-group-label { padding: 18px 20px 8px; font-size: 10px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; }
 
-    case "attendance":
-      newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true";
-    break;
-
-    case "off":
-      newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true";
-    break;
-
-    case "ca":
-      newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true";
-    break;
-
-    case "jo":
-      newSrc = "https://eves-residence.github.io/JOB-ORDER/";
-      break;
-
-    // case "feedback":
-    //   newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true";
-    //   break;
-
-    default:
-      newSrc = "https://tephdy.github.io/WEB-APP/";
-  }
-
-  // Update src
-  setTimeout(() => {
-    iframe.src = newSrc;
-
-    // Show iframe once it has a valid src
-    if (newSrc && newSrc.trim() !== "") {
-      iframe.style.display = "block";
+    /* ✅ WIDE CONTENT WRAPPER */
+    .main_content_wrapper {
+      margin-left: 280px; padding: 24px; width: calc(100% - 280px); min-height: calc(100vh - 64px);
     }
 
-    // Smooth fade-in when loaded
-    iframe.onload = () => {
-      iframe.style.transition = "opacity 0.4s ease";
-      iframe.style.opacity = 1;
-    };
-  }, 200);
-}
+    #mainFrame { width: 100%; height: 85vh; border-radius: 12px; border: 1px solid #e5e7eb; background: white; display: none; opacity: 0; }
 
+    /* ✅ HORIZONTAL KANBAN LIST */
+    #taskList { display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1.5rem; align-items: flex-start; }
+    
+    .task-card { 
+      background: white; border-radius: 1rem; padding: 1rem; margin-bottom: 1rem; 
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); border-left: 5px solid #E5E7EB; 
+      width: 300px; min-width: 300px; flex-shrink: 0;
+      transition: all 0.3s ease; white-space: normal;
+    }
+    .task-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
 
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(-100%); }
+      .main_content_wrapper { margin-left: 0; width: 100%; }
+    }
+  </style>
+</head>
 
+<body class="bg-[#F9FAFB]">
+  <div id="header"></div>
 
+  <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
+    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
+  </a>
 
+  <div class="flex">
+    <aside class="sidebar mt-16">
+      <nav class="mt-2">
+        <div class="sidebar-group-label">Productivity</div>
+        <button onclick="changeFrame('calendar', this)" class="sidebar-link active">
+          <span class="material-symbols-outlined mr-3">calendar_month</span> Secretary Calendar
+        </button>
+        <button onclick="changeFrame('task', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">assignment</span> Task Manager
+        </button>
+
+        <div class="sidebar-group-label">Forms & Applications</div>
+        <button onclick="changeFrame('jo', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">assignment_turned_in</span> Job Order Form
+        </button>
+        <button onclick="changeFrame('feedback', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">rate_review</span> Feedback/Report
+        </button>
+
+        <div class="sidebar-group-label">Spreadsheets & Finance</div>
+        <button onclick="changeFrame('attendance', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">badge</span> Attendance
+        </button>
+        <button onclick="changeFrame('off', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">person_off</span> Off/Absent Form
+        </button>
+        <button onclick="changeFrame('ca', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">account_balance_wallet</span> Cash Advance/Loan
+        </button>
+      </nav>
+    </aside>
+
+    <main class="main_content_wrapper mt-16">
+      <div id="section-iframe" class="hidden">
+        <iframe id="mainFrame" src=""></iframe>
+      </div>
+
+      <div id="section-task" class="hidden flex flex-col xl:flex-row gap-8 items-start">
+        <div class="todo-form-container bg-white p-6 rounded-3xl shadow-sm border border-gray-100 w-full xl:w-[380px] xl:sticky xl:top-24">
+          <h1 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-blue-600">edit_square</span> Task Manager
+          </h1>
+          <form id="todo-form" class="space-y-4">
+            <div>
+              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Task Name</label>
+              <input type="text" id="taskName" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Priority</label>
+                <select id="priority" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
+                  <option>High</option><option>Medium</option><option selected>Low</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Due Date</label>
+                <input type="date" id="dueDate" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
+              </div>
+            </div>
+            <div>
+              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Assigned By</label>
+              <input type="text" id="assignedBy" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
+            </div>
+            <div>
+              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Assigned To</label>
+              <select id="assignTo" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
+                <option value="Secretary">Secretary</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Property Representative">Property Representative</option>
+                <option value="Accounting">Accounting</option>
+                <option value="IT">IT</option>
+                <option value="Maintenance">Maintenance</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Details</label>
+              <textarea id="notes" rows="3" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none focus:ring-2 focus:ring-blue-500 resize-none" placeholder="Task description..."></textarea>
+            </div>
+            <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-100 active:scale-95">Save Task</button>
+          </form>
+          <p id="response" class="mt-4 text-xs font-medium text-green-600 text-center"></p>
+        </div>
+
+        <div class="flex-1 w-full overflow-hidden">
+          <div class="flex justify-between items-center mb-6">
+             <div class="flex gap-2">
+                
+             </div>
+          </div>
+          <div id="taskList"></div>
+        </div>
+      </div>
+
+      <div id="section-calendar" class="w-full">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">📅 Secretary Calendar</h1>
+        <div class="bg-white p-2 rounded-2xl shadow-sm border h-[75vh]">
+          <iframe src="https://calendar.google.com/calendar/embed?src=08e9452d83d5dc0a473f7f8d8c9a20162bed560be6f2573bb858d42c052522e5%40group.calendar.google.com&ctz=Asia%2FManila" 
+            style="border: 0" width="100%" height="100%" frameborder="0" scrolling="no" class="rounded-xl">
+          </iframe>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function changeFrame(type, element) {
+      const iframe = document.getElementById("mainFrame");
+      const sectionIframe = document.getElementById("section-iframe");
+      const sectionCalendar = document.getElementById("section-calendar");
+      const sectionTask = document.getElementById("section-task");
+
+      [sectionIframe, sectionCalendar, sectionTask].forEach(sec => sec.classList.add('hidden'));
+      iframe.style.display = "none";
+      iframe.style.opacity = 0;
+
+      let newSrc = "";
+      switch (type) {
+        case "calendar": sectionCalendar.classList.remove('hidden'); break;
+        case "task": sectionTask.classList.remove('hidden'); if(typeof fetchTasks === 'function') fetchTasks(); break;
+        case "jo": newSrc = "https://eves-residence.github.io/JOB-ORDER"; break; // Replace with your JO source
+
+        case "feedback": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true"; break;
+
+        case "attendance": newSrc = "https://docs.google.com/spreadsheets/d/1k-ryTpaGSjgv7Hl5v0phOpAkSXacHDyyr9bafTe4JbY/edit?usp=sharing"; break;
+
+        case "off": newSrc = "https://docs.google.com/spreadsheets/d/1inxxznuvGWAiHpjAtZA7j8L7gSETlPIs5SyZFUKO1ic/edit?usp=sharing"; break;
+        
+        case "ca": newSrc = "https://docs.google.com/spreadsheets/d/1l3G6SZyPcqpKSFyIDdZRO5Jmg2pgDG0SZwwshe7_hMM/edit?usp=sharing"; break;
+      }
+
+      if (newSrc) {
+        sectionIframe.classList.remove('hidden');
+        iframe.style.display = "block";
+        setTimeout(() => {
+          iframe.src = newSrc;
+          iframe.onload = () => { iframe.style.transition = "opacity 0.4s"; iframe.style.opacity = 1; };
+        }, 100);
+      }
+
+      document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+      if (element) element.classList.add('active');
+    }
+
+    // Header logic
+    fetch("../header/header.html").then(res => res.text()).then(data => {
+      document.getElementById("header").innerHTML = data;
+      const dept = localStorage.getItem("department");
+      const name = localStorage.getItem("name");
+      if (!dept || !name) { window.location.href = "../index.html"; return; }
+      const deptName = document.getElementById("dept-name");
+      if (deptName) deptName.textContent = `${dept} Department | ${name}`;
+    });
+
+    // Auto-resize notes
+    const notes = document.getElementById('notes');
+    notes.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+  </script>
+</body>
+</html>
