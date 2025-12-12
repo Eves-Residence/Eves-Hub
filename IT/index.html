@@ -3,165 +3,280 @@
 <head>
   <meta charset="UTF-8">
   <title>IT Department | EveConnect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
-  <link rel="stylesheet" href="../css/header.css">
-  <link rel="stylesheet" href="../css/department.css">
-  <link rel="stylesheet" href="../css/task.css">
-  <link rel="stylesheet" href="../css/desktop.css">
-  <script src="index.js" defer></script>
+  
+  <!-- <script src="index.js" defer></script> -->
   <script src="it.js" defer></script>
   <script src="/js/header.js" defer></script>
   <script src="notif.js" defer></script>
+
+  <style>
+    
+    /* ✅ TELEGRAM FLOAT */
+    .telegram-float {
+      position: fixed; width: 60px; height: 60px; bottom: 40px; right: 40px;
+      background-color: #2563EB; color: #fff; border-radius: 50px;
+      text-align: center; box-shadow: 2px 2px 3px #999; z-index: 1000;
+    }
+    .telegram-float img { width: 100%; height: 100%; padding: 10px; }
+
+    /* ✅ SIDEBAR STYLES */
+    .sidebar {
+      width: 280px; background-color: #ffffff; border-right: 1px solid #e5e7eb;
+      height: calc(100vh - 64px); position: fixed; left: 0; top: 64px;
+      overflow-y: auto; z-index: 40;
+    }
+    .sidebar-link {
+      display: flex; align-items: center; padding: 10px 20px;
+      color: #4b5563; font-size: 13.5px; font-weight: 500; transition: all 0.2s;
+      border-radius: 8px; margin: 2px 10px; cursor: pointer; border: none; background: transparent; width: calc(100% - 20px); text-align: left;
+    }
+    .sidebar-link:hover { background-color: #f3f4f6; color: #2563eb; }
+    .sidebar-link.active { background-color: #eff6ff; color: #2563eb; font-weight: 600; }
+    .sidebar-group-label { padding: 18px 20px 8px; font-size: 10px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ✅ WIDE CONTENT WRAPPER */
+    .main_content_wrapper {
+      margin-left: 280px; padding: 24px; width: calc(100% - 280px); min-height: calc(100vh - 64px);
+    }
+
+    #mainFrame { width: 100%; height: 85vh; border-radius: 12px; border: 1px solid #e5e7eb; background: white; display: none; opacity: 0; }
+
+    /* ✅ MODERN KANBAN DESIGN */
+    .kanban-board { display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 2rem; align-items: flex-start; }
+    .kanban-column { background-color: #F1F4F9; border-radius: 1.5rem; width: 320px; min-width: 320px; padding: 1.25rem; min-height: 600px; }
+    
+    .task-card { 
+      background: white; border-radius: 1.25rem; padding: 1.25rem; margin-bottom: 1rem; 
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); border-left: 4px solid #E5E7EB; 
+      transition: all 0.3s ease; 
+    }
+    .task-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+    
+    .p-high { border-left-color: #ef4444; }
+    .p-medium { border-left-color: #f59e0b; }
+    .p-low { border-left-color: #10b981; }
+
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(-100%); }
+      .main_content_wrapper { margin-left: 0; width: 100%; }
+    }
+  </style>
 </head>
 
-<body>
-  <!-- ✅ HEADER -->
-   <div id="header"></div>
+<body class="bg-[#F9FAFB]">
+  <div id="header"></div>
+
   <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
-  <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
+    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
   </a>
 
+  <div class="flex">
+    <aside class="sidebar mt-16">
+      <nav class="mt-2">
+        <div class="sidebar-group-label">Productivity</div>
+        <button onclick="changeFrame('calendar', this)" class="sidebar-link active">
+          <span class="material-symbols-outlined mr-3">calendar_month</span> IT Calendar
+        </button>
+        <button onclick="changeFrame('task', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">assignment</span> Task Manager
+        </button>
 
-  <div class="main_container">
-    <div class="content resizable">
-      <div class="title">
-        <h1>💻 IT Department</h1>
-        <p>All tools and files for IT Department.</p>
+        <div class="sidebar-group-label">Property Management</div>
+
+        <button onclick="changeFrame('promo', this)" class="sidebar-link">
+          <span class="material-symbols-outlined">sell
+          </span> Promotional Contents
+        </button>
+
+        <button onclick="changeFrame('master', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">database</span> Master List
+        </button>
+
+        <button onclick="changeFrame('waitlist', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">group_add</span> Wait List
+        </button>
+
+        <button onclick="changeFrame('viewing', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">group_add</span> Viewing Schedule
+        </button>
+        
+        <button onclick="changeFrame('bnb', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">bathtub</span> Bed & Bath Info
+        </button>
+
+        <button onclick="changeFrame('search', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">search</span> Search Engine
+        </button>
+
+        <div class="sidebar-group-label">Personnel & Finance</div>
+        <button onclick="changeFrame('attendance', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">badge</span> Attendance
+        </button>
+
+        <button onclick="changeFrame('off', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">person_off</span> Off/Absent Form
+        </button>
+
+        <button onclick="changeFrame('ca', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">account_balance_wallet</span> Cash Advance/Loan
+        </button>
+
+      </nav>
+    </aside>
+
+    <main class="main_content_wrapper mt-16">
+      <div id="section-iframe" class="hidden">
+        <iframe id="mainFrame" src=""></iframe>
       </div>
 
-      <div class="sub_content">
+      <div id="section-task" class="hidden flex flex-col xl:flex-row gap-8 items-start">
         
-        <div class="card"><a href="#" onclick="changeFrame('master'); return false;">Master List</a></div>
-        
-        <div class="card"><a href="https://drive.google.com/drive/folders/1uXhNGPapLnYDvxXnGU5MzCM2ecint04e?usp=sharing">Viewing Schedule</a></div>
+        <div class="todo-form-container bg-white p-6 rounded-3xl shadow-sm border border-gray-100 w-full xl:w-[380px] xl:sticky xl:top-24">
+          <h1 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-blue-600">edit_square</span> Task Manager
+          </h1>
+          
+          <form id="todo-form" class="space-y-4">
+            <div>
+              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Task Name</label>
+              <input type="text" id="taskName" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
 
-        <div class="card"><a href="#" onclick="changeFrame('waitlist'); return false;">Wait List</a></div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Priority</label>
+                <select id="priority" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
+                  <option>High</option><option>Medium</option><option selected>Low</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Due Date</label>
+                <input type="date" id="dueDate" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
+              </div>
+            </div>
 
-        <div class="card"><a href="https://drive.google.com/drive/folders/1SzEMdtEnluqixrB9Zyj_KC4OvgwwAW-M?usp=sharing">Promotional Content</a></div>
+            <div>
+              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Assigned By</label>
+              <input type="text" id="assignedBy" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
+            </div>
 
-        <div class="card"><a href="#" onclick="changeFrame('bnb'); return false;">Bed and Bath Info</a></div>
+            <div>
+              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Assigned To</label>
+              <select id="assignTo" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
+                <option value="Secretary">Secretary</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Property Representative">Property Representative</option>
+                <option value="Accounting">Accounting</option>
+                <option value="IT">IT</option>
+              </select>
+            </div>
 
-        <div class="card"><a href="#" onclick="changeFrame('search'); return false;">Search Engine</a></div>
+            <div>
+              <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Details</label>
+              <textarea id="notes" rows="3" style="width:100%; padding:12px; border:1px solid #f1f1f1; border-radius:12px; resize:none; overflow:hidden; min-height:100px; max-height:300px; background:#f9fafb; outline:none; font-size:14px;" placeholder="Add task details..."></textarea>
+            </div>
 
-        <div class="card"><a href="#" onclick="changeFrame('attendance'); return false;">Attendance</a></div>
-
-        <div class="card"><a href="#" onclick="changeFrame('off'); return false;">Off/Absent Form</a></div>
-
-        <div class="card"><a href="#" onclick="changeFrame('ca'); return false;">Cash Advance/Loan</a></div>
-
-      </div>
-
-      <iframe id="mainFrame" src=""></iframe>
-
-      <!-- ✅ TASK MANAGER SECTION -->
-      <div class="task-main-container">
-        <!-- Left: Form -->
-        <div class="todo-form-container">
-          <h1>📝 Task Manager</h1>
-          <form id="todo-form">
-            <label>Task Name</label>
-            <input type="text" id="taskName" required>
-
-            <label>Priority</label>
-            <select id="priority">
-              <option>High</option>
-              <option>Medium</option>
-              <option>Low</option>
-            </select>
-
-            <label>Assigned By</label>
-            <input type="text" id="assignedBy" required>
-
-            <label>Assigned To</label>
-            <select id="assignTo" required>
-              <option value="Secretary">Secretary</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Property Representative">Property Representative</option>
-              <option value="Accounting">Accounting</option>
-              <option value="IT">IT</option>
-            </select>
-
-            <label>Due Date</label>
-            <input type="date" id="dueDate" required>
-
-            <label>Details</label>
-            <textarea id="notes" rows="3" style="
-              width:100%;
-              padding:8px;
-              border:1px solid #ccc;
-              border-radius:5px;
-              resize:none;
-              overflow:hidden;
-              min-height:100px;
-              max-height:300px;
-              font-family:inherit;
-              font-size:14px;
-              line-height:1.4;
-              box-sizing:border-box;"></textarea>
-
-            <button type="submit">Save Task</button>
+            <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition active:scale-95 shadow-lg shadow-blue-100">Save Task</button>
           </form>
-          <p id="response" class="response"></p>
+          <p id="response" class="mt-4 text-xs font-medium text-green-600 text-center"></p>
         </div>
 
-        <!-- Right: Task List -->
-        <div class="task-list-container">
-          <h1>📋 Task List</h1>
-          <div id="taskList" class="task-list"></div>
+        <div class="flex-1 w-full overflow-hidden">
+          
+          <div id="taskList" class="kanban-board">
+            <div class="kanban-column" id="col-ready">
+              <h3 class="font-bold text-gray-400 text-[11px] uppercase tracking-widest mb-4 px-2">Task Ready</h3>
+              <div class="cards-area space-y-4"></div>
+            </div>
+            <div class="kanban-column" id="col-progress">
+              <h3 class="font-bold text-gray-400 text-[11px] uppercase tracking-widest mb-4 px-2">On Progress</h3>
+              <div class="cards-area space-y-4"></div>
+            </div>
+            <div class="kanban-column" id="col-done">
+              <h3 class="font-bold text-gray-400 text-[11px] uppercase tracking-widest mb-4 px-2">Done</h3>
+              <div class="cards-area space-y-4"></div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- ✅ Google Calendar -->
-    <div class="content resizable">
-      <iframe 
-        src="https://calendar.google.com/calendar/embed?src=c3d9a3cc01cce614d7432b94ac9162bbce8ad63964dfb927af50b557b9ba75a6%40group.calendar.google.com&ctz=Asia%2FManila" 
-        frameborder="0" scrolling="no">
-      </iframe>
-    </div>
-
-    <footer>
-      <p>© 2025 Eve's Residences. All rights reserved.</p> 
-      <p>Developed by Eve's Residences IT Department.</p> 
-    </footer>
+      <div id="section-calendar" class="w-full">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">📅 IT Calendar</h1>
+        <div class="bg-white p-2 rounded-2xl shadow-sm border h-[75vh]">
+          <iframe src="https://calendar.google.com/calendar/embed?src=c3d9a3cc01cce614d7432b94ac9162bbce8ad63964dfb927af50b557b9ba75a6%40group.calendar.google.com&ctz=Asia%2FManila" 
+            style="border: 0" width="100%" height="100%" frameborder="0" scrolling="no" class="rounded-xl">
+          </iframe>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <!-- ✅ HEADER SCRIPT (merged logic) -->
   <script>
-    // Load shared header
-  fetch("../header/header.html")
-  .then(res => res.text())
-  .then(data => {
-    document.getElementById("header").innerHTML = data;
+    function changeFrame(type, element) {
+      const iframe = document.getElementById("mainFrame");
+      const sectionIframe = document.getElementById("section-iframe");
+      const sectionCalendar = document.getElementById("section-calendar");
+      const sectionTask = document.getElementById("section-task");
 
-    // 🔹 Get department & name from localStorage
-    const department = localStorage.getItem("department");
-    const name = localStorage.getItem("name");
+      [sectionIframe, sectionCalendar, sectionTask].forEach(sec => sec.classList.add('hidden'));
+      iframe.style.display = "none";
+      iframe.style.opacity = 0;
 
-    // Redirect to login if no credentials found
-    if (!department || !name) {
-      window.location.href = "../index.html";
-      return;
+      let newSrc = "";
+      switch (type) {
+        case "calendar": sectionCalendar.classList.remove('hidden'); break;
+        case "task": sectionTask.classList.remove('hidden'); if(typeof fetchTasks === 'function') fetchTasks(); break;
+        case "master": newSrc = "https://docs.google.com/spreadsheets/d/15ouIKyyo1pfegl7oMxUgNgy_36JPb87Ta4JGxgws5HI/edit?usp=sharing"; break;
+
+        case "search": newSrc = "https://tephdy.github.io/WEB-APP/"; break;
+        
+        case "waitlist": newSrc = "https://docs.google.com/spreadsheets/d/1S2v43l75aC6EpyCkXNifSfFYvuXE_XJ9HPcr0RDyhtg/edit?usp=sharing"; break;
+
+        case "viewing": newSrc = "https://docs.google.com/spreadsheets/d/1QqBqiE9ACTfjLZP_00M8rwbvUunhWtqJ2AGInvBpmDc/edit?usp=sharing"; break;
+
+        case "viewing": newSrc = "https://drive.google.com/drive/folders/1SzEMdtEnluqixrB9Zyj_KC4OvgwwAW-M?usp=drive_link"; break;
+
+        case "bnb": newSrc = "https://docs.google.com/spreadsheets/d/1aWdlIT9aRwT4FktT_3oB0poxC8xyC0lOTDKEj574M2Y/edit?usp=sharing"; break;
+
+        case "attendance": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true"; break;
+
+        case "off": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true"; break;
+
+        case "ca": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true"; break;
+      }
+
+      if (newSrc) {
+        sectionIframe.classList.remove('hidden');
+        iframe.style.display = "block";
+        setTimeout(() => {
+          iframe.src = newSrc;
+          iframe.onload = () => { iframe.style.transition = "opacity 0.4s"; iframe.style.opacity = 1; };
+        }, 100);
+      }
+
+      document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+      if (element) element.classList.add('active');
     }
 
-    // 🔹 Update department display text (e.g. IT Department | John)
-    const deptName = document.getElementById("dept-name");
-    if (deptName) {
-      const deptFormatted = department + " Department";
-      deptName.textContent = `${deptFormatted} | ${name}`;
-    }
+    // Header logic
+    fetch("../header/header.html").then(res => res.text()).then(data => {
+      document.getElementById("header").innerHTML = data;
+      const dept = localStorage.getItem("department");
+      const name = localStorage.getItem("name");
+      if (!dept || !name) { window.location.href = "../index.html"; return; }
+      const deptName = document.getElementById("dept-name");
+      if (deptName) deptName.textContent = `${dept} Department | ${name}`;
+    });
 
-    // 🔹 Enable mobile menu toggle AFTER header loads
-    const menuToggle = document.querySelector(".menu-toggle");
-    const subContent = document.querySelector(".sub_content");
-    if (menuToggle && subContent) {
-      menuToggle.addEventListener("click", () => {
-        subContent.classList.toggle("active");
-      });
-    }
-  })
-  .catch(err => console.error("Error loading header:", err));
+    // Auto-resize notes
+    const notes = document.getElementById('notes');
+    notes.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
   </script>
 </body>
 </html>
