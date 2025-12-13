@@ -89,7 +89,7 @@ const filterUI = document.createElement("div");
 filterUI.classList.add("filter-container");
 filterUI.innerHTML = `
   <div class="task-header-row">
-    <p>IT Operations Manager</p>
+    <p>IT Department</p>
     <div style="display:flex; gap:12px;">
       <button class="btn-apply" id="applyFilter">Apply</button>
       <button class="btn-clear" id="clearFilter">Clear</button>
