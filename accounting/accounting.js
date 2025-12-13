@@ -20,12 +20,22 @@ function changeFrame(type, element) {
     let newSrc = "";
     switch (type) {
         case "calendar": if (sectionCalendar) sectionCalendar.classList.remove('hidden'); break;
+
         case "task": if (sectionTask) sectionTask.classList.remove('hidden'); fetchTasks(); break;
+
         case "master": newSrc = "https://docs.google.com/spreadsheets/d/15ouIKyyo1pfegl7oMxUgNgy_36JPb87Ta4JGxgws5HI/edit?usp=sharing"; break;
+
+        case "actSys":newSrc = "https://docs.google.com/spreadsheets/d/1czVE-Z4POL6xd5WdgCY47a0NikL9H3V3N7eK-jvQQUY/edit?usp=sharing";
+        break;
+
         case "bnb": newSrc = "https://docs.google.com/spreadsheets/d/1aWdlIT9aRwT4FktT_3oB0poxC8xyC0lOTDKEj574M2Y/edit?usp=sharing"; break;
+
         case "bnb_dates": newSrc = "https://calendar.google.com/calendar/embed?src=00c9b4f66e0573f992bb911bb11ddc608ccb021f2be44fa6cfdc633de1463f82%40group.calendar.google.com&ctz=Asia%2FManila"; break;
+
         case "attendance": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true"; break;
+
         case "off": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true"; break;
+
         case "ca": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true"; break;
     }
 
