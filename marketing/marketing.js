@@ -1,6 +1,6 @@
-//// WORKING AS OF 12/12/2025
+//// WORKING AS OF 12/13/2025
 // ==========================================
-// 1. IFRAME SWITCHER WITH LOADING SCREEN
+// 1. SINGLE-FUNCTION IFRAME CONTROLLER
 // ==========================================
 function changeFrame(type, element) {
     const iframe = document.getElementById("mainFrame");
@@ -9,6 +9,7 @@ function changeFrame(type, element) {
     const sectionCalendar = document.getElementById("section-calendar");
     const sectionTask = document.getElementById("section-task");
 
+    // Unified Toggling: Hide all sections initially to focus on one function
     [sectionIframe, sectionCalendar, sectionTask].forEach(sec => {
         if (sec) sec.classList.add('hidden');
     });
@@ -19,27 +20,16 @@ function changeFrame(type, element) {
     let newSrc = "";
     switch (type) {
         case "calendar": if (sectionCalendar) sectionCalendar.classList.remove('hidden'); break;
-
         case "task": if (sectionTask) sectionTask.classList.remove('hidden'); fetchTasks(); break;
-
         case "master": newSrc = "https://docs.google.com/spreadsheets/d/15ouIKyyo1pfegl7oMxUgNgy_36JPb87Ta4JGxgws5HI/edit?usp=sharing"; break;
-
         case "search": newSrc = "https://tephdy.github.io/WEB-APP/"; break;
-
         case "waitlist": newSrc = "https://docs.google.com/spreadsheets/d/1S2v43l75aC6EpyCkXNifSfFYvuXE_XJ9HPcr0RDyhtg/edit?usp=sharing"; break;
-
         case "bnb": newSrc = "https://docs.google.com/spreadsheets/d/1aWdlIT9aRwT4FktT_3oB0poxC8xyC0lOTDKEj574M2Y/edit?usp=sharing"; break;
-
         case "bnb_dates": newSrc = "https://calendar.google.com/calendar/embed?src=00c9b4f66e0573f992bb911bb11ddc608ccb021f2be44fa6cfdc633de1463f82%40group.calendar.google.com&ctz=Asia%2FManila"; break;
-
         case "vacancy": newSrc = "https://docs.google.com/spreadsheets/d/1Z_3YqO4ve0TvbkV4Lrg6X9utii7EswQiwnczFcAKvsI/edit?usp=sharing"; break;
-
         case "attendance": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true"; break;
-
         case "off": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true"; break;
-
         case "ca": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true"; break;
-
         default: newSrc = "https://tephdy.github.io/WEB-APP/";
     }
 
@@ -69,40 +59,34 @@ const responseMsg = document.getElementById("response");
 let allTasks = [];
 let editIndex = null;
 
-// ✅ INJECT MODERN FILTER HEADER
+// ✅ CREATE DYNAMIC FILTER HEADER (With Big Buttons)
 const filterContainer = document.createElement("div");
 filterContainer.className = "filter-container";
 filterContainer.style.cssText = "background:#fff; padding:15px; border-radius:12px; margin-bottom:20px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border:1px solid #eee;";
 filterContainer.innerHTML = `
   <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f0f2f5; padding-bottom:10px; margin-bottom:15px;">
     <p style="margin:0; font-weight:700; font-size:18px; color:#1a202c;">📋 All Task Manager</p>
-    <div style="display:flex; gap:10px;">
-      <button id="applyFilter" style="background:#3182ce; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:600;">Apply</button>
-      <button id="clearFilter" style="background:#edf2f7; color:#4a5568; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:600;">Clear</button>
+    <div style="display:flex; gap:12px;">
+      <button id="applyFilter" style="background:#3182ce; color:white; border:none; padding:10px 25px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:700; min-width:100px;">Apply</button>
+      <button id="clearFilter" style="background:#edf2f7; color:#4a5568; border:none; padding:10px 25px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:700; min-width:100px;">Clear</button>
     </div>
   </div>
   <div style="display:flex; flex-wrap:wrap; gap:15px;">
     <div style="display:flex; flex-direction:column; gap:4px;">
       <label style="font-size:11px; font-weight:700; color:#718096; text-transform:uppercase;">Status</label>
-      <select id="statusFilter" style="padding:6px; border-radius:6px; border:1px solid #cbd5e0; min-width:130px;">
-        <option value="All">All Statuses</option>
-        <option value="Not Started">Not Started</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Completed">Completed</option>
+      <select id="statusFilter" style="padding:8px; border-radius:6px; border:1px solid #cbd5e0; min-width:140px;">
+        <option value="All">All Statuses</option><option value="Not Started">Not Started</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option>
       </select>
     </div>
     <div style="display:flex; flex-direction:column; gap:4px;">
       <label style="font-size:11px; font-weight:700; color:#718096; text-transform:uppercase;">Priority</label>
-      <select id="priorityFilter" style="padding:6px; border-radius:6px; border:1px solid #cbd5e0; min-width:130px;">
-        <option value="All">All Priorities</option>
-        <option value="High">High</option>
-        <option value="Medium">Medium</option>
-        <option value="Low">Low</option>
+      <select id="priorityFilter" style="padding:8px; border-radius:6px; border:1px solid #cbd5e0; min-width:140px;">
+        <option value="All">All Priorities</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option>
       </select>
     </div>
     <div style="display:flex; flex-direction:column; gap:4px;">
       <label style="font-size:11px; font-weight:700; color:#718096; text-transform:uppercase;">Assigned By</label>
-      <select id="assignedByFilter" style="padding:6px; border-radius:6px; border:1px solid #cbd5e0; min-width:150px;">
+      <select id="assignedByFilter" style="padding:8px; border-radius:6px; border:1px solid #cbd5e0; min-width:160px;">
         <option value="All">All Departments</option>
       </select>
     </div>
@@ -110,7 +94,6 @@ filterContainer.innerHTML = `
 `;
 taskList.parentNode.insertBefore(filterContainer, taskList);
 
-// Filter Event Listeners
 document.getElementById("applyFilter").onclick = () => renderTasks();
 document.getElementById("clearFilter").onclick = () => {
     document.getElementById("statusFilter").value = "All";
@@ -119,21 +102,8 @@ document.getElementById("clearFilter").onclick = () => {
     renderTasks();
 };
 
-// Modal Injection (Edit, Reply, View)
-const modalHTML = `
-  <div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
-    <div style="background:#fff; padding:20px; border-radius:10px; width:90%; max-width:450px;">
-      <h3>Edit Status</h3>
-      <select id="editStatus" style="width:100%; padding:8px; margin-bottom:10px;"><option value="Not Started">Not Started</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select>
-      <textarea id="addRemarks" style="width:100%; padding:8px; height:80px; resize:none; border:1px solid #ddd;"></textarea>
-      <div id="loadingIndicator" style="display:none; text-align:center;">⏳ Saving...</div>
-      <div style="text-align:right; margin-top:15px;"><button id="saveEditBtn" style="padding:6px 12px; background:#4CAF50; color:#fff; border:none; border-radius:5px;">Save</button><button id="cancelEditBtn" style="padding:6px 12px; background:#ccc; border:none; border-radius:5px; margin-left:10px;">Cancel</button></div>
-    </div>
-  </div>
-`;
-document.body.insertAdjacentHTML("beforeend", modalHTML);
+const safe = s => s ? String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])) : "";
 
-// Fetch Tasks (Flicker-Free)
 async function fetchTasks() {
     if (allTasks.length === 0) taskList.innerHTML = "<p>Loading tasks...</p>";
     try {
@@ -141,69 +111,67 @@ async function fetchTasks() {
         const text = await res.text();
         const jsonMatch = text.match(/\{.*\}|\[.*\]/s);
         const newTasks = JSON.parse(jsonMatch[0]);
-
         if (JSON.stringify(allTasks) !== JSON.stringify(newTasks)) {
             allTasks = newTasks;
-            
-            // Dynamic Assigned By List Update
             const filterSelect = document.getElementById("assignedByFilter");
             const currentVal = filterSelect.value;
             const uniqueDepts = [...new Set(allTasks.map(t => (t["ASSIGNED BY"] || "").trim()).filter(v => v))];
             filterSelect.innerHTML = `<option value="All">All Departments</option>` + uniqueDepts.map(d => `<option value="${d}">${d}</option>`).join("");
             filterSelect.value = [...filterSelect.options].some(o => o.value === currentVal) ? currentVal : "All";
-
             renderTasks();
         }
     } catch (err) { console.error("Refresh failed:", err); }
 }
 
-const safe = s => s ? String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])) : "";
-
-// Render Tasks (Fixed with Filtering Logic)
+// ✅ RENDER TASKS (Horizontal Kanban + Permission Logic + Due Date)
 function renderTasks() {
-    const sFilter = document.getElementById("statusFilter").value;
-    const pFilter = document.getElementById("priorityFilter").value;
-    const aFilter = document.getElementById("assignedByFilter").value;
+    const sF = document.getElementById("statusFilter").value;
+    const pF = document.getElementById("priorityFilter").value;
+    const aF = document.getElementById("assignedByFilter").value;
 
     let filtered = allTasks.filter(t => {
-        return (sFilter === "All" || (t["STATUS"] || "Not Started") === sFilter) &&
-               (pFilter === "All" || (t["PRIORITY"] || "").trim() === pFilter) &&
-               (aFilter === "All" || (t["ASSIGNED BY"] || "").trim() === aFilter);
+        return (sF === "All" || (t["STATUS"] || "Not Started") === sF) &&
+               (pF === "All" || (t["PRIORITY"] || "").trim() === pF) &&
+               (aF === "All" || (t["ASSIGNED BY"] || "").trim() === aF);
     });
 
     taskList.innerHTML = "";
-    taskList.style.cssText = "display:flex !important; flex-direction:row !important; overflow-x:auto !important; gap:20px !important; padding:10px !important; align-items:center !important;";
-
-    if (filtered.length === 0) {
-        taskList.innerHTML = "<p style='padding:20px; color:#666;'>No tasks match your filters.</p>";
-        return;
-    }
+    taskList.style.cssText = "display:flex !important; flex-direction:row !important; overflow-x:auto !important; gap:20px !important; padding:10px !important; align-items:flex-start !important;";
 
     filtered.forEach((t) => {
         const originalIndex = allTasks.indexOf(t);
         const status = (t["STATUS"] || "Not Started").trim();
         let color = status === "Completed" ? "#4CAF50" : (status === "In Progress" ? "#FFC107" : "#F44336");
-        const canEdit = String(t["ASSIGNED BY"] || "").trim().toLowerCase() === "secretary";
+
+        // ✅ PERMISSION LOGIC: Can edit if created by you OR assigned to you
+        const sourceDept = String(t["ASSIGNED BY"] || "").trim().toLowerCase();
+        const targetDept = String(t["ASSIGNED TO"] || "").trim().toLowerCase();
+        const canEdit = sourceDept === "marketing" || "ever";
+
 
         const div = document.createElement("div");
-        div.style.cssText = `background:#fff; border-radius:10px; border-left:8px solid ${color}; width:300px; height:320px; flex-shrink:0; display:flex; flex-direction:column; box-shadow:0 4px 10px rgba(0,0,0,0.05); white-space:normal;`;
+        div.style.cssText = `background:#fff; border-radius:12px; border-left:8px solid ${color}; width:300px; height:340px; flex-shrink:0; display:flex; flex-direction:column; box-shadow:0 4px 15px rgba(0,0,0,0.06); white-space:normal;`;
 
         div.innerHTML = `
-          <div style="padding:15px; flex:1; overflow:hidden; display:flex; flex-direction:column; gap:8px;">
-            <div style="font-weight:bold; font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${safe(t["TASK NAME"])}</div>
-            <div style="background:${color}; color:#fff; padding:2px 10px; border-radius:20px; font-size:10px; width:fit-content;">${status}</div>
-            <div style="flex:1; overflow-y:auto; font-size:13px; background:#fff9e6; padding:10px; border-radius:6px; line-height:1.4;">
-                🗒 ${safe(t["NOTES"] || "-")}
+          <div style="padding:18px; flex:1; overflow:hidden; display:flex; flex-direction:column; gap:10px;">
+            <div style="font-weight:700; font-size:15px; color:#2d3748;">${safe(t["TASK NAME"])}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="background:${color}; color:#fff; padding:3px 12px; border-radius:20px; font-size:10px; font-weight:bold; text-transform:uppercase;">${status}</div>
+                <div style="font-size:11px; color:black; font-weight:600;">📅 ${safe(t["DUE DATE"])}</div>
+            </div>
+            <div style="flex:1; overflow-y:auto; font-size:13px; background:#f7fafc; padding:12px; border-radius:8px; line-height:1.5; color:#4a5568;">
+               🗒 ${safe(t["NOTES"] || "-")}
             </div>
           </div>
-          <div style="padding:10px; border-top:1px solid #eee; display:flex; justify-content:space-between; align-items:center; background:#fafafa;">
-             <span style="font-size:10px; color:#aaa;">🕒 ${safe(t["TIMESTAMP"])}</span>
-             <div style="display:flex; gap:5px;">
+          <div style="padding:15px 18px; border-top:1px solid #edf2f7; display:flex; flex-direction:column; gap:10px; background:#fafafa; border-radius: 0 0 12px 0;">
+             <span style="font-size:10px; color:#a0aec0; font-weight:600;">🕒 ${safe(t["TIMESTAMP"])}</span>
+             <div style="display:flex; gap:8px;">
+                <button onclick="openViewModal(${originalIndex})" style="flex:1; padding:10px; font-size:12px; background:#edf2f7; color:#4a5568; border:none; border-radius:6px; cursor:pointer; font-weight:700;">View</button>
                 ${canEdit ? `
-                  <button onclick="openEditModal(${originalIndex})" style="padding:4px 8px; font-size:11px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">Edit</button>
-                  <button onclick="deleteTask(${originalIndex})" style="padding:4px 8px; font-size:11px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">Del</button>
+                  <button onclick="openEditModal(${originalIndex})" style="flex:1; padding:10px; font-size:12px; background:#3182ce; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:700;">Edit</button>
+                  <button onclick="deleteTask(${originalIndex})" style="flex:1; padding:10px; font-size:12px; background:#e53e3e; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:700;">Del</button>
                 ` : `
-                  <button style="padding:4px 8px; font-size:11px; background:#6c757d; color:#fff; border:none; border-radius:4px; cursor:not-allowed;">View Only</button>
+                  <button style="flex:2; padding:10px; font-size:12px; background:#cbd5e0; color:#4a5568; border:none; border-radius:6px; cursor:not-allowed; font-weight:700;">Locked (Read-Only)</button>
                 `}
              </div>
           </div>
@@ -212,9 +180,62 @@ function renderTasks() {
     });
 }
 
-// ... Keep existing saveEditBtn.onclick, deleteTask, and form.addEventListener ...
+// ✅ MODAL INJECTION (Edit & View)
+const modalsHTML = `
+  <div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
+    <div style="background:#fff; padding:20px; border-radius:10px; width:90%; max-width:450px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+      <h3 style="margin-top:0;">Update Task Status</h3>
+      <select id="editStatus" style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid #ddd;">
+        <option value="Not Started">Not Started</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option>
+      </select>
+      <textarea id="addRemarks" style="width:100%; padding:10px; height:100px; resize:none; border:1px solid #ddd; border-radius:5px;" placeholder="Add remarks..."></textarea>
+      <div id="loadingIndicator" style="display:none; text-align:center; margin-top:10px;">⏳ Syncing...</div>
+      <div style="text-align:right; margin-top:20px;">
+        <button id="saveEditBtn" style="padding:8px 16px; background:#4CAF50; color:#fff; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">Save</button>
+        <button onclick="closeModal('modalOverlay')" style="padding:8px 16px; background:#ccc; color:#333; border:none; border-radius:5px; margin-left:10px; cursor:pointer;">Cancel</button>
+      </div>
+    </div>
+  </div>
 
-document.getElementById("cancelEditBtn").onclick = () => document.getElementById("modalOverlay").style.display = "none";
+  <div id="viewModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
+    <div style="background:#fff; padding:25px; border-radius:15px; width:90%; max-width:500px; max-height:80vh; overflow-y:auto;">
+      <h2 id="viewTaskName" style="margin-top:0; color:#2d3748;"></h2>
+      <div style="display:flex; gap:10px; margin-bottom:15px;" id="viewBadges"></div>
+      <div style="background:#f7fafc; padding:15px; border-radius:10px; border:1px solid #edf2f7; color:#4a5568; line-height:1.6; white-space:pre-wrap;" id="viewNotes"></div>
+      <div style="margin-top:20px; font-size:12px; color:#a0aec0;" id="viewDetails"></div>
+      <div style="text-align:right; margin-top:25px;">
+        <button onclick="closeModal('viewModalOverlay')" style="padding:10px 20px; background:#3182ce; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Close</button>
+      </div>
+    </div>
+  </div>
+`;
+document.body.insertAdjacentHTML("beforeend", modalsHTML);
+
+function openViewModal(index) {
+    const t = allTasks[index];
+    document.getElementById("viewTaskName").textContent = t["TASK NAME"];
+    document.getElementById("viewNotes").textContent = t["NOTES"] || "No additional notes.";
+    document.getElementById("viewBadges").innerHTML = `
+        <span style="background:#edf2f7; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:bold;">${t["PRIORITY"]} Priority</span>
+        <span style="background:#ebf8ff; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:bold; color:#3182ce;">${t["STATUS"]}</span>
+    `;
+    document.getElementById("viewDetails").innerHTML = `
+        <b style="color:black;">From: ${t["ASSIGNED BY"]}</b> <br>
+        <b style="color:black;">To: ${t["ASSIGNED TO"]}</b><br>
+        <b style="color:black;">Due Date: ${t["DUE DATE"]}</b> <br>
+        <b style="color:black;">Created: ${t["TIMESTAMP"]}</b> 
+    `;
+    document.getElementById("viewModalOverlay").style.display = "flex";
+}
+
+function openEditModal(index) {
+    editIndex = index;
+    document.getElementById("editStatus").value = allTasks[index]["STATUS"] || "Not Started";
+    document.getElementById("addRemarks").value = allTasks[index]["NOTES"] || "";
+    document.getElementById("modalOverlay").style.display = "flex";
+}
+
+function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
 document.getElementById("saveEditBtn").onclick = async () => {
     const status = document.getElementById("editStatus").value;
@@ -225,14 +246,14 @@ document.getElementById("saveEditBtn").onclick = async () => {
             method: "POST",
             body: JSON.stringify({ action: "update", rowIndex: allTasks[editIndex].rowIndex, status, notes })
         });
-        document.getElementById("modalOverlay").style.display = "none";
+        closeModal('modalOverlay');
         fetchTasks();
     } catch (e) { alert("Error updating"); }
     document.getElementById("loadingIndicator").style.display = "none";
 };
 
 async function deleteTask(index) {
-    if (!confirm("Delete?")) return;
+    if (!confirm("Delete this task?")) return;
     try {
         await fetch(scriptURL, {
             method: "POST",
