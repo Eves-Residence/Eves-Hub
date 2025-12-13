@@ -1,63 +1,82 @@
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-<link rel="stylesheet" href="../css/header.css">
+<style>
+  /* 1. THE GRID FIX: Forces the center to be exactly in the middle */
+  .header-grid {
+    display: grid;
+    grid-template-columns: 25% 50% 25%; 
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
 
-<!-- header.html -->
-<header>
-  <div class="logo-container">
-    <img src="../img/Logo-for-the-header-1024x248.png" alt="EveHub Logo" class="logo">
-  </div>
+  /* 2. SIDEBAR SCROLL AREA: Internal scrolling */
+  #notif-list {
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  
+  #notif-list::-webkit-scrollbar { width: 4px; }
+  #notif-list::-webkit-scrollbar-track { background: #f8fafc; }
+  #notif-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-  <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="telegram-float">
-  <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" />
-</a>
+  /* Slide-in Animation Classes */
+  .sidebar-hidden { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
+  .sidebar-visible { transform: translateX(0); transition: transform 0.3s ease-in-out; }
+</style>
 
-  <h2 id="dept-name">Department | User</h2>
-
-  <div class="header-right">
-    <!-- 🔔 Notification -->
-    <div class="notification-container" data-count="0">
-      <span class="material-symbols-outlined" id="notif-icon">notifications_unread</span>
-      <span class="notification-count">0</span>
-
-      <!-- Dropdown -->
-      <div class="notif-dropdown" id="notif-list">
-        <p class="empty">No new notifications</p>
-      </div>
+<header class="bg-white border-b border-gray-200 h-16 fixed top-0 left-0 right-0 z-[1000] shadow-sm px-4">
+  <div class="header-grid">
+    
+    <div class="flex justify-start items-center">
+      <img src="../img/Logo-for-the-header-1024x248.png" alt="EveHub Logo" class="h-8 md:h-10">
     </div>
 
-    <!-- 🚪 Logout -->
-    <a href="../index.html" id="logout-link" title="Logout">
-      <span class="material-symbols-outlined">logout</span>
-    </a>
+    <div class="flex justify-center items-center text-center">
+      <h2 id="dept-name" class="text-gray-700 font-bold text-sm md:text-lg whitespace-nowrap">
+        Department | <span id="user" class="font-normal text-gray-400 italic">User</span>
+      </h2>
+    </div>
+
+    <div class="flex items-center justify-end gap-4 md:gap-6">
+      <a href="https://t.me/+xq3axo98cto2NjNl" target="_blank" class="hover:scale-110 transition-transform">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram" class="w-6 h-6" />
+      </a>
+
+      <div class="relative flex items-center" id="notifBtn" style="cursor: pointer;">
+        <span class="material-symbols-outlined text-gray-500 text-2xl">notifications_unread</span>
+        <span id="notifCount" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold px-1.5 rounded-full border-2 border-white hidden">0</span>
+      </div>
+
+      <a href="../index.html" class="flex items-center text-gray-500 hover:text-red-600 transition-colors">
+        <span class="material-symbols-outlined text-2xl">logout</span>
+      </a>
+    </div>
   </div>
 </header>
 
-<script>
-  // ✅ Auto-detect the department based on folder name in URL
-  document.addEventListener("DOMContentLoaded", () => {
-    const pathParts = window.location.pathname.split("/");
-    const dept = pathParts.find(p =>
-      ["admin", "marketing", "maintenance", "housekeeping"].includes(p.toLowerCase())
-    );
+<div id="notifOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000] hidden">
+  <div id="notifSidebar" class="fixed inset-y-0 right-0 w-80 md:w-96 bg-white shadow-2xl flex flex-col sidebar-hidden border-l border-gray-100">
+    
+    <div class="p-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-blue-600">notifications</span>
+        <h3 class="font-bold text-gray-800 uppercase tracking-widest text-xs">Notifications</h3>
+      </div>
+      <button onclick="closeNotifSidebar()" class="flex items-center text-gray-400 hover:text-red-500 transition-colors focus:outline-none">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
 
-    const deptName = {
-      admin: "Admin Department",
-      marketing: "Marketing Department",
-      maintenance: "Maintenance Department",
-      housekeeping: "Housekeeping Department"
-    };
+    <div id="notif-list" class="bg-white">
+      <p class="p-10 text-center text-gray-400 italic text-sm">Loading notifications...</p>
+    </div>
 
-    const deptTitle = deptName[dept?.toLowerCase()] || "Department";
-
-    const deptElement = document.getElementById("dept-name");
-    if (deptElement) {
-      deptElement.textContent = deptTitle;
-    }
-  });
-</script>
-
-
-
-
-
+    <div class="p-4 bg-gray-50 border-t border-gray-100 flex flex-col gap-2">
+      <button onclick="loadNotifications()" class="w-full py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors uppercase tracking-widest">
+        Refresh
+      </button>
+    </div>
+  </div>
+</div>
