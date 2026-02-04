@@ -30,7 +30,7 @@ function changeFrame(type, element) {
             newSrc = "https://docs.google.com/spreadsheets/d/15ouIKyyo1pfegl7oMxUgNgy_36JPb87Ta4JGxgws5HI/edit?usp=sharing";
             break;
         case "actSys":
-            newSrc = "https://docs.google.com/spreadsheets/d/1czVE-Z4POL6xd5WdgCY47a0NikL9H3V3N7eK-jvQQUY/edit?usp=sharing";
+            newSrc = "https://docs.google.com/spreadsheets/d/1g0o68m8ifFJUjSOEXp4XPUGps-IB4npA03sJXCZ9skE/edit?usp=sharing";
             break;
         case "bnb":
             newSrc = "https://docs.google.com/spreadsheets/d/1aWdlIT9aRwT4FktT_3oB0poxC8xyC0lOTDKEj574M2Y/edit?usp=sharing";
@@ -291,3 +291,4 @@ form.addEventListener("submit", async (e) => {
 
 window.addEventListener("load", fetchTasks);
 setInterval(fetchTasks, 30000); // 30s Auto-Refresh
+
