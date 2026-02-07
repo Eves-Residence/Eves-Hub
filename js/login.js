@@ -20,7 +20,7 @@ const access = {
     },
     secretary: {
         password: "secret",
-        names: ["Riza", "Teph dy"]
+        names: ["Havila", "Teph dy"]
     },
     IT: {
         password: "hackerboi2499",
@@ -143,6 +143,7 @@ function togglePasswordVisibility() {
         }
     }
 }
+
 
 
 
