@@ -147,6 +147,9 @@
         <button onclick="changeFrame('master', this)" class="sidebar-link">
           <span class="material-symbols-outlined mr-3">database</span> Master List
         </button>
+        <button onclick="changeFrame('vacancy', this)" class="sidebar-link">
+          <span class="material-symbols-outlined mr-3">door_open</span> Vacancy
+       </button>
         <button onclick="changeFrame('bnb', this)" class="sidebar-link">
           <span class="material-symbols-outlined mr-3">bathtub</span> Bed & Bath Info
         </button>
@@ -270,6 +273,7 @@
         case "calendar": sectionCalendar.classList.remove('hidden'); break;
         case "task": sectionTask.classList.remove('hidden'); if(typeof fetchTasks === 'function') fetchTasks(); break;
         case "master": newSrc = "https://docs.google.com/spreadsheets/d/15ouIKyyo1pfegl7oMxUgNgy_36JPb87Ta4JGxgws5HI/edit?usp=sharing"; break;
+        case "vacancy": newSrc = "https://docs.google.com/spreadsheets/d/1Z_3YqO4ve0TvbkV4Lrg6X9utii7EswQiwnczFcAKvsI/edit?usp=sharing"; break;
         case "bnb": newSrc = "https://docs.google.com/spreadsheets/d/1aWdlIT9aRwT4FktT_3oB0poxC8xyC0lOTDKEj574M2Y/edit?usp=sharing"; break;
         case "jo": newSrc = "https://eves-residence.github.io/JOB-ORDER"; break;
         case "actSys": newSrc = "https://docs.google.com/spreadsheets/d/1g0o68m8ifFJUjSOEXp4XPUGps-IB4npA03sJXCZ9skE/edit?usp=sharing"; break;
@@ -311,5 +315,6 @@
   </script>
 </body>
 </html>
+
 
 
