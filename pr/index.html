@@ -8,7 +8,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   
-  <!-- <script src="index.js" defer></script> -->
   <script src="rep.js" defer></script>
 
   <style>
@@ -42,14 +41,6 @@
       to { transform: rotate(360deg); }
     }
 
-     /* ✅ TELEGRAM FLOAT */
-    .telegram-float {
-      position: fixed; width: 60px; height: 60px; bottom: 40px; right: 40px;
-      background-color: #2563EB; color: #fff; border-radius: 50px;
-      text-align: center; box-shadow: 2px 2px 3px #999; z-index: 1000;
-    }
-    .telegram-float img { width: 100%; height: 100%; padding: 10px; }
-
     /* ✅ SIDEBAR STYLES */
     .sidebar {
       width: 280px; background-color: #ffffff; border-right: 1px solid #e5e7eb;
@@ -65,7 +56,7 @@
     .sidebar-link.active { background-color: #eff6ff; color: #2563eb; font-weight: 600; }
     .sidebar-group-label { padding: 18px 20px 8px; font-size: 10px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; }
 
-    /* ✅ FIXED CONTENT WRAPPER & MAINFRAME SIZE */
+    /* ✅ FIXED CONTENT WRAPPER */
     .main_content_wrapper {
       margin-left: 280px; 
       padding: 24px; 
@@ -75,16 +66,15 @@
       flex-direction: column;
     }
 
-    /* Section Iframe needs to grow to fill space */
     #section-iframe {
       flex-grow: 1;
       width: 100%;
-      height: calc(100vh - 120px); /* Forces it to fill the screen minus padding */
+      height: calc(100vh - 120px);
     }
 
     #mainFrame { 
       width: 100%; 
-      height: 100%; /* Fill the container */
+      height: 100%; 
       min-height: 750px; 
       border-radius: 12px; 
       border: 1px solid #e5e7eb; 
@@ -92,29 +82,6 @@
       display: none; 
       opacity: 0; 
     }
-
-    /* ✅ HORIZONTAL KANBAN LIST */
-    #taskList { 
-        display: flex !important; 
-        flex-direction: row !important; 
-        overflow-x: auto !important; 
-        overflow-y: hidden !important; 
-        gap: 20px; 
-        padding: 10px; 
-        align-items: center; 
-        background: #f1f5f9;
-        border-radius: 15px;
-    }
-    
-    .task-card { 
-      background: white; border-radius: 1rem; padding: 1rem; margin-bottom: 1rem; 
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); border-left: 5px solid #E5E7EB; 
-      width: 300px; min-width: 300px; height: 320px; flex-shrink: 0;
-      transition: all 0.3s ease; white-space: normal; display: flex; flex-direction: column;
-    }
-    
-    #taskList::-webkit-scrollbar { height: 8px; }
-    #taskList::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
 
     @media (max-width: 1024px) {
       .sidebar { transform: translateX(-100%); }
@@ -156,6 +123,7 @@
         <button onclick="changeFrame('jo', this)" class="sidebar-link">
           <span class="material-symbols-outlined mr-3">engineering</span> Job Order Form
         </button>
+        
         <button onclick="changeFrame('actSys', this)" class="sidebar-link">
           <span class="material-symbols-outlined mr-3">account_balance</span> Accounting System
         </button>
@@ -174,12 +142,11 @@
     </aside>
 
     <main class="main_content_wrapper mt-16">
-      
       <div id="section-iframe" class="hidden">
         <iframe id="mainFrame" src=""></iframe>
       </div>
 
-      <div id="section-task" class="hidden flex flex-col xl:flex-row gap-8 items-stretch">
+      <div id="section-task" class="hidden flex flex-col xl:flex-row gap-8 items-start">
         <div class="todo-form-container bg-white p-6 rounded-3xl shadow-sm border border-gray-100 w-full xl:w-[380px] xl:sticky xl:top-24">
           <h1 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
             <span class="material-symbols-outlined text-blue-600">edit_square</span> Task Manager
@@ -187,7 +154,7 @@
           <form id="todo-form" class="space-y-4">
             <div>
               <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Task Name</label>
-              <input type="text" id="taskName" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500 outline-none">
+              <input type="text" id="taskName" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div class="grid grid-cols-2 gap-4">
               <div>
@@ -208,38 +175,46 @@
             <div>
               <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Assigned To</label>
               <select id="assignTo" required class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 outline-none">
-                <option value="Property Representative">Property Representative</option>
                 <option value="Secretary">Secretary</option>
                 <option value="Marketing">Marketing</option>
+                <option value="Property Representative">Property Representative</option>
                 <option value="Accounting">Accounting</option>
                 <option value="IT">IT</option>
+                <option value="Maintenance">Maintenance</option>
               </select>
             </div>
             <div>
               <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Details</label>
-              <textarea id="notes" rows="3" style="width:100%; padding:12px; border:1px solid #f1f1f1; border-radius:12px; resize:none; overflow:hidden; min-height:100px; max-height:300px; background:#f9fafb; outline:none; font-size:14px;" placeholder="Add details..."></textarea>
+              <textarea id="notes" rows="3" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500 resize-none" placeholder="Task description..."></textarea>
             </div>
-            <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl active:scale-95 transition shadow-lg">Save Task</button>
+            <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-100 active:scale-95">Save Task</button>
           </form>
           <p id="response" class="mt-4 text-xs font-medium text-green-600 text-center"></p>
         </div>
 
-        <div class="flex-1 w-full overflow-hidden flex flex-col">
-            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                <span class="material-symbols-outlined text-blue-600">view_kanban</span> Task List
-            </h2>
-            <div id="taskList"></div>
+        <div class="flex-1 w-full overflow-hidden">
+          <div class="flex justify-between items-center mb-6">
+             <div class="flex gap-2"></div>
+          </div>
+          <div id="taskList"></div>
         </div>
       </div>
 
       <div id="section-calendar" class="w-full">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-left">📅 Property Rep Calendar</h1>
+
         <div class="bg-white p-2 rounded-2xl shadow-sm border h-[75vh]">
-          <iframe 
-            src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff&src=f8939355c05bdafed63e7eb02789566c7ebe844c36005d3ce552d4d2fd6cba16%40group.calendar.google.com&src=7e3b30ff9999ea614326851547fe1ad3b916dbd5d66e1ca4aee284a643bec5b8%40group.calendar.google.com&src=4135d53669ba8aeb9fa97e9d43b90b898559135041b9877a74024e64f938433d%40group.calendar.google.com&src=1e4d7aeebe105f901f5667b6ab66abe0cbf3200430b4038c56fca65b9e34fd80%40group.calendar.google.com&src=502be4aa37504dea77d1a6b9102a6e47f615fc2da0cb6bfe75e366d39396fcce%40group.calendar.google.com&src=9b12293cfc74b3ef24aa3b47f244cc0ddd985ccad38a76d8113c6f8fda1c8d57%40group.calendar.google.com&src=e606ac15794bbbf3367bf604d1dcfec9c54206fc69f4a091b27f2998c9a0bbb2%40group.calendar.google.com&src=0ff5cd60c64f7f245b9a751f7bb51aad1c8fef2212d4c37befc52593bd9e37c4%40group.calendar.google.com&src=23195d0aba5de40a69bfc9fe008e82f4a1824526aeb5fd447527468549586af2%40group.calendar.google.com&src=7137dc2d42770e37e88ced5ae69e61975b63c4767c5abd73a5be3019759ef8b9%40group.calendar.google.com&src=00c9b4f66e0573f992bb911bb11ddc608ccb021f2be44fa6cfdc633de1463f82%40group.calendar.google.com&color=%23039BE5&color=%23D50000&color=%23F6BF26&color=%237CB342&color=%23E67C73&color=%23F4511E&color=%237CB342&color=%239E69AF&color=%2323164E&ctz=Asia%2FManila" 
+
+          <iframe
+
+            src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff&src=f8939355c05bdafed63e7eb02789566c7ebe844c36005d3ce552d4d2fd6cba16%40group.calendar.google.com&src=7e3b30ff9999ea614326851547fe1ad3b916dbd5d66e1ca4aee284a643bec5b8%40group.calendar.google.com&src=4135d53669ba8aeb9fa97e9d43b90b898559135041b9877a74024e64f938433d%40group.calendar.google.com&src=1e4d7aeebe105f901f5667b6ab66abe0cbf3200430b4038c56fca65b9e34fd80%40group.calendar.google.com&src=502be4aa37504dea77d1a6b9102a6e47f615fc2da0cb6bfe75e366d39396fcce%40group.calendar.google.com&src=9b12293cfc74b3ef24aa3b47f244cc0ddd985ccad38a76d8113c6f8fda1c8d57%40group.calendar.google.com&src=e606ac15794bbbf3367bf604d1dcfec9c54206fc69f4a091b27f2998c9a0bbb2%40group.calendar.google.com&src=0ff5cd60c64f7f245b9a751f7bb51aad1c8fef2212d4c37befc52593bd9e37c4%40group.calendar.google.com&src=23195d0aba5de40a69bfc9fe008e82f4a1824526aeb5fd447527468549586af2%40group.calendar.google.com&src=7137dc2d42770e37e88ced5ae69e61975b63c4767c5abd73a5be3019759ef8b9%40group.calendar.google.com&src=00c9b4f66e0573f992bb911bb11ddc608ccb021f2be44fa6cfdc633de1463f82%40group.calendar.google.com&color=%23039BE5&color=%23D50000&color=%23F6BF26&color=%237CB342&color=%23E67C73&color=%23F4511E&color=%237CB342&color=%239E69AF&color=%2323164E&ctz=Asia%2FManila"
+
             style="border: 0" width="100%" height="100%" frameborder="0" scrolling="no" class="rounded-xl">
+
           </iframe>
+
         </div>
+
       </div>
 
       <footer class="mt-12 py-6 border-t border-gray-100">
@@ -264,6 +239,7 @@
       const sectionCalendar = document.getElementById("section-calendar");
       const sectionTask = document.getElementById("section-task");
 
+      // Hide all content sections first
       [sectionIframe, sectionCalendar, sectionTask].forEach(sec => sec.classList.add('hidden'));
       mainFrame.style.display = "none";
       mainFrame.style.opacity = 0;
@@ -276,7 +252,10 @@
         case "vacancy": newSrc = "https://docs.google.com/spreadsheets/d/1Z_3YqO4ve0TvbkV4Lrg6X9utii7EswQiwnczFcAKvsI/edit?usp=sharing"; break;
         case "bnb": newSrc = "https://docs.google.com/spreadsheets/d/1aWdlIT9aRwT4FktT_3oB0poxC8xyC0lOTDKEj574M2Y/edit?usp=sharing"; break;
         case "jo": newSrc = "https://eves-residence.github.io/JOB-ORDER"; break;
-        case "actSys": newSrc = "https://docs.google.com/spreadsheets/d/1g0o68m8ifFJUjSOEXp4XPUGps-IB4npA03sJXCZ9skE/edit?usp=sharing"; break;
+        
+        // ✅ UPDATED: Points to Google Drive Folder Grid View
+        case "actSys": newSrc = "https://drive.google.com/embeddedfolderview?id=1_veJNEd8t5g87H0er3yO_4CFNVyYq4b8#grid"; break;
+        
         case "attendance": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfXacHkUdWuQNvv1Pwcyx--NDFqFwjITTYL7672ZL6BG4-SgA/viewform?embedded=true"; break;
         case "off": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSdgQKxcuAsomlhDX6yDsPI1s5O-x-u36-YPtHGGu-33QMMMCQ/viewform?embedded=true"; break;
         case "ca": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSfhw4VyYKI9fc05UGtkvpRx0kIo98QRTKQsH_3NTpZAdzxi4w/viewform?embedded=true"; break;
@@ -286,9 +265,11 @@
         overlay.style.display = 'flex';
         sectionIframe.classList.remove('hidden');
         mainFrame.style.display = "block";
+        // Timeout ensures the loader shows up before the browser starts heavy lifting
         setTimeout(() => { mainFrame.src = newSrc; }, 50);
       }
 
+      // Update Sidebar UI state
       document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
       if (element) element.classList.add('active');
     }
@@ -305,6 +286,7 @@
       }
     });
 
+    // Auto-resize for Task Manager Notes
     const notesArea = document.getElementById('notes');
     if(notesArea) {
         notesArea.addEventListener('input', function() {
@@ -315,6 +297,3 @@
   </script>
 </body>
 </html>
-
-
-

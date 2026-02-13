@@ -15,12 +15,12 @@
     /* ✅ LOADING SCREEN OVERLAY */
     #loading-overlay {
       position: fixed;
-      top: 64px; /* Adjust based on your header height */
-      left: 280px; /* Adjust based on your sidebar width */
+      top: 64px; 
+      left: 280px; 
       right: 0;
       bottom: 0;
       background: rgba(249, 250, 251, 0.9);
-      display: none; /* Hidden by default */
+      display: none; 
       z-index: 100;
       backdrop-filter: blur(6px);
       flex-direction: column;
@@ -60,21 +60,17 @@
     /* ✅ WIDE CONTENT WRAPPER */
     .main_content_wrapper {
       margin-left: 280px; padding: 24px; width: calc(100% - 280px); min-height: calc(100vh - 64px);
+      display: flex; flex-direction: column;
     }
 
-    #mainFrame { width: 100%; height: 85vh; border-radius: 12px; border: 1px solid #e5e7eb; background: white; display: none; opacity: 0; }
+    #section-iframe { flex-grow: 1; width: 100%; height: calc(100vh - 120px); }
+    
+    /* Added height 100% to fill the section */
+    #mainFrame { width: 100%; height: 100%; border-radius: 12px; border: 1px solid #e5e7eb; background: white; display: none; opacity: 0; }
 
     /* ✅ HORIZONTAL KANBAN LIST */
     #taskList { display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1.5rem; align-items: flex-start; }
     
-    .task-card { 
-      background: white; border-radius: 1rem; padding: 1rem; margin-bottom: 1rem; 
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); border-left: 5px solid #E5E7EB; 
-      width: 300px; min-width: 300px; flex-shrink: 0;
-      transition: all 0.3s ease; white-space: normal;
-    }
-    .task-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
-
     @media (max-width: 1024px) {
       .sidebar { transform: translateX(-100%); }
       .main_content_wrapper { margin-left: 0; width: 100%; }
@@ -88,7 +84,7 @@
 
   <div id="loading-overlay">
     <div class="loader-spinner"></div>
-    <p class="mt-4 text-sm font-bold text-blue-600 uppercase tracking-widest">Loading Content...</p>
+    <p class="mt-4 text-sm font-bold text-blue-600 uppercase tracking-widest">Loading Secretary Tools...</p>
   </div>
 
   <div class="flex">
@@ -129,7 +125,12 @@
 
     <main class="main_content_wrapper mt-16">
       <div id="section-iframe" class="hidden">
-        <iframe id="mainFrame" src=""></iframe>
+        <iframe 
+          id="mainFrame" 
+          name="mainFrame" 
+          src="" 
+          sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox">
+        </iframe>
       </div>
 
       <div id="section-task" class="hidden flex flex-col xl:flex-row gap-8 items-start">
@@ -179,9 +180,6 @@
         </div>
 
         <div class="flex-1 w-full overflow-hidden">
-          <div class="flex justify-between items-center mb-6">
-             <div class="flex gap-2"></div>
-          </div>
           <div id="taskList"></div>
         </div>
       </div>
@@ -198,11 +196,9 @@
   </div>
 
   <script>
-    // ✅ REFERENCE ELEMENTS
     const overlay = document.getElementById('loading-overlay');
     const mainFrame = document.getElementById('mainFrame');
 
-    // ✅ AUTOMATICALLY HIDE LOADER WHEN IFRAME FINISHES LOADING
     mainFrame.onload = function() {
       overlay.style.display = 'none';
       mainFrame.style.transition = "opacity 0.4s";
@@ -210,6 +206,9 @@
     };
 
     function changeFrame(type, element) {
+      // Prevent default browser behavior if triggered by a link
+      if (window.event) window.event.preventDefault();
+
       const sectionIframe = document.getElementById("section-iframe");
       const sectionCalendar = document.getElementById("section-calendar");
       const sectionTask = document.getElementById("section-task");
@@ -221,33 +220,28 @@
       let newSrc = "";
       switch (type) {
         case "calendar": sectionCalendar.classList.remove('hidden'); break;
-
         case "task": sectionTask.classList.remove('hidden'); if(typeof fetchTasks === 'function') fetchTasks(); break;
-
-        case "actSys":
-        newSrc = "https://docs.google.com/spreadsheets/d/1g0o68m8ifFJUjSOEXp4XPUGps-IB4npA03sJXCZ9skE/edit?usp=sharing";
-        break;
-
+        
+        // ✅ STRICT GOOGLE DRIVE EMBED URL
+        case "actSys": 
+          newSrc = "https://drive.google.com/embeddedfolderview?id=1_veJNEd8t5g87H0er3yO_4CFNVyYq4b8#grid"; 
+          break;
+        
         case "jo": newSrc = "https://eves-residence.github.io/JOB-ORDER"; break;
-
         case "feedback": newSrc = "https://docs.google.com/forms/d/e/1FAIpQLSc4Nu4EaO-AWIRGSFDixPxj9jMOZ-prjuNlOcnFUKzWKbGE-Q/viewform?embedded=true"; break;
-
         case "attendance": newSrc = "https://docs.google.com/spreadsheets/d/1k-ryTpaGSjgv7Hl5v0phOpAkSXacHDyyr9bafTe4JbY/edit?usp=sharing"; break;
-
         case "off": newSrc = "https://docs.google.com/spreadsheets/d/1inxxznuvGWAiHpjAtZA7j8L7gSETlPIs5SyZFUKO1ic/edit?usp=sharing"; break;
-
         case "ca": newSrc = "https://docs.google.com/spreadsheets/d/1l3G6SZyPcqpKSFyIDdZRO5Jmg2pgDG0SZwwshe7_hMM/edit?usp=sharing"; break;
       }
 
       if (newSrc) {
-        // ✅ SHOW LOADING SCREEN
         overlay.style.display = 'flex';
         sectionIframe.classList.remove('hidden');
         mainFrame.style.display = "block";
         
-        // Timeout to ensure display:flex renders before heavy src loading
+        // ✅ FORCE THE IFRAME TO LOAD INSIDE THE NAMED FRAME
         setTimeout(() => {
-          mainFrame.src = newSrc;
+          window.frames['mainFrame'].location.replace(newSrc);
         }, 50);
       }
 
@@ -258,21 +252,19 @@
     // Header logic
     fetch("../header/header.html").then(res => res.text()).then(data => {
       document.getElementById("header").innerHTML = data;
-      const dept = localStorage.getItem("department");
-      const name = localStorage.getItem("name");
-      if (!dept || !name) { window.location.href = "../index.html"; return; }
+      const dept = localStorage.getItem("department") || "Secretary";
+      const name = localStorage.getItem("name") || "User";
       const deptName = document.getElementById("dept-name");
       if (deptName) deptName.textContent = `${dept} Department | ${name}`;
     });
 
-    // Auto-resize notes
     const notes = document.getElementById('notes');
-    notes.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
-    });
+    if(notes) {
+      notes.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+      });
+    }
   </script>
 </body>
 </html>
-
-
